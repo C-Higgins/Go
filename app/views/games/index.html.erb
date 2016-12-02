@@ -1,4 +1,4 @@
 <h1>All games here</h1>
-<% @games.each do |g| %>
-	<li><%= link_to g.name, game_path(g) %></li>
-<% end -%>
+
+
+<%= react_component 'Games', { data: @games } %>

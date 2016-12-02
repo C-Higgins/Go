@@ -1,4 +1,6 @@
 class GamesController < ApplicationController
+
+
 	def index
 		@games = Game.all #magically goes to the view
 	end
