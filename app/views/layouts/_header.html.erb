@@ -1,0 +1,31 @@
+<%= react_component 'Menubar', {menu: 
+[
+  {
+    "text" => "Link 1",
+    "url"=> "#"
+  },
+  {
+    "text"=> "Link 2",
+    "url"=> "#",
+    "submenu" => [
+    	{
+    		"text"=> "Sublink 1",
+	        "url"=> "#"
+    	}
+    ]
+  },
+  {
+    "text"=> "Link 3",
+    "url"=> "#",
+    "submenu"=> [
+      {
+        "text"=> "Sublink 1",
+        "url"=> "#"
+      },
+      {
+        "text"=> "Sublink 2",
+        "url"=>"#"
+      }
+    ]
+  }
+]} %>

@@ -1,0 +1,44 @@
+body {
+	padding-top:50px;
+}
+
+nav {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	background-color: #eeeeee;
+}
+
+.navTopItem {
+	display: inline-block;
+	/*padding: 10px 40px 10px 40px;*/
+	padding-top: 5px;
+	padding-bottom: 5px;
+
+}
+.navTopItem > a {
+	padding: 20px;
+}
+.navSubItems {
+	display:none;
+	position: absolute;
+	background-color: #eeeeee;
+	min-width: 50px;
+	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+
+	z-index: 1;
+}
+.navSubItems a { 
+	display: block;
+	padding-top: 15px;
+	padding-bottom: 5px;
+	padding-left: 20px;
+	padding-right: 20px;
+}
+.navSubItems a:last-child {
+	padding-bottom: 15px;
+}
+.navTopItem:hover .navSubItems {
+	display:block;
+}
