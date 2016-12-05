@@ -1,6 +1,5 @@
 <h1> This is a gameroom for Game: <%= @game.name %> </h1>
 
-<div id='board'>
-	<img src="../images/tic-tac-toe-board.gif" />
-</div>
 
+
+<%= react_component 'Game', { data: @game } %>

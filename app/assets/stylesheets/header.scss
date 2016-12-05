@@ -1,5 +1,9 @@
+$navColor: #eeeeee;
+$navHoverColor: #cccccc;
+
 body {
 	padding-top:50px;
+	font-family: 'Source Sans Pro', 'Helvetica', sans-serif;
 }
 
 nav {
@@ -7,7 +11,11 @@ nav {
 	top: 0;
 	left: 0;
 	width: 100%;
-	background-color: #eeeeee;
+	background-color: $navColor;
+	a{
+		text-decoration: none;
+		color: black;
+	}
 }
 
 .navTopItem {
@@ -22,7 +30,7 @@ nav {
 	display:none;
 	position: absolute;
 	top: 100%;
-	background-color: #eeeeee;
+	background-color: $navColor;
 	min-width: 50px;
 	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 	z-index: 1;
@@ -31,8 +39,8 @@ nav {
 			@extend .navTopItem;
 			display: block;
 		}
-		
+
 		a:hover {
-		background-color: #ddddff;
+		background-color: $navHoverColor;
 		}
 }
