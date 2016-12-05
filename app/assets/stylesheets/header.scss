@@ -13,32 +13,26 @@ nav {
 .navTopItem {
 	display: inline-block;
 	/*padding: 10px 40px 10px 40px;*/
-	padding-top: 5px;
-	padding-bottom: 5px;
-
-}
-.navTopItem > a {
-	padding: 20px;
+	padding: 5px 10px;
+	&:hover .navSubItems{
+		display:block;
+	}
 }
 .navSubItems {
 	display:none;
 	position: absolute;
+	top: 100%;
 	background-color: #eeeeee;
 	min-width: 50px;
 	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-
 	z-index: 1;
-}
-.navSubItems a { 
-	display: block;
-	padding-top: 15px;
-	padding-bottom: 5px;
-	padding-left: 20px;
-	padding-right: 20px;
-}
-.navSubItems a:last-child {
-	padding-bottom: 15px;
-}
-.navTopItem:hover .navSubItems {
-	display:block;
+
+		a{
+			@extend .navTopItem;
+			display: block;
+		}
+		
+		a:hover {
+		background-color: #ddddff;
+		}
 }
