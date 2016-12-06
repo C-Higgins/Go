@@ -14,18 +14,14 @@ ActiveRecord::Schema.define(version: 20161201200910) do
 
   create_table "games", force: :cascade do |t|
     t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "pieces", force: :cascade do |t|
-    t.boolean  "white?"
-    t.integer  "x"
-    t.integer  "y"
-    t.integer  "pid"
-    t.integer  "gid"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "white_pid"
+    t.integer  "black_pid"
+    t.integer  "winning_pid"
+    t.boolean  "in_progress"
+    t.text     "history"
+    t.integer  "move"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
   create_table "players", force: :cascade do |t|

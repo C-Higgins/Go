@@ -4,8 +4,11 @@ class CreateGames < ActiveRecord::Migration[5.0]
       t.string :name
       t.integer :white_pid
       t.integer :black_pid
-      t.integer :turn
       t.integer :winning_pid
+      t.boolean :in_progress
+
+      t.text :history
+      t.integer :move
       
       t.timestamps
     end

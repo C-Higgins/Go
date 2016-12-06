@@ -1,5 +1,6 @@
-$navColor: #eeeeee;
-$navHoverColor: #cccccc;
+$navColor: transparent;
+$navDropColor: #fff;
+$navHoverColor: #eee;
 
 body {
 	padding-top:50px;
@@ -7,32 +8,36 @@ body {
 }
 
 nav {
-	position: fixed;
+	position: relative;
 	top: 0;
 	left: 0;
 	width: 100%;
 	background-color: $navColor;
 	a{
 		text-decoration: none;
-		color: black;
+		color: #303030;
 	}
 }
 
 .navTopItem {
 	display: inline-block;
-	/*padding: 10px 40px 10px 40px;*/
+	position: relative;
 	padding: 5px 10px;
-	&:hover .navSubItems{
-		display:block;
+	&:hover {
+		background-color: $navDropColor;
+		.navSubItems{
+			display:block;
+			box-shadow: 2px 5px 6px rgba(0,0,0,0.3);
+		}
 	}
 }
 .navSubItems {
 	display:none;
 	position: absolute;
 	top: 100%;
-	background-color: $navColor;
-	min-width: 50px;
-	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	left: 0;
+	background-color: $navDropColor;
+	min-width: 105px;
 	z-index: 1;
 
 		a{

@@ -1,12 +1,12 @@
-<%= react_component 'Menubar', {menu: 
+<% menu = 
 [
   {
     "text" => "Home",
     "url"=> root_url
   },
   {
-    "text"=> "Link 2",
-    "url"=> "#",
+    "text"=> "New Game",
+    "url"=> "/g/new",
     "submenu" => [
     	{
     		"text"=> "Sublink 1",
@@ -28,4 +28,36 @@
       }
     ]
   }
-]} %>
+] %>
+<nav>
+  <% menu.each do |top| %>
+    <div class = navTopItem><%= link_to(top['text'], top['url']) %>
+      <% unless top['submenu'].nil? %>
+        <div class = navSubItems>
+        <% top['submenu'].each do |subi| %>
+          <%= link_to(subi['text'], subi['url']) %>
+        <% end %>
+        </div>
+      <% end -%>
+    </div>
+  <% end -%>
+</nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

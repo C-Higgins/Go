@@ -1,5 +1,3 @@
 <h1> This is a gameroom for Game: <%= @game.name %> </h1>
 
-
-
-<%= react_component 'Game', { data: @game } %>
+<%= react_component 'Game', { game: @game } %>

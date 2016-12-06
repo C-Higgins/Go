@@ -10,6 +10,8 @@ class GamesController < ApplicationController
 
 	def create
 		@game = Game.new(params.require(:game).permit(:name))
+		@game.history = 'THE HISTORY'
+		@game.move = 0
 		@game.save
 		redirect_to @game #redirects to game_path/id which hits routes
 	end

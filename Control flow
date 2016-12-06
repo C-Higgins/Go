@@ -1,0 +1,17 @@
+User does a move
+Board validates and then updates based on that move
+View sends websocket packet with the move to server
+
+Server validates the move
+Server updates the model
+	Server sends websocket packet to all connected clients with the model data
+	OR
+	Server calls render-component on the react comp. and it auto updates
+
+Views render the data
+
+
+
+The view / react never updates the model
+The view / react only recieves data, does not send it (exception is ajax and websockets,
+														but that's not part of react)
