@@ -12,15 +12,15 @@ class Game extends React.Component {
 		}
 
 	}
-	componentWillMount(){ // Set up from the backend passing. Consider it an ajax call
-		this.setState({ 
-			history: [
-			{squares: this.props.game.history}
-			],
-			xNext: true,
-			move: this.props.game.move
-		})
-	}
+	// componentWillMount(){ // Set up from the backend passing. Consider it an ajax call
+	// 	this.setState({ 
+	// 		history: [
+	// 		{squares: this.props.game.history}
+	// 		],
+	// 		xNext: true,
+	// 		move: this.props.game.move
+	// 	})
+	// }
 	handleClick(i){
 		const history = this.state.history
 		const current = history[history.length-1]
