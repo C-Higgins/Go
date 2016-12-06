@@ -11,7 +11,19 @@
     	{
     		"text"=> "Sublink 1",
 	        "url"=> "#"
-    	}
+    	},
+      {
+      "text"=> "Sublink 1",
+      "url"=> "#"
+      },
+      {
+      "text"=> "Sublink 1",
+      "url"=> "#"
+      },
+      {
+        "text"=> "Sublink 1",
+          "url"=> "#"
+      }
     ]
   },
   {
@@ -25,13 +37,20 @@
       {
         "text"=> "Sublink 2",
         "url"=>"#"
+      },{
+        "text"=> "Sublink 1",
+          "url"=> "#"
+      },{
+        "text"=> "Sublink 1",
+          "url"=> "#"
       }
     ]
   }
 ] %>
 <nav>
   <% menu.each do |top| %>
-    <div class = navTopItem><%= link_to(top['text'], top['url']) %>
+    <div class = navTopItem>
+      <%= link_to(top['text'], top['url']) %>
       <% unless top['submenu'].nil? %>
         <div class = navSubItems>
         <% top['submenu'].each do |subi| %>

@@ -1,0 +1,9 @@
+@import 'global';
+footer {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	padding: 20px;
+	color: $textColor;
+	width: 100%;
+}

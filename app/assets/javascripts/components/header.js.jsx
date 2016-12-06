@@ -1,3 +1,5 @@
+/* This does nothing anymore but I will keep it as reference */
+
 class Menubar extends React.Component {
   constructor(props){
     super(props);
