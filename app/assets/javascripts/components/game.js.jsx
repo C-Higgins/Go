@@ -71,9 +71,7 @@ class Game extends React.Component {
 			status = `Next player: ${this.state.xNext ? 'X' : 'O'}`;
 		return (
 			<div className="game">
-				<div className="game-board">
-					<Board squares={current.squares} onClick={(i) => this.handleClick(i)}/>
-				</div>
+				<Board squares={current.squares} onClick={(i) => this.handleClick(i)}/>
 				<div className="game-info">
 					<div>{ status }</div>
 					<ol>{moves}</ol>
@@ -99,26 +97,18 @@ class Board extends React.Component {
 
 class Square extends React.Component {
 	calcStyle(){
-		let xmult = this.props.index % 3
-		let ymult = Math.floor(this.props.index / 3)
-		let pixels = 75 //the square width
-		let style = {
-			position: 'absolute',
-			zIndex: 1,
-			fontSize: 40,
-			width: pixels,
-			height: pixels,
-			lineHeight: pixels+'px',
-			textAlign: 'center',
+		const size = 3
+		const pixels = 75 //the square width
+		const xmult = this.props.index % size
+		const ymult = Math.floor(this.props.index / size)
+
+		return {
 			transform: `translate(${pixels*xmult}px, ${pixels*ymult}px)`
 		}
-
-		return style;
 	}
 	render() {
-		const x = 75 * this.props.index //calc actual positioning later
 		return (
-			<stone className='mark' key={this.props.index} style = {this.calcStyle()} onClick={()=>this.props.onClick()}>
+			<stone className='stone' key={this.props.index} style = {this.calcStyle()} onClick={()=>this.props.onClick()}>
 			{this.props.value}
 			</stone>
 		);

@@ -8,6 +8,8 @@ nav {
 	left: 0;
 	width: 100%;
 	background-color: $navColor;
+	z-index: 999;
+	
 	a{
 		text-decoration: none;
 		color: #303030;
@@ -33,7 +35,6 @@ nav {
 	left: 0;
 	background-color: $navDropColor;
 	min-width: 105px;
-	z-index: 1;
 
 		a{
 			@extend .navTopItem;

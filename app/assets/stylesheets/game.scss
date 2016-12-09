@@ -1,3 +1,5 @@
+$boardpx: 75px;
+
 ol, ul {
   padding-left: 30px;
 }
@@ -8,42 +10,19 @@ ol, ul {
   height:225px;
   position: relative;
 }
-.board-row:after {
-  clear: both;
-  content: "";
-  display: table;
-}
 
 .status {
   margin-bottom: 10px;
 }
 
-
-.square {
-  background: #fff;
-  border: 1px solid #999;
-  float: left;
-  font-size: 24px;
-  font-weight: bold;
-  line-height: 34px;
-  margin-right: -1px;
-  margin-top: -1px;
-  padding: 0;
+.stone {
+  position: absolute;
+  z-index: 1;
+  font-size: 40px;
+  width: $boardpx;
+  height: $boardpx;
+  line-height: $boardpx;
   text-align: center;
-  width: 100px; //box dimensions
-  height: 100px;
-
-  // these two will center the text vertically
-  height: 100px;
-  line-height: 100px; 
-}
-
-.square:focus {
-  outline: none;
-}
-
-.kbd-navigation .square:focus {
-  background: #ddd;
 }
 
 .game {
