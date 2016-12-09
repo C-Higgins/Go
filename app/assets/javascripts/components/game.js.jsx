@@ -1,11 +1,9 @@
-
-
 class Game extends React.Component {
 	constructor(){
 		super();
 		this.state = { //initial
 			history: [
-			{squares: Array(9).fill(null)}
+			{squares: Array(9).fill('')}
 			],
 			xNext: true,
 			move: 0
@@ -22,6 +20,7 @@ class Game extends React.Component {
 	// 	})
 	// }
 	handleClick(i){
+		console.log('handling a click')
 		const history = this.state.history
 		const current = history[history.length-1]
 		const squares = current.squares.slice()
@@ -85,40 +84,45 @@ class Game extends React.Component {
 }
 
 class Board extends React.Component {
-	renderSquare(i) {
-		return <Square value={this.props.squares[i]} onClick={ () => this.props.onClick(i)} />
-		//Passes the onclick function referencing the handleclick function
-		//so when you click a square it calls this 
-	}
 	render() {
+		const squares = this.props.squares.slice()
+		const pieces = squares.map((s, i) => {
+			return <Square value = {s} index={i} onClick={() => this.props.onClick(i)} />
+		})
 		return (
-			<div>
-				<div className="board-row">
-					{this.renderSquare(0)}
-					{this.renderSquare(1)}
-					{this.renderSquare(2)}
-				</div>
-				<div className="board-row">
-					{this.renderSquare(3)}
-					{this.renderSquare(4)}
-					{this.renderSquare(5)}
-				</div>
-				<div className="board-row">
-					{this.renderSquare(6)}
-					{this.renderSquare(7)}
-					{this.renderSquare(8)}
-				</div>
+			<div id = 'board'>
+				{pieces}
 			</div>
 		);
 	}
 }
 
-function Square(props){
-	return (
-		<button className="square" onClick={()=>props.onClick()}>
-		{props.value}
-		</button>
-	);
+class Square extends React.Component {
+	calcStyle(){
+		let xmult = this.props.index % 3
+		let ymult = Math.floor(this.props.index / 3)
+		let pixels = 75 //the square width
+		let style = {
+			position: 'absolute',
+			zIndex: 1,
+			fontSize: 40,
+			width: pixels,
+			height: pixels,
+			lineHeight: pixels+'px',
+			textAlign: 'center',
+			transform: `translate(${pixels*xmult}px, ${pixels*ymult}px)`
+		}
+
+		return style;
+	}
+	render() {
+		const x = 75 * this.props.index //calc actual positioning later
+		return (
+			<stone className='mark' key={this.props.index} style = {this.calcStyle()} onClick={()=>this.props.onClick()}>
+			{this.props.value}
+			</stone>
+		);
+	}
 }
 // ========================================
 

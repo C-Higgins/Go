@@ -2,6 +2,12 @@ ol, ul {
   padding-left: 30px;
 }
 
+#board {
+  background-image: url('../images/tic-tac-toe-board.gif');
+  width: 225px;
+  height:225px;
+  position: relative;
+}
 .board-row:after {
   clear: both;
   content: "";
@@ -12,6 +18,7 @@ ol, ul {
   margin-bottom: 10px;
 }
 
+
 .square {
   background: #fff;
   border: 1px solid #999;
@@ -19,12 +26,16 @@ ol, ul {
   font-size: 24px;
   font-weight: bold;
   line-height: 34px;
-  height: 100px;
   margin-right: -1px;
   margin-top: -1px;
   padding: 0;
   text-align: center;
-  width: 100px;
+  width: 100px; //box dimensions
+  height: 100px;
+
+  // these two will center the text vertically
+  height: 100px;
+  line-height: 100px; 
 }
 
 .square:focus {
