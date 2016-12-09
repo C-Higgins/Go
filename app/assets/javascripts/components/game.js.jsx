@@ -1,11 +1,9 @@
-
-
 class Game extends React.Component {
 	constructor(){
 		super();
 		this.state = { //initial
 			history: [
-			{squares: Array(9).fill(null)}
+			{squares: Array(9).fill('')}
 			],
 			xNext: true,
 			move: 0
@@ -22,6 +20,7 @@ class Game extends React.Component {
 	// 	})
 	// }
 	handleClick(i){
+		console.log('handling a click')
 		const history = this.state.history
 		const current = history[history.length-1]
 		const squares = current.squares.slice()
@@ -72,9 +71,7 @@ class Game extends React.Component {
 			status = `Next player: ${this.state.xNext ? 'X' : 'O'}`;
 		return (
 			<div className="game">
-				<div className="game-board">
-					<Board squares={current.squares} onClick={(i) => this.handleClick(i)}/>
-				</div>
+				<Board squares={current.squares} onClick={(i) => this.handleClick(i)}/>
 				<div className="game-info">
 					<div>{ status }</div>
 					<ol>{moves}</ol>
@@ -85,40 +82,37 @@ class Game extends React.Component {
 }
 
 class Board extends React.Component {
-	renderSquare(i) {
-		return <Square value={this.props.squares[i]} onClick={ () => this.props.onClick(i)} />
-		//Passes the onclick function referencing the handleclick function
-		//so when you click a square it calls this 
-	}
 	render() {
+		const squares = this.props.squares.slice()
+		const pieces = squares.map((s, i) => {
+			return <Square value = {s} index={i} onClick={() => this.props.onClick(i)} />
+		})
 		return (
-			<div>
-				<div className="board-row">
-					{this.renderSquare(0)}
-					{this.renderSquare(1)}
-					{this.renderSquare(2)}
-				</div>
-				<div className="board-row">
-					{this.renderSquare(3)}
-					{this.renderSquare(4)}
-					{this.renderSquare(5)}
-				</div>
-				<div className="board-row">
-					{this.renderSquare(6)}
-					{this.renderSquare(7)}
-					{this.renderSquare(8)}
-				</div>
+			<div id = 'board'>
+				{pieces}
 			</div>
 		);
 	}
 }
 
-function Square(props){
-	return (
-		<button className="square" onClick={()=>props.onClick()}>
-		{props.value}
-		</button>
-	);
+class Square extends React.Component {
+	calcStyle(){
+		const size = 3
+		const pixels = 75 //the square width
+		const xmult = this.props.index % size
+		const ymult = Math.floor(this.props.index / size)
+
+		return {
+			transform: `translate(${pixels*xmult}px, ${pixels*ymult}px)`
+		}
+	}
+	render() {
+		return (
+			<stone className='stone' key={this.props.index} style = {this.calcStyle()} onClick={()=>this.props.onClick()}>
+			{this.props.value}
+			</stone>
+		);
+	}
 }
 // ========================================
 
