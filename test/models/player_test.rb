@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class PlayerTest < ActiveSupport::TestCase
-
+	#These tests are mostly useless but provide a template for more useful ones later
 	def setup
 		@player = Player.new(name: 'Bach', email: 'user@email.com', password: 'pass', password_confirmation: 'pass')
 	end
