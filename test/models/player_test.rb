@@ -3,16 +3,33 @@ require 'test_helper'
 class PlayerTest < ActiveSupport::TestCase
 	#These tests are mostly useless but provide a template for more useful ones later
 	def setup
-		@player = Player.new(name: 'Bach', email: 'user@email.com', password: 'pass', password_confirmation: 'pass')
+		@player = Player.new(name: 'Bach', email: 'user@email.com', password: 'password', password_confirmation: 'password')
 	end
 
 	test "Should be valid" do 
 		assert @player.valid?
 	end
 
-	test "valid name" do
-		@player.name = " "
-		assert_not @player.valid?
+	test "name validity" do
+		invalid_names = [' ', 'A', '']
+		invalid_names.each do |n|
+			@player.name = n
+			assert_not @player.valid?
+		end
+	end
+
+	test "name duplication" do
+		p2 = @player.dup
+		@player.save
+		p2.name = 'BACH'
+		assert_not p2.valid?
+	end
+
+	test "email duplication" do
+		p2 = @player.dup
+		@player.save
+		p2.email = 'UseR@email.com'
+		assert_not p2.valid?
 	end
 
 	test "valid email" do 
