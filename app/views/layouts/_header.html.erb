@@ -19,6 +19,9 @@
 		<div class = navTopItem>
 			<%= link_to('Logout', logout_path, method: 'delete') %>
 		</div>
+		<div class = navTopItem style="float:right">
+			<%= current_user.name %>
+		</div>
 	<% end -%>
 </nav>
 
