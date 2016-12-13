@@ -1,67 +1,26 @@
-<% menu = 
-[
-  {
-    "text" => "Home",
-    "url"=> root_url
-  },
-  {
-    "text"=> "New Game",
-    "url"=> "/g/new",
-    "submenu" => [
-    	{
-    		"text"=> "Sublink 1",
-	        "url"=> "#"
-    	},
-      {
-      "text"=> "Sublink 1",
-      "url"=> "#"
-      },
-      {
-      "text"=> "Sublink 1",
-      "url"=> "#"
-      },
-      {
-        "text"=> "Sublink 1",
-          "url"=> "#"
-      }
-    ]
-  },
-  {
-    "text"=> "Signup",
-    "url"=> "/signup",
-    "submenu"=> [
-      {
-        "text"=> "Sublink 1",
-        "url"=> "#"
-      },
-      {
-        "text"=> "Sublink 2",
-        "url"=>"#"
-      },{
-        "text"=> "Sublink 1",
-          "url"=> "#"
-      },{
-        "text"=> "Sublink 1",
-          "url"=> "#"
-      }
-    ]
-  }
-] %>
 <nav>
-  <% menu.each do |top| %>
-    <div class = navTopItem>
-      <%= link_to(top['text'], top['url']) %>
-      <% unless top['submenu'].nil? %>
-        <div class = navSubItems>
-        <% top['submenu'].each do |subi| %>
-          <%= link_to(subi['text'], subi['url']) %>
-        <% end %>
-        </div>
-      <% end -%>
-    </div>
-  <% end -%>
+	<div class = navTopItem>
+		<%= link_to('Home', root_path) %>
+		<div class = 'navSubItems'>
+			<%= link_to('Sublink 1', '#') %>
+		</div>
+	</div>
+	<div class = navTopItem>
+		<%= link_to('New Game', new_game_path) %>
+	</div>
+	<% unless current_user %>
+		<div class = navTopItem>
+			<%= link_to('Signup', signup_path) %>
+		</div>
+		<div class = navTopItem>
+			<%= link_to('Login', login_path) %>
+		</div>
+	<% else %>
+		<div class = navTopItem>
+			<%= link_to('Logout', logout_path, method: 'delete') %>
+		</div>
+	<% end -%>
 </nav>
-
 
 
 

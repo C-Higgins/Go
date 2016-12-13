@@ -3,6 +3,7 @@ class PlayersController < ApplicationController
 	def create
 		@player = Player.new(params.require(:player).permit(:name, :email, :password, :password_confirmation))
 		if @player.save
+			log_in @player
 			flash[:success] = "Registration successful"
 			redirect_to @player
 		else
