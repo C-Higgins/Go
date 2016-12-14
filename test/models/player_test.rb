@@ -21,14 +21,14 @@ class PlayerTest < ActiveSupport::TestCase
 	test "name duplication" do
 		p2 = @player.dup
 		@player.save
-		p2.name = 'BACH'
+		p2.name = @player.name.upcase
 		assert_not p2.valid?
 	end
 
 	test "email duplication" do
 		p2 = @player.dup
 		@player.save
-		p2.email = 'UseR@email.com'
+		p2.email = @player.email.upcase
 		assert_not p2.valid?
 	end
 
@@ -45,5 +45,53 @@ class PlayerTest < ActiveSupport::TestCase
 			assert @player.valid?, "#{v.inspect} should be valid"
 		end
 	end
+
+	test "emails should be saved in lowercase" do 
+		e = 'EmaIL@exaMple.com'
+		@player.email = e
+		@player.save
+		assert_equal e.downcase, @player.reload.email
+	end
+
+	test "Password not blank" do 
+		@player.password = @player.password_confirmation = ' ' * 8
+		assert_not @player.valid?
+	end
+
+	test "Password min length" do 
+		@player.password = @player.password_confirmation = 'a' * 5
+		assert_not @player.valid?
+		@player.password = @player.password_confirmation = 'a' * 6
+		assert @player.valid?
+	end
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 end

@@ -1,12 +1,9 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-# one:
-#   name: MyString
-#   id: 1
-#   email: MyString
-#   encrypted_password: MyString
-#   reset_password_token: MyString
-#   reset_password_sent_at: 2016-12-01 15:09:10
+testUser1:
+  name: Example name
+  email: example@example.com
+  password_digest: <%= Player.digest('password') %>
 
 # two:
 #   name: MyString
