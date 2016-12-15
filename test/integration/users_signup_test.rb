@@ -21,6 +21,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
 			                                         password_confirmation: "password1" } }
 		end
 		follow_redirect!
+		assert is_logged_in?
 		assert_template 'players/show'
 	end
 end

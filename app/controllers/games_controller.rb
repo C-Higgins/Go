@@ -17,6 +17,6 @@ class GamesController < ApplicationController
 	end
 
 	def show
-		@game = Game.find(params[:id]) #these @vars are magically sent to the view
+		@game = Game.find_by(webid: params[:webid]) #these @vars are magically sent to the view
 	end
 end

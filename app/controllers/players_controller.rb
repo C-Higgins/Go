@@ -14,6 +14,10 @@ class PlayersController < ApplicationController
 		@player = Player.new
 	end
 	def show
-		@player = Player.find(params[:id])
+		@player = Player.find_by(name: params[:name])
+	end
+
+	def edit
+		@player = Player.find_by(name: params[:name])
 	end
 end

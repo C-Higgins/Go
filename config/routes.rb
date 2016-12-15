@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 	post '/login', to: 'sessions#create'
 	delete '/logout', to: 'sessions#destroy'
 
-	resources :players, path: 'u'
-	resources :games, path: 'g'
+	resources :players, path: 'u', param: :name
+	resources :games, path: 'g', param: :webid
 	# For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

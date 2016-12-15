@@ -7,7 +7,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
 		assert_response :success
 	end
 
-	test "logging in works for invalid info" do
+	test "logging in doesn't work for invalid info" do
 		get login_path
 		assert_template 'sessions/new'
 		post login_path, params: { session: { email: "", password: "" } }
