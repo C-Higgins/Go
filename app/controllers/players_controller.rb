@@ -10,14 +10,26 @@ class PlayersController < ApplicationController
 			render 'new'
 		end
 	end
+
 	def new
 		@player = Player.new
 	end
+	
 	def show
 		@player = Player.find_by(name: params[:name])
 	end
 
 	def edit
-		@player = Player.find_by(name: params[:name])
+		@player = Player.find(session[:user_id])
+	end
+
+	def update
+		@player = Player.find(session[:user_id])
+		if @player.update_attributes(params.require(:player).permit(:password, :password_confirmation))
+			flash[:success] = 'Profile Updated'
+			redirect_to @player
+		else
+			render 'edit'
+		end
 	end
 end
