@@ -11,7 +11,6 @@ Rails.application.routes.draw do
 
 	get '/settings', to: 'players#edit'
 	patch '/settings', to: 'players#update'
-	#post '/settings', to: 'players#update'
 
 	resources :players, path: 'u', param: :name, only: [:index, :show]
 	resources :games, path: 'g', param: :webid

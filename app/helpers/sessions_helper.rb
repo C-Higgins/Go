@@ -1,4 +1,14 @@
 module SessionsHelper
+
+	def redirect_back_or default
+		redirect_to (session[:intended_url] || default)
+		session.delete(:intended_url)
+	end
+
+	def save_intent
+		session[:intended_url] = request.original_url if request.get?
+	end
+
 	def log_in user
 		session[:user_id] = user.id
 	end

@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class PlayerTest < ActiveSupport::TestCase
-	#These tests are mostly useless but provide a template for more useful ones later
 	def setup
 		@player = Player.new(name: 'Bach', email: 'user@email.com', password: 'password', password_confirmation: 'password')
 	end
@@ -64,10 +63,6 @@ class PlayerTest < ActiveSupport::TestCase
 		@player.password = @player.password_confirmation = 'a' * 6
 		assert @player.valid?
 	end
-
-	
-
-
 
 
 

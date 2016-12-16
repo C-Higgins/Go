@@ -1,13 +1,14 @@
 User does a move
-Board validates and then updates based on that move
-View sends websocket packet with the move to server
+Front end validates the move
+Move is added to front end history of boards and board updates
+Front sends websocket packet with the move to server
 
 Server validates the move
+Server adds the move to the movelist
 Server updates the model
-	Server sends websocket packet to all connected clients with the model data
-	OR
-	Server calls render-component on the react comp. and it auto updates
+Server sends websocket packet with the new movelist
 
+Client receives the movelist and parses that into a new board object
 Views render the data
 
 
