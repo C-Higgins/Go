@@ -1,3 +1,5 @@
 <h1> This is a gameroom for Game: <%= @game.name %> </h1>
 
+<h3> Participants: <%= link_to @game.players.first.name, @game.players.first %> and <%= link_to(@game.players.second.name, @game.players.second) if @game.players.count>1 %> </h3>
+
 <%= react_component 'Game', { game: @game } %>
