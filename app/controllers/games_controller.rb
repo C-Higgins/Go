@@ -15,6 +15,8 @@ class GamesController < ApplicationController
 		@game.history = 'THE HISTORY'
 		@game.save
 		redirect_to @game #redirects to game_path/id which hits routes
+
+		#need to add white and black IDs when chosen
 	end
 
 	def show
