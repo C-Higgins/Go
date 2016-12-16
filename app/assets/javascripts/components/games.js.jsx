@@ -12,8 +12,8 @@ class Games extends React.Component { //Games is the same variable as 'Games' in
 		console.log(this.state)
 		let games = this.state.games.map((g) => {
 			return (
-				<li key={g.id}>
-				<a href={'/g/'+ g.id}>{g.name}</a>
+				<li key={g.webid}>
+				<a href={'/g/'+ g.webid}>{g.name}</a>
 				</li>
 			)
 		})

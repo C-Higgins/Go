@@ -36,4 +36,10 @@ class Player < ApplicationRecord
 		return false if remember_digest.nil?
 		BCrypt::Password.new(remember_digest).is_password?(remember_token)
 	end
+
+	# This makes helpers such as player_path(player) redirect to /u/:name
+	# instead of the default, /u/:id
+	def to_param
+		self.name
+	end
 end

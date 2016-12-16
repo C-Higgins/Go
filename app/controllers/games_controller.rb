@@ -4,6 +4,7 @@ class GamesController < ApplicationController
 	def index
 		@games = Game.all #magically goes to the view
 	end
+	
 	def new
 
 	end
@@ -17,6 +18,10 @@ class GamesController < ApplicationController
 	end
 
 	def show
-		@game = Game.find(params[:id]) #these @vars are magically sent to the view
+		@game = Game.find_by(webid: params[:webid]) #these @vars are magically sent to the view
+	end
+
+	def edit
+
 	end
 end

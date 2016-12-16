@@ -21,7 +21,11 @@
 		</div>
 		<div class = navTopItem style="float:right">
 			<%= link_to(current_user.name, current_user) %>
+			<div class = 'navSubItems'>
+				<%= link_to('Edit profile', settings_path) %>
+			</div>
 		</div>
+
 	<% end -%>
 </nav>
 

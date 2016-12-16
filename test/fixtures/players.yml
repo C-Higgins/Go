@@ -5,10 +5,7 @@ testUser1:
   email: example@example.com
   password_digest: <%= Player.digest('password') %>
 
-# two:
-#   name: MyString
-#   id: 2
-#   email: MyString
-#   encrypted_password: MyString
-#   reset_password_token: MyString
-#   reset_password_sent_at: 2016-12-01 15:09:10
+testUser2:
+  name: Example name 2
+  email: example2@example.com
+  password_digest: <%= Player.digest('password') %>

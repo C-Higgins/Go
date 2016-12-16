@@ -1,0 +1,13 @@
+<h1> Editing user: <%= @player.name %> </h1>
+
+<%= form_for @player, url: settings_path do |f| %>
+	<%= render 'shared/error_messages' %>
+
+	<%= f.label :password %>
+	<%= f.password_field :password %>
+
+	<%= f.label :password_confirmation, "Confirmation" %>
+	<%= f.password_field :password_confirmation %>
+
+	<%= f.submit "Save changes" %>
+<% end %>
