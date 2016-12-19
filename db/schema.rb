@@ -10,19 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161215163037) do
+ActiveRecord::Schema.define(version: 20161219170344) do
 
   create_table "games", force: :cascade do |t|
     t.string   "name"
-    t.integer  "white_pid"
-    t.integer  "black_pid"
-    t.integer  "winning_pid"
     t.boolean  "in_progress"
     t.text     "history"
-    t.integer  "move"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-    t.string   "webid"
+    t.integer  "move",        default: 0, null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+    t.string   "webid",                   null: false
+  end
+
+  create_table "involvements", force: :cascade do |t|
+    t.integer  "game_id"
+    t.integer  "player_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean  "color"
+    t.string   "result"
+    t.index ["game_id"], name: "index_involvements_on_game_id"
+    t.index ["player_id"], name: "index_involvements_on_player_id"
   end
 
   create_table "players", force: :cascade do |t|

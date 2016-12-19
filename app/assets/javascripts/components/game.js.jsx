@@ -1,12 +1,10 @@
 class Game extends React.Component {
-	constructor(){
-		super();
+	constructor(props){
+		super(props);
 		this.state = { //initial
-			history: [
-			{squares: Array(9).fill('')}
-			],
+			history: props.game.history,
 			xNext: true,
-			move: 0
+			move: props.game.history.length-1
 		}
 
 	}
@@ -27,15 +25,29 @@ class Game extends React.Component {
 
 		if (squares[i] || calculateWinner(squares)) 
 			return;
-		this.setState({move: history.length})
+		//this.setState({})
 		this.state.xNext ? squares[i] = 'X' : squares[i] = 'O'
 		this.setState({
+            move: history.length,
 		    history: history.concat([{
 		      squares: squares
 		    }]),
 		    xNext: !this.state.xNext,
 		  });
+        let _this = this;
+        $.ajax({
+            type: 'PATCH',
+            contentType: 'application/json',
+            url: `/g/${this.props.game.webid}`,
+            data: JSON.stringify(history.concat([{
+                squares: squares
+            }])),
+            dataType: "json",
+            success: function(res){
+                _this.setState({history: res})
 
+            }
+        });
 		/* Send state through websocket here to update server and other client
 		Other client would be like websocket.onrecieve(data, (data)=>setstate(data))
 		And server has to save it to the db
@@ -85,7 +97,7 @@ class Board extends React.Component {
 	render() {
 		const squares = this.props.squares.slice()
 		const pieces = squares.map((s, i) => {
-			return <Square value = {s} index={i} onClick={() => this.props.onClick(i)} />
+			return <Square value = {s} index={i} key={i} onClick={() => this.props.onClick(i)} />
 		})
 		return (
 			<div id = 'board'>

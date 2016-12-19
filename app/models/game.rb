@@ -1,4 +1,7 @@
 class Game < ApplicationRecord
+	has_many :involvements, inverse_of: :game
+	has_many :players, through: :involvements
+
 	before_create :randomize_id
 	serialize :history, JSON
 
