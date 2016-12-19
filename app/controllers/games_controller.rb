@@ -32,15 +32,21 @@ class GamesController < ApplicationController
 	end
 
 	def edit
-		@history = params
+		# @history = params
 	end
 
 	def update
-		@game = Game.find_by(webid: params[:webid])
-		history = params[:_json]
-		# validate history
-		@game.update_attributes(history: history)
-		@game.save
-		render json: @game.history
+		# @game = Game.find_by(webid: params[:webid])
+		# history = params[:_json]
+		# # validate history
+		# @game.update_attributes(history: history)
+		# if @game.save
+		# 	ActionCable.server.broadcast 'game_channel',
+		# 								 message: 'hi im a message',
+		# 								 user: @game.players.first
+		# 	head :ok
+		# 	render json: @game.history
+		# end
+
 	end
 end

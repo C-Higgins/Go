@@ -1,22 +1,21 @@
+let gv = {};
+
 class Game extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = { //initial
 			history: props.game.history,
-			xNext: true,
+			xNext: props.game.history.length % 2 == 0,
 			move: props.game.history.length-1
 		}
 
 	}
-	// componentWillMount(){ // Set up from the backend passing. Consider it an ajax call
-	// 	this.setState({ 
-	// 		history: [
-	// 		{squares: this.props.game.history}
-	// 		],
-	// 		xNext: true,
-	// 		move: this.props.game.move
-	// 	})
-	// }
+
+	componentWillMount(){
+        gv.callback = (data) => { // Comes in from gameroom.js.erb
+            this.setState({history: data, move: data.length-1})
+        }
+	}
 	handleClick(i){
 		console.log('handling a click')
 		const history = this.state.history
@@ -35,19 +34,15 @@ class Game extends React.Component {
 		    xNext: !this.state.xNext,
 		  });
         let _this = this;
-        $.ajax({
-            type: 'PATCH',
-            contentType: 'application/json',
-            url: `/g/${this.props.game.webid}`,
-            data: JSON.stringify(history.concat([{
-                squares: squares
-            }])),
-            dataType: "json",
-            success: function(res){
-                _this.setState({history: res})
 
-            }
-        });
+
+        App[`game_${this.props.game.webid}`].send({
+            data: history.concat([{squares: squares}]),
+            webid: this.props.game.webid
+        })
+        // -> gameroom_channel#receive
+
+
 		/* Send state through websocket here to update server and other client
 		Other client would be like websocket.onrecieve(data, (data)=>setstate(data))
 		And server has to save it to the db
