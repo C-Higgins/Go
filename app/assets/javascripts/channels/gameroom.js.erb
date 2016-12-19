@@ -1,0 +1,18 @@
+<% Game.all.each do |gr| %>
+
+App['game_<%= gr.webid %>'] = App.cable.subscriptions.create({channel: "GameroomChannel", room: '<%= gr.webid %>'}, {
+  connected: function() {
+    // Called when the subscription is ready for use on the server
+  },
+
+  disconnected: function() {
+    // Called when the subscription has been terminated by the server
+  },
+
+  received: function(data) {
+      console.log('websocket data recieved on channel   ' + JSON.parse(this.identifier).room)
+      gv.callback(data)
+  }
+});
+
+<% end %>
