@@ -25,9 +25,10 @@ class Game extends React.Component {
 
 		if (squares[i] || calculateWinner(squares)) 
 			return;
-		//this.setState({move: history.length})
+		//this.setState({})
 		this.state.xNext ? squares[i] = 'X' : squares[i] = 'O'
 		this.setState({
+            move: history.length,
 		    history: history.concat([{
 		      squares: squares
 		    }]),
