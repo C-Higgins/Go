@@ -25,7 +25,7 @@ class Game extends React.Component {
 
 		if (squares[i] || calculateWinner(squares)) 
 			return;
-		this.setState({move: history.length})
+		//this.setState({move: history.length})
 		this.state.xNext ? squares[i] = 'X' : squares[i] = 'O'
 		this.setState({
 		    history: history.concat([{
@@ -47,7 +47,6 @@ class Game extends React.Component {
 
             }
         });
-        // "{"0":{"squares":["","","","","","","","",""]}}"
 		/* Send state through websocket here to update server and other client
 		Other client would be like websocket.onrecieve(data, (data)=>setstate(data))
 		And server has to save it to the db
@@ -97,7 +96,7 @@ class Board extends React.Component {
 	render() {
 		const squares = this.props.squares.slice()
 		const pieces = squares.map((s, i) => {
-			return <Square value = {s} index={i} onClick={() => this.props.onClick(i)} />
+			return <Square value = {s} index={i} key={i} onClick={() => this.props.onClick(i)} />
 		})
 		return (
 			<div id = 'board'>

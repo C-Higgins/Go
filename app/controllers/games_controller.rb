@@ -12,7 +12,7 @@ class GamesController < ApplicationController
 	def create
 		@game = Game.new(params.require(:game).permit(:name))
 		current_user.games << @game
-		@game.history = [squares: Array(9).fill("")]
+		@game.history = [squares: Array.new(9).fill("")]
 		@game.save
 		redirect_to @game #redirects to game_path/id which hits routes
 
@@ -38,6 +38,7 @@ class GamesController < ApplicationController
 	def update
 		@game = Game.find_by(webid: params[:webid])
 		history = params[:_json]
+		# validate history
 		@game.update_attributes(history: history)
 		@game.save
 		render json: @game.history

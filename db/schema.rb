@@ -10,13 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161216205543) do
+ActiveRecord::Schema.define(version: 20161219170344) do
 
   create_table "games", force: :cascade do |t|
     t.string   "name"
-    t.integer  "white_pid"
-    t.integer  "black_pid"
-    t.integer  "winning_pid"
     t.boolean  "in_progress"
     t.text     "history"
     t.integer  "move",        default: 0, null: false
