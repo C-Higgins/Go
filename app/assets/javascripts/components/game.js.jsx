@@ -36,7 +36,7 @@ class Game extends React.Component {
         let _this = this;
 
 
-        App[`game_${this.props.game.webid}`].send({
+        App.gameRoom.send({
             data: history.concat([{squares: squares}]),
             webid: this.props.game.webid
         })
