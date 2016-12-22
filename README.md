@@ -15,19 +15,23 @@ The game itself and all interactive elements are rendered with React using the r
 
 # Structure
 ## /app
-JS and CSS files, including the clientside websocket code and react components, are served from app/assets. 
+### /app/assets
+JS and CSS files, including the clientside websocket code and react components
 
-Channels contains the server side websocket code.
+### /app/channels
+The server side websocket code.
 
-Controllers handle all logic involving a URL change or a CRUD action. Also contains code for handling sessions.
+### /app/controllers
+All logic involving a URL change or a CRUD action. Also contains code for handling sessions.
 
-Helpers contain the implementations of controller logic in the form of helper methods.
+### /app/helpers
+The implementations of controller logic in the form of helper methods.
 
-Jobs / Mailers currently unused.
+### /app/models
+Deals with the game and player models and their validations and interactions.
 
-Models deals with the game and player models and their validations and interactions.
-
-Views stores the HTML and erb files to be rendered.
+### /app/views
+The HTML and erb files to be rendered.
 
 ## /config
 Configurations for the database, websockets, routes, and related server information.
