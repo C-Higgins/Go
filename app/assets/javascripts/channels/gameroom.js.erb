@@ -1,18 +1,23 @@
-$( document ).on('turbolinks:load', function() {
-    let wrapper = $('#gamewrapper');
+$( document ).on('ready', function() {
+    if(wrapper = document.getElementById('gamewrapper')) {
+        App.gameRoom = App.cable.subscriptions.create({channel: "GameroomChannel", room: wrapper.dataset.roomId}, {
+            connected: function () {
+                // Called when the subscription is ready for use on the server
+                console.log('connected to room')
+                $(document).on('page:change', function() {
+                    this.unsubscribe();
+                })
+            },
 
-    App.gameRoom = App.cable.subscriptions.create({channel: "GameroomChannel", room: wrapper.data('room-id')}, {
-        connected: function () {
-            // Called when the subscription is ready for use on the server
-        },
+            disconnected: function () {
+                // Called when the subscription has been terminated by the server
+                console.log('left room')
+            },
 
-        disconnected: function () {
-            // Called when the subscription has been terminated by the server
-        },
-
-        received: function (data) {
-            console.log('websocket data recieved on channel   ' + JSON.parse(this.identifier).room)
-            gv.callback(data)
-        }
-    })
+            received: function (data) {
+                console.log('websocket data recieved on channel   ' + JSON.parse(this.identifier).room)
+                gv.callback(data, JSON.parse(this.identifier).room)
+            }
+        })
+    }
 });

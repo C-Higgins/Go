@@ -1,7 +1,8 @@
 # Be sure to restart your server when you modify this file. Action Cable runs in a loop that does not support auto reloading.
 class GameroomChannel < ApplicationCable::Channel
 	def subscribed
-		stream_from "#{params['room']}"
+		game = Game.find_by(webid: params[:room])
+		stream_for game
 	end
 
 	def unsubscribed
@@ -14,8 +15,7 @@ class GameroomChannel < ApplicationCable::Channel
 		# validate history
 		@game.update_attributes(history: history)
 		if @game.save
-			ActionCable.server.broadcast("#{params['room']}", history)
-			puts ''
+			GameroomChannel.broadcast_to(@game, history)
 		end
 	end
 end

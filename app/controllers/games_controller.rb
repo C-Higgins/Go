@@ -10,9 +10,8 @@ class GamesController < ApplicationController
 	end
 
 	def create
-		@game = Game.new(params.require(:game).permit(:name))
-		current_user.games << @game
-		@game.history = [squares: Array.new(9).fill("")]
+		@game = current_user.games.build(params.require(:game).permit(:name))
+		@game.history = [squares: Array.new(9).fill('')]
 		@game.save
 		redirect_to @game #redirects to game_path/id which hits routes
 

@@ -12,8 +12,11 @@ class Game extends React.Component {
 	}
 
 	componentWillMount(){
-        gv.callback = (data) => { // Comes in from gameroom.js.erb
-            this.setState({history: data, move: data.length-1})
+        gv.callback = (data, id) => { // Comes in from gameroom.js.erb
+            if (id == this.props.game.webid){
+                this.setState({history: data, move: data.length-1})
+            }
+            console.log(data)
         }
 	}
 	handleClick(i){
