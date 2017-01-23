@@ -2,7 +2,7 @@ class GamesController < ApplicationController
 
 
 	def index
-		@games = Game.all #magically goes to the view
+		@games = Game.joins(:players).group('id').having('count(players.id)<2').to_json(include: :players) #magically goes to the view
 	end
 	
 	def new
@@ -25,6 +25,7 @@ class GamesController < ApplicationController
 		else
 			# Join as player
 			@game.players << current_user unless (@game.players.include?(current_user) || current_user.nil?)
+			ActionCable.server.broadcast 'games', Game.joins(:players).group('id').having('count(players.id)<2').to_json(include: :players)
 			# Change this part when anon users implemented
 		end
 		@game

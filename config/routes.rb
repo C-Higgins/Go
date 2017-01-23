@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-	root 'home#index'
+	root 'games#index'
 
 	get '/signup', to: 'players#new'
 	post '/signup',  to: 'players#create'
