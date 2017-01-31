@@ -6,12 +6,13 @@ class GamesController < ApplicationController
 	end
 	
 	def new
-
+		create
 	end
 
 	def create
-		@game = current_user.games.build(params.require(:game).permit(:name))
-		@game.history = [squares: Array.new(9).fill('')]
+		@game         = current_user.games.build
+		@game.history = [squares: Array.new(361).fill('')]
+		current_user.involvements.last.update(color: true) #1 black, 0 white
 		@game.save
 		redirect_to @game #redirects to game_path/id which hits routes
 
@@ -24,7 +25,11 @@ class GamesController < ApplicationController
 			# Join as spectator
 		else
 			# Join as player
-			@game.players << current_user unless (@game.players.include?(current_user) || current_user.nil?)
+			unless @game.players.include?(current_user) || current_user.nil?
+				@game.players << current_user
+				current_user.involvements.last.update(color: false)
+				@game.save
+			end
 			ActionCable.server.broadcast 'games', Game.joins(:players).group('id').having('count(players.id)<2').to_json(include: :players)
 			# Change this part when anon users implemented
 		end

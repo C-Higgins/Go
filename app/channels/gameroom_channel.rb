@@ -10,12 +10,12 @@ class GameroomChannel < ApplicationCable::Channel
 	end
 
 	def receive data
-		@game = Game.find_by(webid: data["webid"])
-		history = data["data"]
+		@game = Game.find_by(webid: params[:room])
+		move  = data['newMove']
 		# validate history
-		@game.update_attributes(history: history)
+		@game.update_attributes(history: @game.history.concat([move]))
 		if @game.save
-			GameroomChannel.broadcast_to(@game, history)
+			GameroomChannel.broadcast_to(@game, move)
 		end
 	end
 end

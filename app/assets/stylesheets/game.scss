@@ -1,13 +1,14 @@
-$boardpx: 75px;
+$boardpx: 26px;
 
 ol, ul {
 	padding-left: 30px;
 }
 
 #board {
-	background-image: url('../images/tic-tac-toe-board.gif');
-	width: 225px;
-	height:225px;
+  background-image: url('../images/board.png');
+  background-size: contain;
+  width: 500px;
+  height: 500px;
 	position: relative;
 
 	&:hover {
@@ -22,7 +23,7 @@ ol, ul {
 .stone {
 	position: absolute;
 	z-index: 1;
-	font-size: 40px;
+  font-size: 20px;
 	width: $boardpx;
 	height: $boardpx;
 	line-height: $boardpx;
@@ -42,6 +43,27 @@ ol, ul {
 	flex-direction: row;
 }
 
-.game-info {
-	margin-left: 20px;
+#infobox {
+  $totalHeight: 300px;
+  $buttonHeight: 40px;
+  max-height: $totalHeight;
+  #game-info {
+    margin-left: 20px;
+    overflow-y: scroll;
+    width: 200px;
+    height: $totalHeight - $buttonHeight;
+  }
+  #infobuttons {
+    height: $buttonHeight;
+    display: flex;
+    justify-content: space-between;
+    a {
+      background: #aaa;
+      margin: 0 .2em 0 .2em;
+      flex-grow: 1;
+      text-align: center;
+      line-height: $buttonHeight;
+    }
+  }
 }
+
