@@ -1,5 +1,5 @@
-<h1>All games here</h1>
-
-<div id="lobbywrapper" data-room-id="lobby"
-<%= react_component 'Games', {games: @games} %>
+<div id="lobbywrapper" data-room-id="lobby">
+  <div id="gameList">
+    <%= react_component 'Games', {games: @games} %>
+  </div>
 </div>

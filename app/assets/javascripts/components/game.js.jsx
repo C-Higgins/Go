@@ -98,12 +98,12 @@ class Game extends React.Component {
 class Infobox extends React.Component {
     render() {
         return (
-            <div id="infobox">
-                <div id="game-info">
-                    <span>{ this.props.status }</span>
+            <div id="controlBox">
+                <span>{ this.props.status }</span>
+                <div id="moveList">
                     <ol>{this.props.moves}</ol>
                 </div>
-                <div id="infobuttons">
+                <div id="controlButtons">
                     <a href='#' onClick={() => this.props.jumpTo(this.props.moveNum - 1)}> &lt; </a>
                     <a href='#' onClick={() => this.props.jumpTo(this.props.moveNum + 1)}> &gt; </a>
                     <a href='#' onClick={() => this.props.jumpTo(this.props.moves.length - 1)}> &gt;&gt; </a>
