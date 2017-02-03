@@ -2,17 +2,17 @@ class GamesController < ApplicationController
 
 
 	def index
-		@games = Game.all #magically goes to the view
+		@games = Game.joins(:players).group('id').having('count(players.id)<2').to_json(include: :players) #magically goes to the view
 	end
 	
 	def new
-
+		create
 	end
 
 	def create
-		@game = Game.new(params.require(:game).permit(:name))
-		current_user.games << @game
-		@game.history = [squares: Array.new(9).fill("")]
+		@game         = current_user.games.build
+		@game.history = [squares: Array.new(361).fill('')]
+		current_user.involvements.last.update(color: true) #1 black, 0 white
 		@game.save
 		redirect_to @game #redirects to game_path/id which hits routes
 
@@ -25,22 +25,33 @@ class GamesController < ApplicationController
 			# Join as spectator
 		else
 			# Join as player
-			@game.players << current_user unless (@game.players.include?(current_user) || current_user.nil?)
+			unless @game.players.include?(current_user) || current_user.nil?
+				@game.players << current_user
+				current_user.involvements.last.update(color: false)
+				@game.save
+			end
+			ActionCable.server.broadcast 'games', Game.joins(:players).group('id').having('count(players.id)<2').to_json(include: :players)
 			# Change this part when anon users implemented
 		end
 		@game
 	end
 
 	def edit
-		@history = params
+		# @history = params
 	end
 
 	def update
-		@game = Game.find_by(webid: params[:webid])
-		history = params[:_json]
-		# validate history
-		@game.update_attributes(history: history)
-		@game.save
-		render json: @game.history
+		# @game = Game.find_by(webid: params[:webid])
+		# history = params[:_json]
+		# # validate history
+		# @game.update_attributes(history: history)
+		# if @game.save
+		# 	ActionCable.server.broadcast 'game_channel',
+		# 								 message: 'hi im a message',
+		# 								 user: @game.players.first
+		# 	head :ok
+		# 	render json: @game.history
+		# end
+
 	end
 end

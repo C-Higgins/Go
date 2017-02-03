@@ -1,28 +1,46 @@
 <nav>
 	<div class = navTopItem>
-		<%= link_to('Home', root_path) %>
+    Home
+    <%= link_to root_path do %>
+        <span></span>
+    <% end %>
 		<div class = 'navSubItems'>
-			<%= link_to('Sublink 1', '#') %>
+      <%= link_to 'Sublink 1', '#' %>
 		</div>
 	</div>
 	<div class = navTopItem>
-		<%= link_to('New Game', new_game_path) %>
+    New Game
+    <%= link_to new_game_path do %>
+        <span></span>
+    <% end %>
 	</div>
 	<% unless current_user %>
 		<div class = navTopItem>
-			<%= link_to('Signup', signup_path) %>
+      Signup
+      <%= link_to signup_path do %>
+          <span></span>
+      <% end %>
 		</div>
 		<div class = navTopItem>
-			<%= link_to('Login', login_path) %>
+      Login
+      <%= link_to login_path do %>
+          <span></span>
+      <% end %>
 		</div>
 	<% else %>
 		<div class = navTopItem>
-			<%= link_to('Logout', logout_path, method: 'delete') %>
+      Logout
+      <%= link_to logout_path, method: 'delete' do %>
+          <span></span>
+      <% end %>
 		</div>
-		<div class = navTopItem style="float:right">
-			<%= link_to(current_user.name, current_user) %>
+      <div class="navTopItem navRight">
+        <%= current_user.name %>
+        <%= link_to current_user do %>
+            <span></span>
+        <% end %>
 			<div class = 'navSubItems'>
-				<%= link_to('Edit profile', settings_path) %>
+        <%= link_to 'Edit profile', settings_path %>
 			</div>
 		</div>
 

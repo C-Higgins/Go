@@ -1,47 +1,85 @@
-$boardpx: 75px;
+$boardpx: 26px;
 
-ol, ul {
-	padding-left: 30px;
+#gamewrapper {
+  .game {
+    display: flex;
+    flex-direction: row;
+
+    #board {
+      background-image: url('../images/board.png');
+      background-size: contain;
+      width: 500px;
+      height: 500px;
+      position: relative;
+
+      &:hover {
+        cursor: pointer;
+      }
+
+      .stone {
+        position: absolute;
+        z-index: 1;
+        font-size: 20px;
+        width: $boardpx;
+        height: $boardpx;
+        line-height: $boardpx;
+        text-align: center;
+
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Chrome/Safari/Opera */
+        -khtml-user-select: none; /* Konqueror */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none;
+        /* Non-prefixed version, currently
+                               not supported by any browser */
+      }
+    }
+
+    #controlBox {
+      $totalHeight: 300px;
+      $buttonHeight: 40px;
+      $spanHeight: 20px;
+      max-height: $totalHeight;
+      position: relative;
+
+      .status {
+        margin-bottom: 10px;
+      }
+
+      span {
+        text-align: center;
+        width: 100%;
+        position: absolute;
+      }
+
+      #moveList {
+        margin-left: 20px;
+        margin-top: $spanHeight;
+        overflow-y: scroll;
+        width: 200px;
+        height: $totalHeight - $buttonHeight - $spanHeight;
+
+        ol {
+          -webkit-margin-before: 0px;
+          padding-left: 30px;
+        }
+      }
+
+      #controlButtons {
+        height: $buttonHeight;
+        display: flex;
+        justify-content: space-between;
+
+        a {
+          background: #aaa;
+          margin: 0 .2em 0 .2em;
+          flex-grow: 1;
+          text-align: center;
+          line-height: $buttonHeight;
+        }
+      }
+    }
+  }
 }
 
-#board {
-	background-image: url('../images/tic-tac-toe-board.gif');
-	width: 225px;
-	height:225px;
-	position: relative;
-
-	&:hover {
-		cursor: pointer;
-	}
-}
-
-.status {
-	margin-bottom: 10px;
-}
-
-.stone {
-	position: absolute;
-	z-index: 1;
-	font-size: 40px;
-	width: $boardpx;
-	height: $boardpx;
-	line-height: $boardpx;
-	text-align: center;
-
-	-webkit-touch-callout: none; /* iOS Safari */
-	-webkit-user-select: none; /* Chrome/Safari/Opera */
-	-khtml-user-select: none; /* Konqueror */
-	-moz-user-select: none; /* Firefox */
-	-ms-user-select: none; /* Internet Explorer/Edge */
-	user-select: none; /* Non-prefixed version, currently
-						not supported by any browser */
-}
-
-.game {
-	display: flex;
-	flex-direction: row;
-}
-
-.game-info {
-	margin-left: 20px;
-}

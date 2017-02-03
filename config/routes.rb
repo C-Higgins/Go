@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-	root 'home#index'
+	root 'games#index'
 
 	get '/signup', to: 'players#new'
 	post '/signup',  to: 'players#create'
@@ -15,4 +15,6 @@ Rails.application.routes.draw do
 	resources :players, path: 'u', param: :name, only: [:index, :show]
 	resources :games, path: 'g', param: :webid
 	# For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+
+	mount ActionCable.server, at: '/cable'
 end
