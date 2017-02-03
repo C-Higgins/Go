@@ -14,12 +14,12 @@ ActiveRecord::Schema.define(version: 20170123191903) do
 
   create_table "games", force: :cascade do |t|
     t.string   "name"
-    t.boolean "in_progress", default: true
+	t.boolean "in_progress", default: true
     t.text     "history"
-    t.integer "move", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "webid", null: false
+	t.integer "move", default: 0, null: false
+	t.datetime "created_at", null: false
+	t.datetime "updated_at", null: false
+	t.string "webid", null: false
   end
 
   create_table "involvements", force: :cascade do |t|
