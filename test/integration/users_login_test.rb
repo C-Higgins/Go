@@ -23,7 +23,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
 		# Correct nav links persist after changing pages
 		get root_path
 		assert is_logged_in?
-		assert_template 'home/index'
+		assert_template 'games/index'
 		assert_select "a[href=?]", signup_path, count: 0
 		assert_select "a[href=?]", login_path, count: 0
 		assert_select "a[href=?]", logout_path
