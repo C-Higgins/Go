@@ -35,7 +35,6 @@ class Games extends React.Component { //Games is the same variable as 'Games' in
                 </div>
                 <div id="gameListTableRows">
                     {games}
-                    <div className="game filler"></div>
                 </div>
 
             </div>);
