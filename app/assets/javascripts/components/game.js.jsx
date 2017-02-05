@@ -5,7 +5,7 @@ class Game extends React.Component {
         super(props);
         this.state = { //initial
             history: props.game.history,
-            blackNext: props.game.history.length % 2 == 0,
+            blackNext: props.game.history.length % 2 != 0,
             move: props.game.history.length - 1
         }
 
@@ -42,7 +42,8 @@ class Game extends React.Component {
                 squares: squares
             }])
         });
-
+        //there is a bug here where it will concat the history and then again when it gets the socket response
+        // So you will see two moves in your history for the same move
 
         App.gameRoom.send({
             newMove: {squares: squares},
@@ -129,25 +130,25 @@ class Board extends React.Component {
 
 class Square extends React.Component {
     calcStyle() {
-        const size = 19
-        const pixels = 26 //the square width
-        const xmult = this.props.index % size
-        const ymult = Math.floor(this.props.index / size)
-        let piece = this.props.value
+        const size = 19;
+        const pixels = 30; //the square width
+        const xmult = this.props.index % size;
+        const ymult = Math.floor(this.props.index / size);
+        let piece = this.props.value;
         if (piece == 'WHITE') {
             return {
-                transform: `translate(${pixels * xmult + 3}px, ${pixels * ymult + 3}px)`,
+                transform: `translate(${pixels * xmult + 15}px, ${pixels * ymult + 15}px)`,
                 backgroundImage: `url('../images/whitedot.png')`,
                 backgroundSize: 'contain'
             }
         } else if (piece == 'BLACK') {
             return {
-                transform: `translate(${pixels * xmult + 3}px, ${pixels * ymult + 3}px)`,
-                backgroundImage: `url('../images/blackdot.gif')`,
+                transform: `translate(${pixels * xmult + 15}px, ${pixels * ymult + 15}px)`,
+                backgroundImage: `url('../images/blackdot.png')`,
                 backgroundSize: 'contain'
             }
         } else {
-            return {transform: `translate(${pixels * xmult + 3}px, ${pixels * ymult + 3}px)`}
+            return {transform: `translate(${pixels * xmult + 15}px, ${pixels * ymult + 15}px)`}
         }
     }
 

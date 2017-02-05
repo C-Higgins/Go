@@ -2,6 +2,7 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+$grey: #ccc;
 #lobbywrapper {
   margin-top: 100px;
 
@@ -11,7 +12,7 @@
     margin: auto;
     overflow-x: hidden;
     overflow-y: auto;
-    border: 1px solid grey;
+    border: 1px solid $grey;
   }
   #gameListTable {
     width: 100%;
@@ -31,7 +32,8 @@
     .game {
       display: table-row;
       background: white;
-      border-bottom: 1px solid grey;
+      border-bottom: 1px solid $grey;
+      height: 30px;
       line-height: 2em;
     }
 
