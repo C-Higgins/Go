@@ -10,7 +10,8 @@
 	</div>
 	<div class = navTopItem>
     New Game
-    <%= link_to new_game_path do %>
+    <!--fallback link for nojs-->
+    <%= link_to new_game_path, id: 'newGame' do %>
         <span></span>
     <% end %>
 	</div>

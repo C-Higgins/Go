@@ -14,7 +14,12 @@ class GamesController < ApplicationController
 		@game.history = [squares: Array.new(361).fill('')]
 		current_user.involvements.last.update(color: true) #1 black, 0 white
 		@game.save
-		redirect_to @game #redirects to game_path/id which hits routes
+		respond_to do |format|
+			format.js #run the create.js.erb file in views
+		end
+
+
+		# redirect_to @game #redirects to game_path/id which hits routes
 
 		#need to add white and black IDs when chosen
 	end
