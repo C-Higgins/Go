@@ -1,7 +1,19 @@
 
 <div id='modal'>
   <div id='modalContainer'>
-    <div id='modalBody'>A modal body for <%= @modal || modal %></div>
+    <div id='modalBody'>
+
+      <%= form_for(@game, url: games_path, remote: true,
+                   html:       {onsubmit: "createGame();"}) do |f| %>
+          <%= f.label :name, class: 'example', id: 'example2' %>
+          <%= f.text_field :name %>
+
+
+          <%= f.submit '' %>
+      <% end -%>
+
+
+    </div>
   </div>
 </div>
 

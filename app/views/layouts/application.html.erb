@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
   </head>
 
-  <body>
+  <body data-current_user="<%= current_user.name if current_user %>">
   	<%= render "layouts/header" %>
 
     <% flash.each do |message_type, message| %>

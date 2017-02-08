@@ -3,10 +3,12 @@ class GamesController < ApplicationController
 
 	def index
 		@games = Game.joins(:players).group('id').having('count(players.id)<2').to_json(include: :players) #magically goes to the view
+		@me    = current_user
 	end
 	
 	def new
 		@modal = 'new'
+		@game  = Game.new
 		respond_to do |format|
 			format.js { render template: 'layouts/modal', locals: {modal: @modal} } #modal.js
 			format.html {
@@ -22,8 +24,9 @@ class GamesController < ApplicationController
 		current_user.involvements.last.update(color: true) #1 black, 0 white
 		@game.save
 
-		# redirect_to @game #redirects to game_path/id which hits routes
-
+		ActionCable.server.broadcast 'lobby', Game.joins(:players).group('id').having('count(players.id)<2').to_json(include: :players)
+		# ActionCable.server.broadcast 'waiting', @game.players.first.name
+		@game
 		#need to add white and black IDs when chosen
 	end
 
@@ -37,8 +40,10 @@ class GamesController < ApplicationController
 				@game.players << current_user
 				current_user.involvements.last.update(color: false)
 				@game.save
+				ActionCable.server.broadcast 'lobby', Game.joins(:players).group('id').having('count(players.id)<2').to_json(include: :players)
+				ActionCable.server.broadcast 'waiting', {p1: @game.players.first.name, p2: @game.players.second.name, id: @game.webid}
 			end
-			ActionCable.server.broadcast 'games', Game.joins(:players).group('id').having('count(players.id)<2').to_json(include: :players)
+
 			# Change this part when anon users implemented
 		end
 		@game
