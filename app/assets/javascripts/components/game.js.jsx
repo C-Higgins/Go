@@ -20,7 +20,6 @@ class Game extends React.Component {
                     blackNext: !this.state.blackNext
                 })
             }
-            console.log(data)
         }
     }
 
@@ -88,10 +87,10 @@ class Game extends React.Component {
         else
             status = `${this.props.color == this.state.blackNext ? 'YOUR MOVE' : 'THEIR MOVE'}`;
         return (
-            <div className="game">
+            <game>
                 <Board squares={current.squares} onClick={(i) => this.handleClick(i)}/>
                 <Infobox status={status} moves={moves} moveNum={this.state.move} jumpTo={(m) => this.jumpTo(m)}/>
-            </div>
+            </game>
         );
     }
 }
@@ -105,9 +104,9 @@ class Infobox extends React.Component {
                     <ol>{this.props.moves}</ol>
                 </div>
                 <div id="controlButtons">
-                    <a href='#' onClick={() => this.props.jumpTo(this.props.moveNum - 1)}> &lt; </a>
-                    <a href='#' onClick={() => this.props.jumpTo(this.props.moveNum + 1)}> &gt; </a>
-                    <a href='#' onClick={() => this.props.jumpTo(this.props.moves.length - 1)}> &gt;&gt; </a>
+                    <control onClick={() => this.props.jumpTo(this.props.moveNum - 1)}> &lt; </control>
+                    <control onClick={() => this.props.jumpTo(this.props.moveNum + 1)}> &gt; </control>
+                    <control onClick={() => this.props.jumpTo(this.props.moves.length - 1)}> &gt;&gt; </control>
                 </div>
             </div>
         )
@@ -121,9 +120,9 @@ class Board extends React.Component {
             return <Square value={s} index={i} key={i} onClick={() => this.props.onClick(i)}/>
         })
         return (
-            <div id='board'>
+            <board>
                 {pieces}
-            </div>
+            </board>
         );
     }
 }
@@ -134,27 +133,27 @@ class Square extends React.Component {
         const pixels = 30; //the square width
         const xmult = this.props.index % size;
         const ymult = Math.floor(this.props.index / size);
+        const position = {transform: `translate(${pixels * xmult + 15}px, ${pixels * ymult + 15}px)`}
+
         let piece = this.props.value;
         if (piece == 'WHITE') {
             return {
-                transform: `translate(${pixels * xmult + 15}px, ${pixels * ymult + 15}px)`,
-                backgroundImage: `url('../images/whitedot.png')`,
-                backgroundSize: 'contain'
+                ...position,
+                backgroundImage: `url('../images/whitedot.png')`
             }
         } else if (piece == 'BLACK') {
             return {
-                transform: `translate(${pixels * xmult + 15}px, ${pixels * ymult + 15}px)`,
-                backgroundImage: `url('../images/blackdot.png')`,
-                backgroundSize: 'contain'
+                ...position,
+                backgroundImage: `url('../images/blackdot.png')`
             }
         } else {
-            return {transform: `translate(${pixels * xmult + 15}px, ${pixels * ymult + 15}px)`}
+            return position;
         }
     }
 
     render() {
         return (
-            <stone className='stone' key={this.props.index} style={this.calcStyle()}
+            <stone key={this.props.index} style={this.calcStyle()}
                    onClick={() => this.props.onClick()}>
 
             </stone>

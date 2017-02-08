@@ -10,8 +10,14 @@
 	</div>
 	<div class = navTopItem>
     New Game
-    <%= link_to new_game_path do %>
-        <span></span>
+    <% if current_page?(root_path) %>
+        <%= link_to new_game_path, id: 'newGame', remote: true do %>
+            <span></span>
+        <% end %>
+    <% else %>
+        <%= link_to new_game_path, id: 'newGame' do %>
+            <span></span>
+        <% end %>
     <% end %>
 	</div>
 	<% unless current_user %>

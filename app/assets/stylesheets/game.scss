@@ -2,11 +2,11 @@ $boardpx: 30px;
 $boardcolor: #b17e45;
 
 #gamewrapper {
-  .game {
+  game {
     display: flex;
     flex-direction: row;
 
-    #board {
+    board {
       background: $boardcolor url('../images/board.png');
       background-size: contain;
       width: 600px;
@@ -17,7 +17,7 @@ $boardcolor: #b17e45;
         cursor: pointer;
       }
 
-      .stone {
+      stone {
         position: absolute;
         z-index: 1;
         font-size: 20px;
@@ -25,6 +25,7 @@ $boardcolor: #b17e45;
         height: $boardpx;
         line-height: $boardpx;
         text-align: center;
+        background-size: contain;
 
         -webkit-touch-callout: none; /* iOS Safari */
         -webkit-user-select: none; /* Chrome/Safari/Opera */
@@ -72,12 +73,13 @@ $boardcolor: #b17e45;
         display: flex;
         justify-content: space-between;
 
-        a {
+        control {
           background: #aaa;
           margin: 0 .2em 0 .2em;
           flex-grow: 1;
           text-align: center;
           line-height: $buttonHeight;
+          cursor: pointer;
         }
       }
     }
