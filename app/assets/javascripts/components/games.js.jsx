@@ -16,8 +16,9 @@ class Games extends React.Component { //Games is the same variable as 'Games' in
 
 	render() {
 		let games = this.state.games.map((g) => {
+            hilite = (this.props.me == g.players[0].id) ? {background: '#b3f9f8'} : {};
 			return (
-                <a className="game" href={'/g/' + g.webid} key={g.webid}>
+                <a className="game" href={'/g/' + g.webid} key={g.webid} style={hilite}>
                     <span className="player">{g.players[0].name}</span>
                     <span className="rating">1423</span>
                     <span className="time">10m + 5s</span>
