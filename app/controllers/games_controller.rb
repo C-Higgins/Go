@@ -6,7 +6,14 @@ class GamesController < ApplicationController
 	end
 	
 	def new
-		create
+		@modal = 'new'
+		respond_to do |format|
+			format.js { render template: 'layouts/modal', locals: {modal: @modal} } #modal.js
+			format.html {
+				redirect_to root_path(modal: @modal)
+			}
+
+		end
 	end
 
 	def create
@@ -14,10 +21,6 @@ class GamesController < ApplicationController
 		@game.history = [squares: Array.new(361).fill('')]
 		current_user.involvements.last.update(color: true) #1 black, 0 white
 		@game.save
-		respond_to do |format|
-			format.js #run the create.js.erb file in views
-		end
-
 
 		# redirect_to @game #redirects to game_path/id which hits routes
 

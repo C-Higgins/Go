@@ -1,14 +1,1 @@
-/**
- * Created by chhiggin on 2/6/17.
- */
-
-$(document).on('ready', function () {
-    $('#newGame').click(function (e) {
-        e.preventDefault();
-        $('#modalOverlay').click(function (e) {
-            $('#modal').hide();
-        })
-        $('#modal').show();
-//        $('#modalBody').html();
-    })
-})
+$('body').append("<%= j render 'layouts/modal' %>")
