@@ -50,11 +50,6 @@ class Game extends React.Component {
         })
         // -> gameroom_channel#receive
 
-
-        /* Send state through websocket here to update server and other client
-         Other client would be like websocket.onrecieve(data, (data)=>setstate(data))
-         And server has to save it to the db
-         */
     }
 
     jumpTo(step) {

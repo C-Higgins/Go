@@ -1,5 +1,5 @@
-=== 1 ===
-Persist to db
-Authentication
-Websocket connection
+- Fix history duplication
+- Implement game logic
+- Refactor history send/receive nonsense
+- New game modal add settings
 
