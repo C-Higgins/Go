@@ -2,29 +2,33 @@ module GamesHelper
 
 
 	# @return [board]
-	def getNewBoard board, move
-		board[move['index']] = move['color']
-		dead                 = findDeadStones board, move['index']
-		newBoard = clearStones board, dead
+	def getNewBoard game, move
+		$board                = Array.new(game.history.last['squares'])
+		$board[move['index']] = move['color']
+		dead                  = findDeadStones move['index']
+		newBoard              = clearStones dead
 		return newBoard
 	end
 
 	# @return array of dead indices
 	# board: an array of colors
 	# moveIndex: integer index of newest move
-	def findDeadStones(board, moveIndex)
+	def findDeadStones(moveIndex)
+		$newBoard = Array.new($board)
+		$stop     = false
 		dead         = []
-		b            = Array.new(board)
-		b[moveIndex] = opposite_of b[moveIndex]
-		dead         += startRecursion b, moveIndex
-		dead.delete(moveIndex)
+		dead.concat recurse(dir(moveIndex, 'l'), opposite_of($newBoard[moveIndex]), dead)
+		dead.concat recurse(dir(moveIndex, 'r'), opposite_of($newBoard[moveIndex]), dead)
+		dead.concat recurse(dir(moveIndex, 'u'), opposite_of($newBoard[moveIndex]), dead)
+		dead.concat recurse(dir(moveIndex, 'd'), opposite_of($newBoard[moveIndex]), dead)
+		#$dead.delete(moveIndex)
 
-		return dead
+		return (dead || [])
 	end
 
-	def clearStones board, deaths
-		return board if deaths.empty?
-		newBoard = Array.new(board)
+	def clearStones deaths
+		return $newBoard if deaths.empty?
+		newBoard = Array.new($newBoard)
 		deaths.each do |i|
 			newBoard[i] = ''
 		end
@@ -32,39 +36,25 @@ module GamesHelper
 	end
 
 	private
-	def startRecursion b, moveIndex
-		dead      = []
-		localdead = []
-		stop      = false
-
-		def recurse stone, target, replacement, b, localdead, stop
-			return if stone.nil?
-			return if target == replacement
-			return if b[stone] != target
-			return if stop
-			if b[stone] == ''
-				stop      = true
-				localdead = nil
-				return
-			end
-
-			b[stone] = replacement
-			localdead << stone
-			recurse dir(stone, 'l', b), target, replacement, b, localdead, stop
-			recurse dir(stone, 'r', b), target, replacement, b, localdead, stop
-			recurse dir(stone, 'u', b), target, replacement, b, localdead, stop
-			recurse dir(stone, 'd', b), target, replacement, b, localdead, stop
-
-			stop = false
-			return localdead
+	def recurse square, target, dead
+		return [] if $stop
+		if $newBoard[square]== ''
+			$stop = true
+			return []
 		end
-
-		return recurse moveIndex, b[moveIndex], 'R', b, localdead, stop
+		return dead if target == 'R'
+		return dead if $newBoard[square] != target
+		$newBoard[square] = 'R'
+		dead << square
+		recurse dir(square, 'l'), target, dead unless $stop
+		recurse dir(square, 'r'), target, dead unless $stop
+		recurse dir(square, 'u'), target, dead unless $stop
+		recurse dir(square, 'd'), target, dead unless $stop
+		return $stop ? [] : dead
 	end
 
-
-	def dir index, direction, b
-		dimensions = Math.sqrt(b.size) #19
+	def dir index, direction
+		dimensions = Math.sqrt($board.size) #19
 
 		case direction
 			when 'l'
@@ -75,15 +65,14 @@ module GamesHelper
 				return index - dimensions if index >= dimensions
 			when 'd'
 				return index + dimensions if index < dimensions * (dimensions - 1)
-			else
-				return nil
 		end
+		return index
 	end
 
 	def opposite_of color
 		return 'WHITE' if color == 'BLACK'
 		return 'BLACK' if color == 'WHITE'
-		return '-'
+		return ''
 	end
 end
 
