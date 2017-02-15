@@ -3,3 +3,10 @@
 - Refactor history send/receive nonsense
 - New game modal add settings
 
+
+
+Send: move such as 'W122'
+Process: White stone at position 122
+        Save into game object
+        Update history (FEN list)
+Receive: the new FEN

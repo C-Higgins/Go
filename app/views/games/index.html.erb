@@ -1,5 +1,5 @@
 <div id="lobbywrapper" data-room-id="lobby">
   <div id="gameList">
-    <%= react_component 'Games', {games: @games, me: current_user.id} %>
+    <%= react_component 'Games', {games: @games, me: (current_user.id if current_user)} %>
   </div>
 </div>

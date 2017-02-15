@@ -35,18 +35,14 @@ class Game extends React.Component {
         if (squares[i] || calculateWinner(squares))
             return;
         this.state.blackNext ? squares[i] = 'BLACK' : squares[i] = 'WHITE'
-        this.setState({
-            move: history.length,
-            history: history.concat([{
-                squares: squares
-            }])
-        });
-        //there is a bug here where it will concat the history and then again when it gets the socket response
-        // So you will see two moves in your history for the same move
+
+        //set board state here without setting move list
 
         App.gameRoom.send({
-            newMove: {squares: squares},
-            webid: this.props.game.webid
+            newMove: {
+                index: i,
+                color: squares[i]
+            }
         })
         // -> gameroom_channel#receive
 
