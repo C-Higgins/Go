@@ -1,13 +1,26 @@
 module GamesHelper
 
 
-	# @return [board]
+	# @return board array if move validates, else return nil
 	def getNewBoard game, move
-		board                = Array.new(game.history.last['squares'])
-		board[move['index']] = move['color']
-		dead                 = findDeadStones board, move['index']
-		newBoard             = clearStones board, dead
-		return newBoard
+		board  = Array.new(game.history.last['squares'])
+		square = move['index']
+
+		# Can't move where something already is
+		return nil if board[square] != ''
+
+		# make the move...
+		board[square] = move['color']
+
+		# Can't place a stone that causes itself to be captured unless it captures first
+		# First check if you just captured anything - if so you're fine
+		# Otherwise check if you are now captured
+		captured      = findDeadStones(board, square)
+
+		return clearStones(board, captured) if captured.any?
+		return board if deadGroup(Array.new(board), square, board[square]).empty?
+		return nil
+
 	end
 
 	# @return array of dead indices
@@ -16,7 +29,8 @@ module GamesHelper
 	def findDeadStones(board, square)
 		dead        = []
 		targetColor = opposite_of(board[square])
-		getDirections(board, square).each_value { |d| dead.concat deadGroup(board, d, targetColor) }
+		deathBoard = Array.new(board)
+		getDirections(board, square).each_value { |d| dead.concat deadGroup(deathBoard, d, targetColor) }
 		return dead
 	end
 
@@ -26,7 +40,6 @@ module GamesHelper
 	# @param target, color being checked
 	# @return array of dead indices or []
 	def deadGroup board, square, target
-		board = Array.new(board)
 		return [] if board[square] != target
 		queue = [square]
 		dead  = []

@@ -15,10 +15,9 @@ class GameroomChannel < ApplicationCable::Channel
 		@game = Game.find_by(webid: params[:room])
 		move  = data['newMove'] #{index: 122, color: 'WHITE'}
 		board = getNewBoard(@game, move)
-		# @game.update_attributes(board: board, move: @game.move++)
-		@game.update_attributes(history: @game.history.concat(['squares' => board]))
-		if @game.save
-			GameroomChannel.broadcast_to(@game, @game.history.last)
+		unless board.nil?
+			@game.update_attributes(history: @game.history.concat(['squares' => board]), move: @game.move+1)
+			GameroomChannel.broadcast_to(@game, @game.history.last) if @game.save
 		end
 	end
 end
