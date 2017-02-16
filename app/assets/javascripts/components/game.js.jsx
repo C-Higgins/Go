@@ -30,11 +30,11 @@ class Game extends React.Component {
         }
         const history = this.state.history
         const current = history[history.length - 1]
-        const squares = current.squares.slice()
+        const squares = current.slice()
 
         if (squares[i] || calculateWinner(squares))
             return;
-        this.state.blackNext ? squares[i] = 'BLACK' : squares[i] = 'WHITE'
+        this.state.blackNext ? squares[i] = 'B' : squares[i] = 'W'
 
         //set board state here without setting move list
 
@@ -59,7 +59,7 @@ class Game extends React.Component {
     render() {
         const history = this.state.history
         const current = history[this.state.move]
-        const winner = calculateWinner(current.squares)
+        const winner = calculateWinner(current)
 
         const moves = history.map((step, move) => {
             const desc = move ?
@@ -79,7 +79,7 @@ class Game extends React.Component {
             status = `${this.props.color == this.state.blackNext ? 'YOUR MOVE' : 'THEIR MOVE'}`;
         return (
             <game>
-                <Board squares={current.squares} onClick={(i) => this.handleClick(i)}/>
+                <Board squares={current} onClick={(i) => this.handleClick(i)}/>
                 <Infobox status={status} moves={moves} moveNum={this.state.move} jumpTo={(m) => this.jumpTo(m)}/>
             </game>
         );
@@ -127,12 +127,12 @@ class Square extends React.Component {
         const position = {transform: `translate(${pixels * xmult + 15}px, ${pixels * ymult + 15}px)`}
 
         let piece = this.props.value;
-        if (piece == 'WHITE') {
+        if (piece == 'W') {
             return {
                 ...position,
                 backgroundImage: `url('../images/whitedot.png')`
             }
-        } else if (piece == 'BLACK') {
+        } else if (piece == 'B') {
             return {
                 ...position,
                 backgroundImage: `url('../images/blackdot.png')`

@@ -16,8 +16,8 @@ class GameroomChannel < ApplicationCable::Channel
 		move  = data['newMove'] #{index: 122, color: 'WHITE'}
 		board = getNewBoard(@game, move)
 		unless board.nil?
-			@game.update_attributes(history: @game.history.concat(['squares' => board]), move: @game.move+1)
-			GameroomChannel.broadcast_to(@game, @game.history.last) if @game.save
+			@game.update_attributes(history: @game.history.push(board), move: @game.move+1)
+			GameroomChannel.broadcast_to(@game, [@game.history.last]) if @game.save
 		end
 	end
 end

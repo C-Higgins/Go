@@ -21,7 +21,7 @@ class GamesController < ApplicationController
 
 	def create
 		@game         = current_user.games.build
-		@game.history = [squares: Array.new(361).fill('')]
+		@game.history = [Array.new(361).fill('')]
 		current_user.involvements.last.update(color: true) #1 black, 0 white
 		@game.save
 
