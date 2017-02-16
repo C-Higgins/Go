@@ -3,70 +3,68 @@ module GamesHelper
 
 	# @return [board]
 	def getNewBoard game, move
-		$board                = Array.new(game.history.last['squares'])
-		$board[move['index']] = move['color']
-		dead                  = findDeadStones move['index']
-		newBoard              = clearStones dead
+		board                = Array.new(game.history.last['squares'])
+		board[move['index']] = move['color']
+		dead                 = findDeadStones board, move['index']
+		newBoard             = clearStones board, dead
 		return newBoard
 	end
 
 	# @return array of dead indices
-	# board: an array of colors
-	# moveIndex: integer index of newest move
-	def findDeadStones(moveIndex)
-		$newBoard = Array.new($board)
-		$stop     = false
-		dead         = []
-		dead.concat recurse(dir(moveIndex, 'l'), opposite_of($newBoard[moveIndex]), dead)
-		dead.concat recurse(dir(moveIndex, 'r'), opposite_of($newBoard[moveIndex]), dead)
-		dead.concat recurse(dir(moveIndex, 'u'), opposite_of($newBoard[moveIndex]), dead)
-		dead.concat recurse(dir(moveIndex, 'd'), opposite_of($newBoard[moveIndex]), dead)
-		#$dead.delete(moveIndex)
-
-		return (dead || [])
+	# board: an array of color strings
+	# square: index of newest move
+	def findDeadStones(board, square)
+		dead        = []
+		targetColor = opposite_of(board[square])
+		getDirections(board, square).each_value { |d| dead.concat deadGroup(board, d, targetColor) }
+		return dead
 	end
 
-	def clearStones deaths
-		return $newBoard if deaths.empty?
-		newBoard = Array.new($newBoard)
+
+	# @param board, the board
+	# @param square, index of square in group being checked
+	# @param target, color being checked
+	# @return array of dead indices or []
+	def deadGroup board, square, target
+		board = Array.new(board)
+		return [] if board[square] != target
+		queue = [square]
+		dead  = []
+		until queue.empty? do
+			n = queue.shift
+			dead.push n
+			board[n] = 'R'
+			dirs     = getDirections(board, n)
+			# If there is an empty square adjacent, group is not dead
+			return [] if board.values_at(*dirs.values).include? ''
+			dirs.each_value { |dir| queue.push(dir) if board[dir]==target }
+		end
+		return dead
+	end
+
+
+	private
+
+	def clearStones board, deaths
+		return board if deaths.empty?
+		newBoard = Array.new(board)
 		deaths.each do |i|
 			newBoard[i] = ''
 		end
 		return newBoard
 	end
 
-	private
-	def recurse square, target, dead
-		return [] if $stop
-		if $newBoard[square]== ''
-			$stop = true
-			return []
-		end
-		return dead if target == 'R'
-		return dead if $newBoard[square] != target
-		$newBoard[square] = 'R'
-		dead << square
-		recurse dir(square, 'l'), target, dead unless $stop
-		recurse dir(square, 'r'), target, dead unless $stop
-		recurse dir(square, 'u'), target, dead unless $stop
-		recurse dir(square, 'd'), target, dead unless $stop
-		return $stop ? [] : dead
-	end
 
-	def dir index, direction
-		dimensions = Math.sqrt($board.size) #19
-
-		case direction
-			when 'l'
-				return index-1 if index % dimensions != 0
-			when 'r'
-				return index+1 if index+1 % dimensions != 0
-			when 'u'
-				return index - dimensions if index >= dimensions
-			when 'd'
-				return index + dimensions if index < dimensions * (dimensions - 1)
-		end
-		return index
+	# @return hash of form {direction: index}
+	# if OOB return same index
+	def getDirections board, index
+		dimensions = Math.sqrt(board.size) #19
+		return {
+			left:  index % dimensions != 0 ? index-1 : index,
+			right: index+1 % dimensions != 0 ? index+1 : index,
+			up:    index>=dimensions ? index-dimensions : index,
+			down:  index < dimensions * (dimensions - 1) ? index+dimensions : index
+		}
 	end
 
 	def opposite_of color
@@ -74,8 +72,9 @@ module GamesHelper
 		return 'BLACK' if color == 'WHITE'
 		return ''
 	end
-end
 
+
+end
 
 #  O O X -
 #  O x O X
