@@ -12,6 +12,9 @@
 
 ActiveRecord::Schema.define(version: 20170203230810) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "games", force: :cascade do |t|
     t.string   "name"
     t.boolean  "in_progress", default: true
@@ -29,8 +32,8 @@ ActiveRecord::Schema.define(version: 20170203230810) do
     t.datetime "updated_at", null: false
     t.boolean  "color"
     t.string   "result"
-    t.index ["game_id"], name: "index_involvements_on_game_id"
-    t.index ["player_id"], name: "index_involvements_on_player_id"
+    t.index ["game_id"], name: "index_involvements_on_game_id", using: :btree
+    t.index ["player_id"], name: "index_involvements_on_player_id", using: :btree
   end
 
   create_table "players", force: :cascade do |t|
@@ -40,8 +43,8 @@ ActiveRecord::Schema.define(version: 20170203230810) do
     t.datetime "updated_at",      null: false
     t.string   "password_digest"
     t.string   "remember_digest"
-    t.index ["email"], name: "index_players_on_email", unique: true
-    t.index ["name"], name: "index_players_on_name", unique: true
+    t.index ["email"], name: "index_players_on_email", unique: true, using: :btree
+    t.index ["name"], name: "index_players_on_name", unique: true, using: :btree
   end
 
 end
