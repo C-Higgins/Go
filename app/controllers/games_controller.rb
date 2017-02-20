@@ -6,7 +6,7 @@ class GamesController < ApplicationController
 		@me    = current_user
 		@game  = Game.new
 	end
-	
+
 	def new
 		@modal = 'new'
 		@game  = Game.new

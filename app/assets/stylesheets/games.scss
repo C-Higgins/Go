@@ -2,57 +2,57 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-$grey: #ccc;
+$grey: #cccccc;
 #lobbywrapper {
-  margin-top: 100px;
+	margin-top: 100px;
 
-  #gameList {
-    height: 500px;
-    width: 500px;
-    margin: auto;
-    overflow-x: hidden;
-    overflow-y: auto;
-    border: 1px solid $grey;
-  }
-  #gameListTable {
-    width: 100%;
-    display: table;
-    border-collapse: collapse;
+	#gameList {
+		height:     500px;
+		width:      500px;
+		margin:     auto;
+		overflow-x: hidden;
+		overflow-y: auto;
+		border:     1px solid $grey;
+	}
+	#gameListTable {
+		width:           100%;
+		display:         table;
+		border-collapse: collapse;
 
-    #gameListTableHeader {
-      display: table-header-group;
-      font-weight: bold;
-      span {
-        padding: 10px 0px;
-      }
-    }
-    #gameListTableRows {
-      display: table-footer-group;
-    }
-    .game {
-      display: table-row;
-      background: white;
-      border-bottom: 1px solid $grey;
-      height: 30px;
-      line-height: 30px;
-    }
+		#gameListTableHeader {
+			display:     table-header-group;
+			font-weight: bold;
+			span {
+				padding: 10px 0px;
+			}
+		}
+		#gameListTableRows {
+			display: table-footer-group;
+		}
+		.game {
+			display:       table-row;
+			background:    white;
+			border-bottom: 1px solid $grey;
+			height:        30px;
+			line-height:   30px;
+		}
 
-    span {
-      display: table-cell;
+		span {
+			display: table-cell;
 
-      &.player {
-        padding-left: 5px !important;
-        width: 40%;
-      }
-      &.rating {
-        width: 25%;
-      }
-      &.time {
-        width: 25%;
-      }
-      &.mode {
-        width: 10%
-      }
-    }
-  }
+			&.player {
+				padding-left: 5px !important;
+				width:        40%;
+			}
+			&.rating {
+				width: 25%;
+			}
+			&.time {
+				width: 25%;
+			}
+			&.mode {
+				width: 10%
+			}
+		}
+	}
 }

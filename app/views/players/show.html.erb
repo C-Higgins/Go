@@ -1,12 +1,10 @@
-
-
 <h1> <%= @player.name %> </h1>
 <small> <%= @player.email %> </small>
 <br>
 User ID is <%= @player.id %> <br>
-User was in these games: 
+User was in these games:
 <div>
-<% @player.games.each do |g| %>
-	<li><%= link_to g.name, g %>
-<% end -%>
+	<% @player.games.each do |g| %>
+		<li><%= link_to g.name, g %>
+	<% end -%>
 </div>

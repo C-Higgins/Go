@@ -19,7 +19,7 @@ class PlayersController < ApplicationController
 			render 'new'
 		end
 	end
-	
+
 	# Profiles
 	def show
 		@player = Player.find_by(name: params[:name])
@@ -42,17 +42,17 @@ class PlayersController < ApplicationController
 	end
 
 	private
-		def logged_in_user
-			unless logged_in?
-				save_intent
-				flash[:danger] = 'Please log in.'
-				redirect_to login_path
-			end
+	def logged_in_user
+		unless logged_in?
+			save_intent
+			flash[:danger] = 'Please log in.'
+			redirect_to login_path
 		end
+	end
 
-		def logged_out_user
-			if logged_in?
-				redirect_to current_user
-			end
+	def logged_out_user
+		if logged_in?
+			redirect_to current_user
 		end
+	end
 end

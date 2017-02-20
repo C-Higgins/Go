@@ -1,24 +1,24 @@
 function waitSubscribe() {
-    App.waiting = App.cable.subscriptions.create({channel: "WaitingChannel", room: 'waiting'}, {
-        connected: function () {
-            // Called when the subscription is ready for use on the server
-            console.log('joined waiting channel')
-//                $(document).on('page:change', function () {
-//                    this.unsubscribe();
-//                })
-        },
+	App.waiting = App.cable.subscriptions.create({channel: "WaitingChannel", room: 'waiting'}, {
+		connected: function () {
+			// Called when the subscription is ready for use on the server
+			console.log('joined waiting channel')
+			//                $(document).on('page:change', function () {
+			//                    this.unsubscribe();
+			//                })
+		},
 
-        disconnected: function () {
-            // Called when the subscription has been terminated by the server
-            console.log('left lobby')
-        },
+		disconnected: function () {
+			// Called when the subscription has been terminated by the server
+			console.log('left lobby')
+		},
 
-        received: function (data) {
-            if ((data.p1 == $('body').data().current_user)) {
-                this.unsubscribe();
-                window.location = '/g/' + data.id
-            }
+		received: function (data) {
+			if ((data.p1 == $('body').data().current_user)) {
+				this.unsubscribe();
+				window.location = '/g/' + data.id
+			}
 
-        }
-    })
+		}
+	})
 };

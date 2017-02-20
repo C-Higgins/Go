@@ -14,13 +14,13 @@ class Game < ApplicationRecord
 		self.webid
 	end
 
-	
+
 	private
 
-		# Gives the games/pages a unique identifier such as zJf9ZSrhHQk
-		def randomize_id
-			begin
+	# Gives the games/pages a unique identifier such as zJf9ZSrhHQk
+	def randomize_id
+		begin
 			self.webid = SecureRandom.urlsafe_base64(8)
-			end while Game.where(webid: self.webid).exists?
-		end
+		end while Game.where(webid: self.webid).exists?
+	end
 end

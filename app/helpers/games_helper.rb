@@ -3,7 +3,7 @@ module GamesHelper
 
 	# @return board array if move validates, else return nil
 	def getNewBoard game, move
-		board    = Array.new(game.history.last)
+		board  = Array.new(game.history.last)
 		square = move['index']
 
 		# Can't move where something already is
@@ -15,7 +15,7 @@ module GamesHelper
 		# Can't place a stone that causes itself to be captured unless it captures first
 		# First check if you just captured anything - if so you're fine
 		# Otherwise check if you are now captured
-		captured = getCapturedStones(board, square)
+		captured      = getCapturedStones(board, square)
 
 		return clearStones(board, captured) if captured.any?
 		return board if getDeadGroup(Array.new(board), square, board[square]).empty?

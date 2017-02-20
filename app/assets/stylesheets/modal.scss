@@ -1,28 +1,28 @@
 #modal {
-  z-index: 98;
-  position: absolute;
-  //height: 100vh;
-  //width: 100vw;
-  top: 0;
-  left: 0;
-  //background-color: rgba(0, 0, 0, .5);
+	z-index:  98;
+	position: absolute;
+	//height: 100vh;
+	//width: 100vw;
+	top:      0;
+	left:     0;
+	//background-color: rgba(0, 0, 0, .5);
 
-  #modalContainer {
-    z-index: 99;
-    position: absolute;
-    margin: auto;
-    top: 150px;
-    left: 0;
-    right: 0;
+	#modalContainer {
+		z-index:          99;
+		position:         absolute;
+		margin:           auto;
+		top:              150px;
+		left:             0;
+		right:            0;
 
-    background-color: white;
-    width: 450px;
-    height: 250px;
-    border-radius: 2%;
-    box-shadow: 0px 0px 80px 15px;
+		background-color: white;
+		width:            450px;
+		height:           250px;
+		border-radius:    2%;
+		box-shadow:       0px 0px 80px 15px;
 
-    #modalBody {
-      padding: 10px;
-    }
-  }
+		#modalBody {
+			padding: 10px;
+		}
+	}
 }

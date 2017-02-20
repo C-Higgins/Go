@@ -1,5 +1,6 @@
-<h3> Participants: <%= link_to @game.players.first.name, @game.players.first %> and <%= link_to(@game.players.second.name, @game.players.second) if @game.players.count>1 %> </h3>
+<h3> Participants: <%= link_to @game.players.first.name, @game.players.first %>
+	and <%= link_to(@game.players.second.name, @game.players.second) if @game.players.count>1 %> </h3>
 
-<div id="gamewrapper" data-room-id="<%= @game.webid %>" >
-  <%= react_component 'Game', {game: @game, p1: @game.players.first, p2: @game.players.second, color: current_user.involvements.find_by(game_id: @game.id).color} %>
+<div id="gamewrapper" data-room-id="<%= @game.webid %>">
+	<%= react_component 'Game', {game: @game, p1: @game.players.first, p2: @game.players.second, color: current_user.involvements.find_by(game_id: @game.id).color} %>
 </div>

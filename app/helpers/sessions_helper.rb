@@ -19,7 +19,7 @@ module SessionsHelper
 		cookies.permanent[:remember_token] = user.remember_token
 	end
 
-	def forget user 
+	def forget user
 		user.forget
 		cookies.delete(:user_id)
 		cookies.delete(:remember_token)
@@ -34,7 +34,7 @@ module SessionsHelper
 				log_in(user)
 				@current_user = user
 			end
-		end			
+		end
 	end
 
 	def logged_in?

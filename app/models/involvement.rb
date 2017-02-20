@@ -3,5 +3,5 @@ class Involvement < ApplicationRecord
 	belongs_to :player, inverse_of: :involvements
 
 	validates :game, presence: true
-	 validates :player, presence: true
+	validates :player, presence: true
 end

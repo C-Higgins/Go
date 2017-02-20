@@ -3,10 +3,10 @@ class Player < ApplicationRecord
 	has_many :games, through: :involvements
 
 	validates :name, presence: true, length: {maximum: 16, minimum: 2}, uniqueness: {case_sensitive: false}
-	validates :email, presence: true, length: {maximum: 100}, format: { with: /@/ }, uniqueness: {case_sensitive: false}
+	validates :email, presence: true, length: {maximum: 100}, format: {with: /@/}, uniqueness: {case_sensitive: false}
 	validates :password, presence: true, length: {minimum: 6}, allow_nil: true
 
-	before_save {email.downcase!}
+	before_save { email.downcase! }
 
 	has_secure_password
 

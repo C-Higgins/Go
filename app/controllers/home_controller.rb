@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  def index
-  	@games = Game.all
-  end
+	def index
+		@games = Game.all
+	end
 end

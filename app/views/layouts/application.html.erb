@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Go</title>
-    <%= csrf_meta_tags %>
+<head>
+	<title>Go</title>
+	<%= csrf_meta_tags %>
 
-    <%= stylesheet_link_tag    'application', media: 'all' %>
-    <%= javascript_include_tag 'application' %>
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
-  </head>
+	<%= stylesheet_link_tag 'application', media: 'all' %>
+	<%= javascript_include_tag 'application' %>
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+</head>
 
-  <body data-current_user="<%= current_user.name if current_user %>">
-  	<%= render "layouts/header" %>
+<body data-current_user="<%= current_user.name if current_user %>">
+<%= render "layouts/header" %>
 
-    <% flash.each do |message_type, message| %>
-      <%= content_tag(:div, message, class: "alert alert-#{message_type}") %>
-    <% end %>
+<% flash.each do |message_type, message| %>
+	<%= content_tag(:div, message, class: "alert alert-#{message_type}") %>
+<% end %>
 
-    <%= yield %>
-    <%= render 'layouts/modal', modal: params[:modal] if params[:modal] %>
-    <%= render "layouts/footer" %>
-    
-    <%= debug(params) if Rails.env.development? %>
-  </body>
+<%= yield %>
+<%= render 'layouts/modal', modal: params[:modal] if params[:modal] %>
+<%= render "layouts/footer" %>
+
+<%= debug(params) if Rails.env.development? %>
+</body>
 </html>
