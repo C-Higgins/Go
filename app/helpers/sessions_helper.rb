@@ -34,11 +34,22 @@ module SessionsHelper
 				log_in(user)
 				@current_user = user
 			end
+		else
+			anon = Player.new(name: SecureRandom.urlsafe_base64(10), password: '123456', password_confirmation: '123456', anonymous: true, display_name: 'Anonymous')
+			anon.save(validate: false) if anon.new_record?
+			@current_user = anon
+			log_in anon
+			remember anon
+
 		end
 	end
 
 	def logged_in?
-		return !current_user.nil?
+		return (!current_user.nil? && !anon?)
+	end
+
+	def anon?
+		return current_user.anonymous
 	end
 
 	def log_out

@@ -3,7 +3,7 @@ class SessionsController < ApplicationController
 	end
 
 	def create
-		user = Player.find_by(email: params[:session][:email].downcase)
+		user = Player.find_by(name: params[:session][:name])
 		if user && user.authenticate(params[:session][:password])
 			log_in user
 			remember user

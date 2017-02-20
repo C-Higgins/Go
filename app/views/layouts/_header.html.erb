@@ -4,9 +4,6 @@
 		<%= link_to root_path do %>
 			<span></span>
 		<% end %>
-		<div class='navSubItems'>
-			<%= link_to 'Sublink 1', '#' %>
-		</div>
 	</div>
 	<div class=navTopItem>
 		New Game
@@ -20,36 +17,30 @@
 			<% end %>
 		<% end %>
 	</div>
-	<% unless current_user %>
-		<div class=navTopItem>
+	<% if current_user.anonymous %>
+		<div class='navTopItem navRight'>
 			Signup
 			<%= link_to signup_path do %>
 				<span></span>
 			<% end %>
 		</div>
-		<div class=navTopItem>
+		<div class='navTopItem navRight'>
 			Login
 			<%= link_to login_path do %>
 				<span></span>
 			<% end %>
 		</div>
 	<% else %>
-		<div class=navTopItem>
-			Logout
-			<%= link_to logout_path, method: 'delete' do %>
-				<span></span>
-			<% end %>
-		</div>
 		<div class="navTopItem navRight">
-			<%= current_user.name %>
+			<%= current_user.display_name %>
 			<%= link_to current_user do %>
 				<span></span>
 			<% end %>
 			<div class='navSubItems'>
 				<%= link_to 'Edit profile', settings_path %>
+				<%= link_to 'Logout', logout_path, method: 'delete' %>
 			</div>
 		</div>
-
 	<% end -%>
 </nav>
 

@@ -1,7 +1,9 @@
-- Fix history duplication
-- Implement game logic
+- Implement ko and scoring
 - Refactor history send/receive nonsense
+	- use gem sgf
 - New game modal add settings
+- Chat
+- index on webid
 
 
 

@@ -10,8 +10,10 @@ class PlayersController < ApplicationController
 
 	# Post signup
 	def create
-		@player = Player.new(params.require(:player).permit(:name, :email, :password, :password_confirmation))
+		@player              = Player.new(params.require(:player).permit(:name, :password, :password_confirmation))
+		@player.display_name = @player.name
 		if @player.save
+			log_out
 			log_in @player
 			flash[:success] = "Registration successful"
 			redirect_to @player
