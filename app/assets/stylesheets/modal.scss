@@ -33,6 +33,45 @@
 			width:            $modal-width;
 			height:           $modal-height;
 
+			.range-output {
+				text-align:  center;
+				line-height: 3em;
+			}
+			.rangeslider--horizontal {
+				width:  80%;
+				margin: auto;
+			}
+
+			#new_game {
+				text-align: center;
+				bottom:     20px;
+				position:   absolute;
+				margin:     auto;
+				left:       0;
+				right:      0;
+
+				input[type='submit'] {
+					border:     none;
+					background: #cccccc;
+					height:     55px;
+					width:      55px;
+					margin:     -2px;
+					cursor:     pointer;
+
+					&#submit-black {
+						border-radius: 5px 0px 0px 5px;
+						border-right:  1px solid white;
+					}
+					&#submit-white {
+						border-radius: 0px 5px 5px 0px;
+						border-left:   1px solid white;
+					}
+					&#submit-rand {
+
+					}
+				}
+			}
+
 		}
 		#modal-close {
 			position:              absolute;

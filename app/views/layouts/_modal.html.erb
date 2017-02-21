@@ -4,12 +4,20 @@
 			X
 		</span>
 		<div id='modalBody'>
+			<br/><br/>
+			<input type="range" min="1" max="120" step="1" value="10" class="rangeslider-minutes">
+			<br>
+			<input type="range" min="0" max="30" step="5" value="5" class="rangeslider-seconds">
 			<%= form_for(@game, url: games_path, remote: true,
 						 html:       {onsubmit: "createGame();"}) do |f| %>
 
 
-				<%= f.submit 'Create' %>
+				<%= f.submit 'Black', name: 'submit-black', id: 'submit-black' %>
+				<%= f.submit 'Mix', name: 'submit-rand', id: 'submit-rand' %>
+				<%= f.submit 'White', name: 'submit-white', id: 'submit-white' %>
+
 			<% end -%>
+
 		</div>
 	</div>
 </div>

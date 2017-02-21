@@ -39,7 +39,7 @@ module SessionsHelper
 			end
 		else
 			anon = Player.new(name: SecureRandom.urlsafe_base64(10), password: '123456', password_confirmation: '123456', anonymous: true, display_name: 'Anonymous')
-			anon.save(validate: false) if anon.new_record?
+			anon.save if anon.new_record?
 			@current_user = anon
 			log_in anon
 			remember anon
