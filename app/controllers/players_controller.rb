@@ -5,7 +5,7 @@ class PlayersController < ApplicationController
 	# Signup
 	def new
 		return @player = Player.new unless logged_in?
-		redirect_to current_user # if logged in
+		redirect_to @current_user # if logged in
 	end
 
 	# Post signup
@@ -16,7 +16,7 @@ class PlayersController < ApplicationController
 			log_out
 			log_in @player
 			flash[:success] = "Registration successful"
-			redirect_to @player
+			redirect_to current_user
 		else
 			render 'new'
 		end

@@ -1,5 +1,5 @@
 #modal {
-	z-index:  98;
+	z-index: 98;
 
 	//height: 100vh;
 	//width: 100vw;
@@ -7,21 +7,51 @@
 	//background-color: rgba(0, 0, 0, .5);
 
 	#modalContainer {
-		z-index:          99;
-		position:         absolute;
-		margin:           auto;
-		top:              150px;
-		left:             0;
-		right:            0;
-
-		background-color: white;
-		width:            450px;
-		height:           250px;
-		border-radius:    2%;
-		box-shadow:       0px 0px 80px 15px;
+		$modal-width: 450px;
+		$modal-height: 250px;
+		$close-button-size: 28px;
+		z-index:  10;
+		position: absolute;
+		margin:   auto;
+		top:      150px;
+		left:     0;
+		right:    0;
+		width:    $modal-width + $close-button-size;
+		height:   $modal-height + $close-button-size/2;
 
 		#modalBody {
-			padding: 10px;
+			background-color: white;
+
+			border-radius:    2%;
+			box-shadow:       0px 0px 80px 15px;
+			padding:          10px;
+			position:         absolute;
+			bottom:           0;
+			left:             0;
+			right:            0;
+			margin:           auto;
+			width:            $modal-width;
+			height:           $modal-height;
+
+		}
+		#modal-close {
+			position:              absolute;
+			right:                 0;
+			height:                $close-button-size;
+			width:                 $close-button-size;
+			-webkit-border-radius: $close-button-size;
+			-moz-border-radius:    $close-button-size;
+			border-radius:         $close-button-size;
+			z-index:               11;
+
+			text-align:            center;
+			line-height:           $close-button-size;
+			font-weight:           bold;
+			font-size:             20px;
+
+			box-shadow:            -3px 3px 15px 0px;
+			background:            #cccccc;
+			cursor:                pointer;
 		}
 	}
 }

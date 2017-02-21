@@ -1,5 +1,15 @@
 $textColor: #707070;
 
+html {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing:    border-box;
+	box-sizing:         border-box;
+	min-height:         100%;
+}
+
+*, *:before, *:after {
+	box-sizing: inherit;
+}
 body {
 
 	background-image: linear-gradient(to bottom, #d7d7d7 0%, #eeeeee 116px);

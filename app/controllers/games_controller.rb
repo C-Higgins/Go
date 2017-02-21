@@ -3,7 +3,6 @@ class GamesController < ApplicationController
 
 	def index
 		@games = Game.joins(:players).group('id').having('count(players.id)<2').to_json(include: :players) #magically goes to the view
-		@me    = current_user
 		@game  = Game.new
 	end
 

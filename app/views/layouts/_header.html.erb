@@ -17,7 +17,7 @@
 			<% end %>
 		<% end %>
 	</div>
-	<% if current_user.anonymous %>
+	<% if @current_user.anonymous %>
 		<div class='navTopItem navRight'>
 			Signup
 			<%= link_to signup_path do %>
@@ -32,7 +32,7 @@
 		</div>
 	<% else %>
 		<div class="navTopItem navRight">
-			<%= current_user.display_name %>
+			<%= @current_user.display_name %>
 			<%= link_to current_user do %>
 				<span></span>
 			<% end %>
