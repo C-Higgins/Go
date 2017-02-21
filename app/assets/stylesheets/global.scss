@@ -1,19 +1,15 @@
 $textColor: #707070;
 
-html {
-	background-image: linear-gradient(to bottom, #d7d7d7 0%, #eeeeee 116px);
-	width:            100%;
-	height:           100%;
-
-}
-
 body {
-	font:      12px 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, Sans-Serif;
-	max-width: 1005px;
-	min-width: 640px;
-	margin:    0 auto;
-	padding:   0;
-	color:     $textColor;
+
+	background-image: linear-gradient(to bottom, #d7d7d7 0%, #eeeeee 116px);
+
+	font:             12px 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, Sans-Serif;
+	max-width:        1005px;
+	min-width:        640px;
+	margin:           0 auto;
+	padding:          0;
+	color:            $textColor;
 	a {
 		color:           $textColor;
 		text-decoration: none;
