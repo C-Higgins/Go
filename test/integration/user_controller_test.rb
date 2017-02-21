@@ -25,7 +25,7 @@ class UserControllerTest < ActionDispatch::IntegrationTest
 		patch settings_path(@player2), params: { player: { password: 'newpassword', password_confirmation: 'newpassword' } }
 		delete logout_path
 		log_in_as @player2, 'newpassword'
-		assert_not is_logged_in?
+		assert_not is_logged_in? @player2
 	end
 
 	test "Redirected to correct page after requiring login" do 

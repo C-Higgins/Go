@@ -14,7 +14,7 @@ class PlayersEditTest < ActionDispatch::IntegrationTest
 	    delete logout_path
 	    log_in_as @user, 'password'
 
-	    assert is_logged_in?                                      
+		assert is_logged_in? @user
 	end
 
 	test "Password can be edited" do
@@ -25,9 +25,9 @@ class PlayersEditTest < ActionDispatch::IntegrationTest
 		assert_redirected_to @user
 		delete logout_path
 		log_in_as @user, 'password'
-		assert_not is_logged_in?  
+		assert_not is_logged_in? @user
 		log_in_as @user, 'newpassword'
-		assert is_logged_in?  
+		assert is_logged_in? @user
 	end
 
 end

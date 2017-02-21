@@ -7,13 +7,13 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
 
 	test "Valid login and logout works" do
 		get login_path
-		post login_path, params: { session: { email:    @user.email,
-		                                      password: 'password' } }
+		post login_path, params: {session: {name:     @user.name,
+											password: 'password' } }
 		assert_redirected_to @user
 		follow_redirect!
 
 		# Login goes to the user page and shows correct nav links
-		assert is_logged_in?
+		assert is_logged_in? @user
 		assert_template 'players/show'
 		assert_select "a[href=?]", signup_path, count: 0
 		assert_select "a[href=?]", login_path, count: 0
@@ -22,7 +22,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
 
 		# Correct nav links persist after changing pages
 		get root_path
-		assert is_logged_in?
+		assert is_logged_in? @user
 		assert_template 'games/index'
 		assert_select "a[href=?]", signup_path, count: 0
 		assert_select "a[href=?]", login_path, count: 0
@@ -31,7 +31,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
 
 		#Logout 
 		delete logout_path
-		assert_not is_logged_in?
+		assert_not is_logged_in? @user
 		assert_redirected_to root_url
 		delete logout_path # Simulate multiple browser situation
 		follow_redirect!

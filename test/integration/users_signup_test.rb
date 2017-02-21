@@ -5,7 +5,6 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
 		get signup_path
 		assert_no_difference 'Player.count' do
 		post signup_path, params: { player: { name:  "",
-			                                         email: "user@invalid",
 			                                         password:              "foo",
 			                                         password_confirmation: "bar" } }
         end
@@ -16,12 +15,11 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
 		get signup_path
 		assert_difference 'Player.count', 1 do
 		post signup_path, params: { player: { name:  "Joe",
-			                                         email: "email@example.com",
 			                                         password:              "password1",
 			                                         password_confirmation: "password1" } }
 		end
 		follow_redirect!
-		assert is_logged_in?
+		assert is_logged_in? Player.last
 		assert_template 'players/show'
 	end
 end

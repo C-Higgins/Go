@@ -2,10 +2,8 @@
 
 testUser1:
   name: Example name
-  email: example@example.com
   password_digest: <%= Player.digest('password') %>
 
 testUser2:
   name: Example name 2
-  email: example2@example.com
   password_digest: <%= Player.digest('password') %>
