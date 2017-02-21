@@ -1,0 +1,2 @@
+module ModalHelper
+end
