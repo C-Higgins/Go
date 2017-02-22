@@ -16,9 +16,12 @@ class Games extends React.Component { //Games is the same variable as 'Games' in
 
 	render() {
 		let games = this.state.games.map((g) => {
-			hilite = (this.props.me.id == g.players[0].id) ? {background: '#b3f9f8'} : {};
+			const classname = this.props.me.id == g.players[0].id ? 'game mine' : 'game'
+			const link = g.players.every((p) => {
+				return p.id != this.props.me.id
+			}) ? '/g/' + g.webid : '#'
 			return (
-				<a className="game" href={'/g/' + g.webid} key={g.webid} style={hilite}>
+				<a className={classname} href={link} key={g.webid}>
 					<span className="player">{g.players[0].display_name}</span>
 					<span className="rating">Unranked</span>
 					<span className="time">{`${g.timer / 60}m + ${g.inc}s`}</span>

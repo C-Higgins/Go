@@ -18,6 +18,7 @@ class PlayersController < ApplicationController
 			flash[:success] = "Registration successful"
 			redirect_to current_user
 		else
+			flash.now[:danger] = 'Name taken'
 			render 'new'
 		end
 	end

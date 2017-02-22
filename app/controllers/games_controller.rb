@@ -41,6 +41,8 @@ class GamesController < ApplicationController
 
 	def show
 		@game = Game.find_by(webid: params[:webid]) #these @vars are magically sent to the view
+		return if (@game.players.include?(@current_user) && @game.players.count < 2)
+
 		if @game.players.count >=2
 			# Join as spectator
 		else

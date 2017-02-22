@@ -7,11 +7,12 @@ $boardcolor: #b17e45;
 		flex-direction: row;
 
 		board {
-			background:      $boardcolor url('../images/board.png');
-			background-size: contain;
-			width:           600px;
-			height:          600px;
-			position:        relative;
+			background:        $boardcolor url('../images/board.png');
+			background-repeat: no-repeat;
+			background-size:   contain;
+			min-width:         600px;
+			min-height:        600px;
+			position:          relative;
 
 			&:hover {
 				cursor: pointer;

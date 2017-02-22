@@ -11,6 +11,7 @@ module SessionsHelper
 
 	def log_in user
 		session[:user_id] = user.id
+		remember user
 	end
 
 	def remember user
@@ -28,13 +29,11 @@ module SessionsHelper
 	def current_user
 		if (user_id = session[:user_id])
 			@current_user = Player.find_by(id: user_id) if @current_user.nil? || (@current_user.id != user_id)
-			remember @current_user
 			return @current_user
 		elsif (user_id = cookies.signed[:user_id])
 			user = Player.find_by(id: user_id)
 			if user && user.authenticated?(cookies[:remember_token])
 				log_in(user)
-				remember user
 				@current_user = user
 			end
 		else
@@ -42,7 +41,6 @@ module SessionsHelper
 			anon.save if anon.new_record?
 			@current_user = anon
 			log_in anon
-			remember anon
 
 		end
 	end
