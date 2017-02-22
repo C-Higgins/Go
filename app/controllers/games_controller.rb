@@ -49,7 +49,8 @@ class GamesController < ApplicationController
 			# Join as player
 			unless @game.players.include?(current_user) || current_user.nil?
 				@game.players << current_user
-				current_user.involvements.last.update(color: false)
+				current_user.involvements.last.update(color: !@game.involvements.last.color)
+				@game.update(in_progress: true)
 				@game.save
 				ActionCable.server.broadcast 'lobby', Game.joins(:players).group('id').having('count(players.id)<2').to_json(include: :players)
 				ActionCable.server.broadcast 'waiting', {p1: @game.players.first.name, p2: @game.players.second.name, id: @game.webid}

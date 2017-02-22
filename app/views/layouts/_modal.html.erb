@@ -5,7 +5,7 @@
 		</span>
 		<div id='modalBody'>
 			<br/><br/>
-			<%= form_tag(games_path, method: :post, remote: true, id: 'new_game', onsubmit: "createGame();") do %>
+			<%= form_tag(games_path, method: :post, remote: true, id: 'new_game', onsubmit: "createGame(#{@current_user.id});") do %>
 				<%= range_field :game, :timer, in: 1..120, step: 1, value: 10, class: "rangeslider-minutes" %>
 				<%= range_field :game, :inc, in: 0..30, step: 5, value: 5, class: "rangeslider-seconds" %>
 

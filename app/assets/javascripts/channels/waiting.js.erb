@@ -1,5 +1,5 @@
-function waitSubscribe() {
-	App.waiting = App.cable.subscriptions.create({channel: "WaitingChannel", room: 'waiting'}, {
+function waitSubscribe(user) {
+	App.waiting = App.cable.subscriptions.create({channel: "WaitingChannel", room: 'waiting', user: user}, {
 		connected: function () {
 			// Called when the subscription is ready for use on the server
 			console.log('joined waiting channel')

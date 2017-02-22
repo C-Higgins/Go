@@ -4,9 +4,12 @@ class WaitingChannel < ApplicationCable::Channel
 		stream_from "waiting"
 	end
 	#
-	# def unsubscribed
-	# 	# Any cleanup needed when channel is unsubscribed
-	# end
+	def unsubscribed
+		leaver = Player.find_by(id: params[:user])
+		leaver.games.where(in_progress: false).destroy_all
+		ActionCable.server.broadcast 'lobby', Game.joins(:players).group('id').having('count(players.id)<2').to_json(include: :players)
+		# Any cleanup needed when channel is unsubscribed
+	end
 	#
 	# def receive data
 	# 	@game = Game.find_by(webid: data["webid"])
