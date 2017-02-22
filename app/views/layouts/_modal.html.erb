@@ -4,7 +4,7 @@
 			X
 		</span>
 		<div id='modalBody'>
-			<% if (ongoing_games(@current_user)) %>
+			<% if (ongoing_games(@current_user).any?) %>
 				Note: You have games in progress. Creating a new game will not interrupt ongoing games.
 			<% end %>
 			<%= form_tag(games_path, method: :post, remote: true, id: 'new_game', onsubmit: "createGame(#{@current_user.id});") do %>
