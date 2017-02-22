@@ -1,5 +1,8 @@
 module GamesHelper
 
+	def all_pending_games
+		Game.where(in_progress: false, completed: false)
+	end
 
 	# @return board array if move validates, else return nil
 	def getNewBoard game, move

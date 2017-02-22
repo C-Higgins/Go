@@ -14,7 +14,8 @@ function waitSubscribe(user) {
 		},
 
 		received: function (data) {
-			if ((data.p1 == $('body').data().current_user)) {
+			I_am = $('body').data().current_user
+			if (I_am == data.p1 || I_am == data.p2) {
 				this.unsubscribe();
 				window.location = '/g/' + data.id
 			}

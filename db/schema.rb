@@ -10,21 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170222170433) do
+ActiveRecord::Schema.define(version: 20170222182412) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "games", force: :cascade do |t|
-    t.string   "name"
-    t.boolean "in_progress", default: false
+	  t.boolean "in_progress", default: false
     t.text     "history"
-    t.integer "move", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "webid", null: false
-    t.integer "timer"
-    t.integer "inc"
+	  t.integer "move", default: 0, null: false
+	  t.datetime "created_at", null: false
+	  t.datetime "updated_at", null: false
+	  t.string "webid", null: false
+	  t.integer "timer"
+	  t.integer "inc"
+	  t.boolean "completed", default: false
+	  t.string "result"
   end
 
   create_table "involvements", force: :cascade do |t|
@@ -40,12 +41,12 @@ ActiveRecord::Schema.define(version: 20170222170433) do
 
   create_table "players", force: :cascade do |t|
     t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+	t.datetime "created_at", null: false
+	t.datetime "updated_at", null: false
     t.string   "password_digest"
     t.string   "remember_digest"
-    t.boolean "anonymous", default: false
-    t.string "display_name"
+	t.boolean "anonymous", default: false
+	t.string "display_name"
     t.index ["name"], name: "index_players_on_name", unique: true, using: :btree
   end
 

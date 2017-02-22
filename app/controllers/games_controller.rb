@@ -1,8 +1,10 @@
 class GamesController < ApplicationController
-
+	include GamesHelper
+	include PlayersHelper
+	include CableHelper
 
 	def index
-		@games = Game.joins(:players).group('id').having('count(players.id)<2').to_json(include: :players) #magically goes to the view
+		@games = all_pending_games.select(:id, :webid, :timer, :inc).to_json(include: :players)
 		@game  = Game.new
 	end
 
@@ -19,24 +21,21 @@ class GamesController < ApplicationController
 	end
 
 	def create
+		pending_games(@current_user).destroy_all #Remove old pending games
 		params[:game][:timer] = params[:game][:timer].to_i*60 #minutes to seconds
-		params[:game][:inc]   = params[:game][:inc].to_i
 		@game                 = current_user.games.build(params.require(:game).permit(:timer, :inc))
 		@game.history = [Array.new(361).fill('')]
 		case params[:color]
 			when 'white'
-				current_user.involvements.last.update(color: 0)
+				current_user.involvements.last.update(color: false)
 			when 'black'
-				current_user.involvements.last.update(color: 1)
+				current_user.involvements.last.update(color: true)
 			when 'rand'
-				current_user.involvements.last.update(color: rand(2))
+				current_user.involvements.last.update(color: !!rand(2))
 		end
 		@game.save
-
-		ActionCable.server.broadcast 'lobby', Game.joins(:players).group('id').having('count(players.id)<2').to_json(include: :players)
-		# ActionCable.server.broadcast 'waiting', @game.players.first.name
+		refresh_games_list!
 		@game
-		#need to add white and black IDs when chosen
 	end
 
 	def show
@@ -47,13 +46,13 @@ class GamesController < ApplicationController
 			# Join as spectator
 		else
 			# Join as player
-			unless @game.players.include?(current_user) || current_user.nil?
+			unless current_user.nil?
 				@game.players << current_user
-				current_user.involvements.last.update(color: !@game.involvements.last.color)
+				current_user.involvements.last.update(color: !@game.involvements.first.color)
 				@game.update(in_progress: true)
 				@game.save
-				ActionCable.server.broadcast 'lobby', Game.joins(:players).group('id').having('count(players.id)<2').to_json(include: :players)
-				ActionCable.server.broadcast 'waiting', {p1: @game.players.first.name, p2: @game.players.second.name, id: @game.webid}
+				update_waiters! @game
+				refresh_games_list!
 			end
 
 			# Change this part when anon users implemented
