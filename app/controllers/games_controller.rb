@@ -19,9 +19,18 @@ class GamesController < ApplicationController
 	end
 
 	def create
-		@game         = current_user.games.build
+		params[:game][:timer] = params[:game][:timer].to_i*60 #minutes to seconds
+		params[:game][:inc]   = params[:game][:inc].to_i
+		@game                 = current_user.games.build(params.require(:game).permit(:timer, :inc))
 		@game.history = [Array.new(361).fill('')]
-		current_user.involvements.last.update(color: true) #1 black, 0 white
+		case params[:color]
+			when 'white'
+				current_user.involvements.last.update(color: 0)
+			when 'black'
+				current_user.involvements.last.update(color: 1)
+			when 'rand'
+				current_user.involvements.last.update(color: rand(2))
+		end
 		@game.save
 
 		ActionCable.server.broadcast 'lobby', Game.joins(:players).group('id').having('count(players.id)<2').to_json(include: :players)

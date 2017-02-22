@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170220202236) do
+ActiveRecord::Schema.define(version: 20170222145815) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,8 @@ ActiveRecord::Schema.define(version: 20170220202236) do
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
     t.string   "webid",                      null: false
+	t.integer "timer"
+	t.integer "inc"
   end
 
   create_table "involvements", force: :cascade do |t|
@@ -38,12 +40,12 @@ ActiveRecord::Schema.define(version: 20170220202236) do
 
   create_table "players", force: :cascade do |t|
     t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+	t.datetime "created_at", null: false
+	t.datetime "updated_at", null: false
     t.string   "password_digest"
     t.string   "remember_digest"
-    t.boolean "anonymous", default: false
-    t.string "display_name"
+	t.boolean "anonymous", default: false
+	t.string "display_name"
     t.index ["name"], name: "index_players_on_name", unique: true, using: :btree
   end
 

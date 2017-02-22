@@ -5,16 +5,14 @@
 		</span>
 		<div id='modalBody'>
 			<br/><br/>
-			<input type="range" min="1" max="120" step="1" value="10" class="rangeslider-minutes">
-			<br>
-			<input type="range" min="0" max="30" step="5" value="5" class="rangeslider-seconds">
-			<%= form_for(@game, url: games_path, remote: true,
-						 html:       {onsubmit: "createGame();"}) do |f| %>
+			<%= form_tag(games_path, method: :post, remote: true, id: 'new_game', onsubmit: "createGame();") do %>
+				<%= range_field :game, :timer, in: 1..120, step: 1, value: 10, class: "rangeslider-minutes" %>
+				<%= range_field :game, :inc, in: 0..30, step: 5, value: 5, class: "rangeslider-seconds" %>
 
+				<%= button_tag 'Black', type: 'submit', name: 'color', value: 'black', id: 'submit-black' %>
+				<%= button_tag 'Rand', type: 'submit', name: 'color', value: 'rand', id: 'submit-rand' %>
+				<%= button_tag 'White', type: 'submit', name: 'color', value: 'white', id: 'submit-white' %>
 
-				<%= f.submit 'Black', name: 'submit-black', id: 'submit-black' %>
-				<%= f.submit 'Mix', name: 'submit-rand', id: 'submit-rand' %>
-				<%= f.submit 'White', name: 'submit-white', id: 'submit-white' %>
 
 			<% end -%>
 
