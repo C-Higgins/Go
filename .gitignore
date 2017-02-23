@@ -23,3 +23,6 @@
 # Ignore rubymine stuff
 /.idea/*
 *.sublime-*
+
+# Ignore node
+/node_modules/*

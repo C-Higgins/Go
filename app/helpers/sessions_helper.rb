@@ -27,22 +27,21 @@ module SessionsHelper
 	end
 
 	def current_user
-		if (user_id = session[:user_id])
-			@current_user = Player.find_by(id: user_id) if @current_user.nil? || (@current_user.id != user_id)
-			return @current_user
-		elsif (user_id = cookies.signed[:user_id])
-			user = Player.find_by(id: user_id)
-			if user && user.authenticated?(cookies[:remember_token])
-				log_in(user)
-				@current_user = user
-			end
-		else
-			anon = Player.new(name: SecureRandom.urlsafe_base64(10), password: '123456', password_confirmation: '123456', anonymous: true, display_name: 'Anonymous')
-			anon.save if anon.new_record?
-			@current_user = anon
-			log_in anon
+		user_id = session[:user_id]
+		@current_user = Player.find_by(id: user_id) if @current_user.nil? || (@current_user.id != user_id)
+		return @current_user unless @current_user.nil?
 
+		user_id = cookies.signed[:user_id]
+		user = Player.find_by(id: user_id)
+		if user && user.authenticated?(cookies[:remember_token])
+			log_in(user)
+			return @current_user = user
 		end
+
+		anon = Player.new(name: SecureRandom.urlsafe_base64(10), password: '123456', password_confirmation: '123456', anonymous: true, display_name: 'Anonymous')
+		anon.save if anon.new_record?
+		log_in anon
+		@current_user = anon
 	end
 
 	def logged_in?
