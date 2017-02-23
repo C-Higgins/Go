@@ -23,7 +23,7 @@ module Go
       # If 'true', runs 'npm install' on 'rake assets:precompile'. (v1.6.0+)
       # This is generally desired, but you may set this to false when
       # deploying to Heroku to speed things up.
-      config.npm.install_on_asset_precompile = false
+      config.npm.install_on_asset_precompile = true
     end
   end
 end
