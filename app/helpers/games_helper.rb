@@ -5,9 +5,11 @@ module GamesHelper
 	end
 
 	# @return board array if move validates, else return nil
+	# @return new ko position
 	def getNewBoard game, move
 		board  = Array.new(game.history.last)
 		square = move['index']
+		ko = game.ko
 
 		# Can't move where something already is
 		return nil if board[square] != ''
@@ -16,13 +18,30 @@ module GamesHelper
 		board[square] = move['color']
 
 		# Can't place a stone that causes itself to be captured unless it captures first
-		# First check if you just captured anything - if so you're fine
-		# Otherwise check if you are now captured
+		# Can't place a stone in a ko position that only captures one stone
+		# One may not capture just one stone, if that stone was played on the previous move, and that move also captured just one stone.
+		# First check if you just captured anything
 		captured      = getCapturedStones(board, square)
+		if captured.any?
+			if captured.size == 1 # Captured only one stone, so check/set ko
+				if captured[0] == ko # illegal move, trying to capture the ko stone
+					return nil
+				else # this move is new ko
+					ko = square
+				end
+			else # captured more than one, so reset ko
+				ko = nil
+			end
 
-		return clearStones(board, captured) if captured.any?
-		return board if getDeadGroup(Array.new(board), square, board[square]).empty?
-		return nil
+			return clearStones(board, captured), ko
+		end
+
+
+		# Didn't cap anything, ensure no suicide
+		return board, nil if getDeadGroup(Array.new(board), square, board[square]).empty?
+
+		# suicide, illegal move
+		return nil, nil
 	end
 
 	private
