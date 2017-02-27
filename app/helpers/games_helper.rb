@@ -6,15 +6,16 @@ module GamesHelper
 
 	# @return board array if move validates, else return nil
 	# @return new ko position
+	# move should contain {index, color} or {pass}
 	def getNewBoard game, move
 		if (move['pass'])
-			return nil, nil, true if game.history.last == game.history[-2] # last move was also a pass
+			return {board: nil, ko: nil, end_of_game: true} if game.history.last == game.history[-2] # last move was also a pass
 			return game.history.last, nil # normal pass
 		end
 
 		board  = Array.new(game.history.last)
 		square = move['index']
-		ko = game.ko
+		ko     = game.ko
 
 		# Can't move where something already is
 		return nil if board[square] != ''
@@ -38,15 +39,15 @@ module GamesHelper
 				ko = nil
 			end
 
-			return clearStones(board, captured), ko
+			return {board: clearStones(board, captured), ko: ko}
 		end
 
 
 		# Didn't cap anything, ensure no suicide
-		return board, nil if getDeadGroup(Array.new(board), square, board[square]).empty?
+		return {board: board, ko: nil} if getDeadGroup(Array.new(board), square, board[square]).empty?
 
 		# suicide, illegal move
-		return nil, nil
+		return {board: nil, ko: nil}
 	end
 
 	def end_game game, data, sender=nil
@@ -61,14 +62,18 @@ module GamesHelper
 					loser:   sender,
 					winner:  game.players.where.not(id: sender.id).first
 				}
+			else
+				return
 		end
-
 
 		game.update_attributes(in_progress: false, completed: true, result: result[:message])
 		result[:winner].involvements.find_by(game_id: game.id).update_attributes(winner: true)
 		result[:loser].involvements.find_by(game_id: game.id).update_attributes(winner: false)
 		GameroomChannel.broadcast_to(game, result)
 	end
+
+
+	private
 
 	def calc_winner game
 		board  = Array.new(game.history.last)
@@ -122,8 +127,6 @@ module GamesHelper
 				'Unknown result.'
 		end
 	end
-
-	private
 
 	# @return array of dead indices
 	# board: an array of color strings

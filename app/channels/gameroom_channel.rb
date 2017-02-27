@@ -9,6 +9,7 @@ class GameroomChannel < ApplicationCable::Channel
 
 	def unsubscribed # Sender is in self.connection.user
 		# Any cleanup needed when channel is unsubscribed
+		#start user left game timer
 	end
 
 	def receive data # Sender is in self.connection.user
@@ -16,11 +17,10 @@ class GameroomChannel < ApplicationCable::Channel
 		return if @game.completed || data.nil?
 		return end_game @game, data, self.connection.user if data.keys.any? { |key| ['resign', 'draw', 'abort'].include? key }
 
-		move                   = data['newMove'] #{index: 122, color: 'WHITE'}
-		board, ko, end_of_game = getNewBoard(@game, move)
-		return end_game @game, data if end_of_game
-		unless board.nil?
-			@game.update_attributes(history: @game.history.push(board), move: @game.move+1, ko: ko)
+		new = getNewBoard(@game, data['newMove'])
+		return end_game @game, data if new[:end_of_game]
+		unless new[:board].nil?
+			@game.update_attributes(history: @game.history.push(new[:board]), move: @game.move+1, ko: new[:ko])
 			GameroomChannel.broadcast_to(@game, move: [@game.history.last]) if @game.save
 		end
 	end
