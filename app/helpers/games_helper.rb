@@ -7,6 +7,11 @@ module GamesHelper
 	# @return board array if move validates, else return nil
 	# @return new ko position
 	def getNewBoard game, move
+		if (move['pass'])
+			return nil, nil, true if game.history.last == game.history[-2] # last move was also a pass
+			return game.history.last, nil # normal pass
+		end
+
 		board  = Array.new(game.history.last)
 		square = move['index']
 		ko = game.ko
@@ -42,6 +47,80 @@ module GamesHelper
 
 		# suicide, illegal move
 		return nil, nil
+	end
+
+	def end_game game, data, sender=nil
+		type = data.keys.last
+		case type
+			when 'newMove' #Game ended naturally
+				result = calc_winner @game
+			when 'resign'
+				loser_color = sender.involvements.find_by(game_id: game.id).color
+				result      = {
+					message: result_message('resign', !loser_color, loser_color),
+					loser:   sender,
+					winner:  game.players.where.not(id: sender.id).first
+				}
+		end
+
+
+		game.update_attributes(in_progress: false, completed: true, result: result[:message])
+		result[:winner].involvements.find_by(game_id: game.id).update_attributes(winner: true)
+		result[:loser].involvements.find_by(game_id: game.id).update_attributes(winner: false)
+		GameroomChannel.broadcast_to(game, result)
+	end
+
+	def calc_winner game
+		board  = Array.new(game.history.last)
+		filled = fill_territory board
+
+		case filled.count('W') <=> filled.count('B')
+			when 1
+				{
+					message: result_message('score', 'White', 'Black'),
+					winner:  game.white_player,
+					loser:   game.black_player
+				}
+			when 0
+				{
+					message: result_message('draw'),
+					winner:  nil,
+					loser:   nil
+				}
+			when -1
+				{
+					message: result_message('score', 'Black', 'White'),
+					winner:  game.black_player,
+					loser:   game.white_player
+				}
+		end
+	end
+
+	def bool_to_string bool
+		bool ? 'Black' : 'White'
+	end
+
+	def result_message type, winner=nil, loser=nil
+		winner = bool_to_string winner unless winner.is_a? String
+		loser  = bool_to_string loser unless loser.is_a? String
+		case type
+			when 'score'
+				"#{winner} is victorious."
+			when 'resign'
+				"#{loser} resigned. #{winner} is victorious."
+			when 'time'
+				"#{loser}'s time expired. #{winner} is victorious."
+			when 'draw'
+				'Draw.'
+			when 'agree'
+				"#{loser} agreed to draw."
+			when 'leave'
+				"#{loser} left the game. #{winner} is victorious."
+			when 'abort'
+				'Game aborted.'
+			else
+				'Unknown result.'
+		end
 	end
 
 	private

@@ -13,9 +13,11 @@ class Game extends React.Component {
 
 	componentWillMount() {
 		gv.callback = (data, id) => { // Comes in from gameroom.js.erb
-			if (id == this.props.game.webid) {
+			if (data.winner) {
+				return gameOver(data);
+			} else if (id == this.props.game.webid) {
 				this.setState({
-					history:   this.state.history.concat(data),
+					history:   this.state.history.concat(data.move),
 					move:      this.state.move + 1,
 					blackNext: !this.state.blackNext
 				})
@@ -43,11 +45,19 @@ class Game extends React.Component {
 		App.gameRoom.send({
 			newMove: {
 				index: i,
-				color: squares[i]
+				color: squares[i],
+				pass:  false,
 			}
 		})
 		// -> gameroom_channel#receive
+	}
 
+	pass() {
+		App.gameRoom.send({
+			newMove: {
+				pass: true,
+			}
+		})
 	}
 
 	jumpTo(step) {
@@ -82,13 +92,15 @@ class Game extends React.Component {
 		return (
 			<game>
 				<Board squares={current} onClick={(i) => this.handleClick(i)}/>
-				<Infobox status={status} moves={moves} moveNum={this.state.move} jumpTo={(m) => this.jumpTo(m)}/>
+				<Infobox status={status} moves={moves} moveNum={this.state.move} jumpTo={(m) => this.jumpTo(m)}
+						 pass={() => this.pass()}/>
 			</game>
 		);
 	}
 }
 
-class Infobox extends React.Component {
+class Infobox extends React
+	.Component {
 	render() {
 		return (
 			<div id="controlBox">
@@ -100,6 +112,7 @@ class Infobox extends React.Component {
 					<control onClick={() => this.props.jumpTo(this.props.moveNum - 1)}> &lt; </control>
 					<control onClick={() => this.props.jumpTo(this.props.moveNum + 1)}> &gt; </control>
 					<control onClick={() => this.props.jumpTo(this.props.moves.length - 1)}> &gt;&gt; </control>
+					<control onClick={() => this.props.pass()}> Pass</control>
 				</div>
 			</div>
 		)
