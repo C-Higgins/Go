@@ -1,6 +1,19 @@
-<h3> Participants: <%= link_to @game.players.first.display_name, @game.players.first %>
-	and <%= link_to(@game.players.second.display_name, @game.players.second) if @game.players.count>1 %> </h3>
+<%= unless @game.players[0..1].include? @current_user then
+		'You are spectating. This is not fully implemented and some things may break.'
+	end %>
 
 <div id="gamewrapper" data-room-id="<%= @game.webid %>">
-	<%= react_component 'Game', {game: @game, p1: @game.players.first, p2: @game.players.second, color: current_user.involvements.find_by(game_id: @game.id).color} %>
+	<% inv = current_user.involvements.find_by(game_id: @game.id) %>
+	<% inv.nil? ? color='spec' : color=inv.color %>
+	<%
+		if @game.players[1] == @current_user
+			p1 = @game.players[1]
+			p2 = @game.players[0]
+		else
+			p1 = @game.players[0]
+			p2 = @game.players[1]
+		end
+	%>
+
+	<%= react_component 'Game', {game: @game, p1: p1, p2: p2, color: color} %>
 </div>

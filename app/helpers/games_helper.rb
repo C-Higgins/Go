@@ -5,9 +5,17 @@ module GamesHelper
 	end
 
 	# @return board array if move validates, else return nil
+	# @return new ko position
+	# move should contain {index, color} or {pass}
 	def getNewBoard game, move
+		if (move['pass'])
+			return {board: nil, ko: nil, end_of_game: true} if game.history.last == game.history[-2] # last move was also a pass
+			return game.history.last, nil # normal pass
+		end
+
 		board  = Array.new(game.history.last)
 		square = move['index']
+		ko     = game.ko
 
 		# Can't move where something already is
 		return nil if board[square] != ''
@@ -16,16 +24,109 @@ module GamesHelper
 		board[square] = move['color']
 
 		# Can't place a stone that causes itself to be captured unless it captures first
-		# First check if you just captured anything - if so you're fine
-		# Otherwise check if you are now captured
+		# Can't place a stone in a ko position that only captures one stone
+		# One may not capture just one stone, if that stone was played on the previous move, and that move also captured just one stone.
+		# First check if you just captured anything
 		captured      = getCapturedStones(board, square)
+		if captured.any?
+			if captured.size == 1 # Captured only one stone, so check/set ko
+				if captured[0] == ko # illegal move, trying to capture the ko stone
+					return nil
+				else # this move is new ko
+					ko = square
+				end
+			else # captured more than one, so reset ko
+				ko = nil
+			end
 
-		return clearStones(board, captured) if captured.any?
-		return board if getDeadGroup(Array.new(board), square, board[square]).empty?
-		return nil
+			return {board: clearStones(board, captured), ko: ko}
+		end
+
+
+		# Didn't cap anything, ensure no suicide
+		return {board: board, ko: nil} if getDeadGroup(Array.new(board), square, board[square]).empty?
+
+		# suicide, illegal move
+		return {board: nil, ko: nil}
 	end
 
+	def end_game game, data, sender=nil
+		type = data.keys.last
+		case type
+			when 'newMove' #Game ended naturally
+				result = calc_winner @game
+			when 'resign'
+				loser_color = sender.involvements.find_by(game_id: game.id).color
+				result      = {
+					message: result_message('resign', !loser_color, loser_color),
+					loser:   sender,
+					winner:  game.players.where.not(id: sender.id).first
+				}
+			else
+				return
+		end
+
+		game.update_attributes(in_progress: false, completed: true, result: result[:message])
+		result[:winner].involvements.find_by(game_id: game.id).update_attributes(winner: true)
+		result[:loser].involvements.find_by(game_id: game.id).update_attributes(winner: false)
+		GameroomChannel.broadcast_to(game, result)
+	end
+
+
 	private
+
+	def calc_winner game
+		board  = Array.new(game.history.last)
+		filled = fill_territory board
+
+		case filled.count('W') <=> filled.count('B')
+			when 1
+				{
+					message: result_message('score', 'White', 'Black'),
+					winner:  game.white_player,
+					loser:   game.black_player
+				}
+			when 0
+				{
+					message: result_message('draw'),
+					winner:  nil,
+					loser:   nil
+				}
+			when -1
+				{
+					message: result_message('score', 'Black', 'White'),
+					winner:  game.black_player,
+					loser:   game.white_player
+				}
+		end
+	end
+
+	def bool_to_string bool
+		bool ? 'Black' : 'White'
+	end
+
+	def result_message type, winner=nil, loser=nil
+		winner = bool_to_string winner unless winner.is_a? String
+		loser  = bool_to_string loser unless loser.is_a? String
+		case type
+			when 'score'
+				"#{winner} is victorious."
+			when 'resign'
+				"#{loser} resigned. #{winner} is victorious."
+			when 'time'
+				"#{loser}'s time expired. #{winner} is victorious."
+			when 'draw'
+				'Draw.'
+			when 'agree'
+				"#{loser} agreed to draw."
+			when 'leave'
+				"#{loser} left the game. #{winner} is victorious."
+			when 'abort'
+				'Game aborted.'
+			else
+				'Unknown result.'
+		end
+	end
 
 	# @return array of dead indices
 	# board: an array of color strings

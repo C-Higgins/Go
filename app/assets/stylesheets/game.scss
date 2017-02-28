@@ -1,7 +1,17 @@
 $boardpx: 30px;
 $boardcolor: #b17e45;
+@mixin no-select {
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select:   none; /* Chrome/Safari/Opera */
+	-moz-user-select:      none; /* Firefox */
+	-ms-user-select:       none; /* Internet Explorer/Edge */
+	user-select:           none;
+	/* Non-prefixed version, currently
+						   not supported by any browser */
+}
 
 #gamewrapper {
+	margin-top: 50px;
 	game {
 		display:        flex;
 		flex-direction: row;
@@ -19,49 +29,41 @@ $boardcolor: #b17e45;
 			}
 
 			stone {
-				position:              absolute;
-				z-index:               1;
-				font-size:             20px;
-				width:                 $boardpx;
-				height:                $boardpx;
-				line-height:           $boardpx;
-				text-align:            center;
-				background-size:       contain;
+				position:        absolute;
+				z-index:         1;
+				font-size:       20px;
+				width:           $boardpx;
+				height:          $boardpx;
+				line-height:     $boardpx;
+				text-align:      center;
+				background-size: contain;
 
-				-webkit-touch-callout: none; /* iOS Safari */
-				-webkit-user-select:   none; /* Chrome/Safari/Opera */
-				-khtml-user-select:    none; /* Konqueror */
-				-moz-user-select:      none; /* Firefox */
-				-ms-user-select:       none; /* Internet Explorer/Edge */
-				user-select:           none;
-				/* Non-prefixed version, currently
-									   not supported by any browser */
+				@include no-select;
 			}
 		}
 
 		#controlBox {
+
 			$totalHeight: 300px;
-			$buttonHeight: 40px;
+			$buttonHeight: 20px;
 			$spanHeight: 20px;
-			max-height: $totalHeight;
-			position:   relative;
+			$width: 249px;
+			width:    $width;
+			position: relative;
+			margin:   auto 0 auto 20px;
 
-			.status {
-				margin-bottom: 10px;
-			}
-
-			span {
-				text-align: center;
-				width:      100%;
-				position:   absolute;
+			.player-name {
+				padding:     5px;
+				font-size:   1.3em;
+				font-weight: bold;
+				border:      1px solid #cccccc;
 			}
 
 			#moveList {
-				margin-left: 20px;
-				margin-top:  $spanHeight;
+				padding-top: $spanHeight;
 				overflow-y:  scroll;
-				width:       200px;
 				height:      $totalHeight - $buttonHeight - $spanHeight;
+				border:      1px solid #cccccc;
 
 				ol {
 					-webkit-margin-before: 0px;
@@ -69,18 +71,21 @@ $boardcolor: #b17e45;
 				}
 			}
 
-			#controlButtons {
-				height:          $buttonHeight;
-				display:         flex;
-				justify-content: space-between;
+			#history-buttons {
+				height:       $buttonHeight;
+				border:       1px solid #cccccc;
+				border-width: 0 0 0 1px;
 
 				control {
-					background:  #aaaaaa;
-					margin:      0 .2em 0 .2em;
-					flex-grow:   1;
-					text-align:  center;
-					line-height: $buttonHeight;
-					cursor:      pointer;
+					display:      inline-block;
+					border:       1px solid #cccccc;
+					border-width: 0 1px 0 0;
+					background:   white;
+					width:        ($width - 1)/4;
+					text-align:   center;
+					line-height:  $buttonHeight;
+					cursor:       pointer;
+					@include no-select;
 				}
 			}
 		}

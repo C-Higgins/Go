@@ -1,7 +1,6 @@
-- Implement ko and scoring
+- Implement scoring
 - Refactor history send/receive nonsense
 	- use gem sgf
-- New game modal add settings
 - Chat
 - index on webid
 

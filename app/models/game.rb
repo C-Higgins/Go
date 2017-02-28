@@ -14,6 +14,13 @@ class Game < ApplicationRecord
 		self.webid
 	end
 
+	def white_player
+		self.involvements.find_by(color: false).player
+	end
+
+	def black_player
+		self.involvements.find_by(color: true).player
+	end
 
 	private
 
