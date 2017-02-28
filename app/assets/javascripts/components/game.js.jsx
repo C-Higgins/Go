@@ -93,12 +93,13 @@ class Game extends React.Component {
 		if (winner)
 			status = `Winner: ${winner}`
 		else
-			status = `${this.props.color == this.state.blackNext ? 'YOUR MOVE' : 'THEIR MOVE'}`;
+			status = this.props.color == this.state.blackNext
 		return (
 			<game>
+				{message}
 				<Board squares={current} onClick={(i) => this.handleClick(i)}/>
 				<Infobox status={status} moves={moves} moveNum={this.state.move} jumpTo={(m) => this.jumpTo(m)}
-						 pass={() => this.pass()}/>
+						 pass={() => this.pass()} p1={this.props.p1} p2={this.props.p2}/>
 			</game>
 		);
 	}
@@ -106,18 +107,35 @@ class Game extends React.Component {
 
 class Infobox extends React.Component {
 	render() {
+		//temporary
+		let p1indicator, p2indicator
+		if (this.props.status) {
+			p1indicator = <span className="indicator">    &lt;--</span>
+			p2indicator = ''
+		} else {
+			p2indicator = <span className="indicator">    &lt;--</span>
+			p1indicator = ''
+		}
+
 		return (
 			<div id="controlBox">
-				<span>{ this.props.status }</span>
-				<div id="moveList">
-					<ol>{this.props.moves}</ol>
-				</div>
-				<div id="controlButtons">
+				<div className="player-name">{this.props.p2.display_name}{p2indicator}</div>
+				<div id="history-buttons">
+					<control onClick={() => this.props.jumpTo(1)}> &lt;&lt; </control>
 					<control onClick={() => this.props.jumpTo(this.props.moveNum - 1)}> &lt; </control>
 					<control onClick={() => this.props.jumpTo(this.props.moveNum + 1)}> &gt; </control>
 					<control onClick={() => this.props.jumpTo(this.props.moves.length - 1)}> &gt;&gt; </control>
-					<control onClick={() => this.props.pass()}> Pass</control>
 				</div>
+				<div id="moveList">
+					<ol>{this.props.moves}</ol>
+				</div>
+				<div id="history-buttons">
+					<control onClick={() => this.props.pass()}>Pass</control>
+					<control>Takeback</control>
+					<control>Draw</control>
+					<control>Resign</control>
+				</div>
+				<div className="player-name">{this.props.p1.display_name}{p1indicator}</div>
 			</div>
 		)
 	}
