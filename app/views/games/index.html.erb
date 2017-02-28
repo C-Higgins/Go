@@ -2,4 +2,9 @@
 	<div id="gameList">
 		<%= react_component 'Games', {games: @games, me: @current_user} %>
 	</div>
+	<div id="button-container">
+		<%= react_component 'BigButton', {text: 'Create Game', link: new_game_path, remote: true} %>
+		<%= react_component 'BigButton', {text: 'Play with Friend', link: '', remote: true, disabled: true} %>
+		<%= react_component 'BigButton', {text: 'Play against Computer', link: '', remote: true, disabled: true} %>
+	</div>
 </div>

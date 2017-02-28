@@ -14,7 +14,7 @@ class Game extends React.Component {
 	componentWillMount() {
 		gv.callback = (data, id) => { // Comes in from gameroom.js.erb
 			if (data.winner) {
-				return gameOver(data);
+				return this.gameOver(data);
 			} else if (id == this.props.game.webid) {
 				this.setState({
 					history:   this.state.history.concat(data.move),
@@ -23,6 +23,11 @@ class Game extends React.Component {
 				})
 			}
 		}
+	}
+
+	gameOver(data) {
+		//timer.stop()
+		//this.setState({win/loss info})
 	}
 
 	handleClick(i) {
@@ -99,8 +104,7 @@ class Game extends React.Component {
 	}
 }
 
-class Infobox extends React
-	.Component {
+class Infobox extends React.Component {
 	render() {
 		return (
 			<div id="controlBox">
