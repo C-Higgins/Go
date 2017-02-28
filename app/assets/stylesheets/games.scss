@@ -6,14 +6,15 @@ $grey: #cccccc;
 #lobbywrapper {
 	display:         flex;
 	justify-content: center;
-	margin-top:      100px;
+	margin-top:      50px;
 
 	#button-container {
 		display:         flex;
 		flex-direction:  column;
 		justify-content: center;
 		margin-left:     40px;
-		width:           250px;
+		margin-right:    20px;
+		min-width:       250px;
 		.game-creation-button {
 			width:          100%;
 			height:         80px;
@@ -50,7 +51,7 @@ $grey: #cccccc;
 	}
 	#gameList {
 		height:     500px;
-		width:      500px;
+		min-width:  500px;
 		overflow-x: hidden;
 		overflow-y: auto;
 		border:     1px solid $grey;
@@ -61,8 +62,9 @@ $grey: #cccccc;
 		border-collapse: collapse;
 
 		#gameListTableHeader {
-			display:     table-header-group;
-			font-weight: bold;
+			display:       table-header-group;
+			border-bottom: 1px solid $grey;
+			font-weight:   bold;
 			span {
 				padding: 10px 0px;
 			}
@@ -100,4 +102,21 @@ $grey: #cccccc;
 		}
 	}
 
+	#shameless-plug {
+		@media all and (max-width: 940px) {
+			display: none;
+		}
+		text-align: right;
+		margin:     20px 40px 0 0px;
+		width:      150px;
+		//text-align: center;
+		#plug-header {
+			font-family: 'georgia', serif;
+			font-size:   50px;
+		}
+		#plug-body {
+			display:    block;
+			text-align: right;
+		}
+	}
 }

@@ -14,17 +14,26 @@ class BigButton extends React.Component {
 	}
 
 	handleClick() {
-		this.setState({selected: true})
+		if (!this.props.disabled)
+			this.setState({selected: true})
 	}
 
 	render() {
+		if (!this.props.disabled) {
+			var link = (<a data-remote={this.props.remote} href={this.props.link}>
+				<span></span>
+			</a>)
+		}
+
+		let classes = 'game-creation-button'
+		if (this.state.selected) classes += ' selected';
+		if (this.props.disabled) classes += ' disabled';
+
 		return (
 			<div onClick={() => this.handleClick()}
-				 className={`game-creation-button ${this.state.selected ? 'selected' : ''} ${this.props.disabled ? 'disabled' : ''}`}>
+				 className={classes}>
 				{this.props.text}
-				<a data-remote={this.props.remote} href={this.props.link}>
-					<span></span>
-				</a>
+				{link}
 			</div>
 		);
 
