@@ -96,7 +96,6 @@ class Game extends React.Component {
 			status = this.props.color == this.state.blackNext
 		return (
 			<game>
-				{message}
 				<Board squares={current} onClick={(i) => this.handleClick(i)}/>
 				<Infobox status={status} moves={moves} moveNum={this.state.move} jumpTo={(m) => this.jumpTo(m)}
 						 pass={() => this.pass()} p1={this.props.p1} p2={this.props.p2}/>
