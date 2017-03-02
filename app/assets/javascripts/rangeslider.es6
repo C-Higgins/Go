@@ -503,3 +503,71 @@
 	return 'rangeslider.js is available in jQuery context e.g $(selector).rangeslider(options);';
 
 }));
+
+function triggerSliders() {
+	$('input[type="range"].rangeslider-minutes').rangeslider({
+
+		// Feature detection the default is `true`.
+		// Set this to `false` if you want to use
+		// the polyfill also in Browsers which support
+		// the native <input type="range"> element.
+		polyfill: false,
+
+		// Default CSS classes
+		rangeClass:      'rangeslider',
+		disabledClass:   'rangeslider--disabled',
+		horizontalClass: 'rangeslider--horizontal',
+		verticalClass:   'rangeslider--vertical',
+		fillClass:       'rangeslider__fill',
+		handleClass:     'rangeslider__handle',
+
+		// Callback function
+		onInit: function () {
+			this.output = $('<div class="range-output" />').insertAfter(this.$range).html(`Timer: ${this.$element.val()}m`);
+		},
+
+		// Callback function
+		onSlide: function (position, value) {
+			this.output.html(`Timer: ${value}m`);
+		},
+
+		// Callback function
+		onSlideEnd: function (position, value) {
+		}
+	});
+	$('input[type="range"].rangeslider-seconds').rangeslider({
+
+		// Feature detection the default is `true`.
+		// Set this to `false` if you want to use
+		// the polyfill also in Browsers which support
+		// the native <input type="range"> element.
+		polyfill: false,
+
+		// Default CSS classes
+		rangeClass:      'rangeslider',
+		disabledClass:   'rangeslider--disabled',
+		horizontalClass: 'rangeslider--horizontal',
+		verticalClass:   'rangeslider--vertical',
+		fillClass:       'rangeslider__fill',
+		handleClass:     'rangeslider__handle',
+
+		// Callback function
+		onInit: function () {
+			this.output = $('<div class="range-output" />').insertAfter(this.$range).html(`Increment: +${this.$element.val()}s`);
+		},
+
+		// Callback function
+		onSlide: function (position, value) {
+			this.output.html(`Increment: +${value}s`);
+		},
+
+		// Callback function
+		onSlideEnd: function (position, value) {
+		}
+	});
+}
+
+$(document).on('ready', function () {
+	if (location.search.length > 3) //check for modal params here
+		triggerSliders();
+})
