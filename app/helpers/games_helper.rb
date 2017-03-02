@@ -147,6 +147,7 @@ module GamesHelper
 	# Note this modifies board
 	def getDeadGroup board, square, target
 		return [] if board[square] != target
+		board = Array.new(board)
 		queue = [square]
 		dead  = []
 		until queue.empty? do
@@ -175,7 +176,7 @@ module GamesHelper
 		dimensions = Math.sqrt(board.size) #19
 		return {
 			left:  index % dimensions != 0 ? index - 1 : index,
-			right: index + 1 % dimensions != 0 ? index + 1 : index,
+			right: (index + 1) % dimensions != 0 ? index + 1 : index,
 			up:    index >= dimensions ? index-dimensions : index,
 			down:  index < dimensions * (dimensions - 1) ? index + dimensions : index
 		}
