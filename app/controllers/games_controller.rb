@@ -12,7 +12,7 @@ class GamesController < ApplicationController
 		@modal = 'new'
 		@game  = Game.new
 		respond_to do |format|
-			format.js { render template: 'layouts/modal', locals: {modal: @modal} } #modal.js
+			format.js { render template: 'layouts/modal' } #modal.js.erb
 			format.html {
 				redirect_to root_path(modal: @modal)
 			}
