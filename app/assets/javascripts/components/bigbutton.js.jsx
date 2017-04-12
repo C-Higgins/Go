@@ -7,10 +7,10 @@ class BigButton extends React.Component {
 	}
 
 	componentDidMount() {
-		// Eventually factor this out into the parent page react element
-		$('body').on('click', '#modal-close', (e) => {
-			this.setState({selected: false})
-		})
+		$('body').bind("DOMNodeRemoved", (e) => {
+			if (e.target.id == 'modal')
+				this.setState({selected: false})
+		});
 	}
 
 	handleClick() {

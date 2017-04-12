@@ -1,16 +1,24 @@
 <%= render 'layouts/modal', modal: params[:modal] if params[:modal] %>
 
-<div id="lobbywrapper" data-room-id="lobby">
-	<div id="shameless-plug">
-		<span id="plug-header">rgo</span><br>
-		<span id="plug-body">Chris Higgins<br><a href="https://github.com/C-Higgins/Go">Github</a></span>
-	</div>
-	<div id="gameList">
-		<%= react_component 'Games', {games: @games, me: @current_user} %>
-	</div>
-	<div id="button-container">
-		<%= react_component 'BigButton', {text: 'Create Game', link: new_game_path, remote: true} %>
-		<%= react_component 'BigButton', {text: 'Play with Friend', link: '', remote: true, disabled: true} %>
-		<%= react_component 'BigButton', {text: 'Play against Computer', link: '', remote: true, disabled: true} %>
-	</div>
-</div>
+
+<%= react_component 'Lobby', {
+	game_data:   {
+		games:  @games,
+		me:     @current_user,
+		remote: true
+	},
+	button_data: {
+		create:   {
+			text: 'Create Game',
+			link: new_game_path
+		},
+		friend:   {
+			text: 'Play with Friend',
+			link: ''
+		},
+		computer: {
+			text: 'Play against Computer',
+			link: ''
+		}
+	}
+} %>
