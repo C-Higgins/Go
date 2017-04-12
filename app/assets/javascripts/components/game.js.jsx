@@ -6,14 +6,16 @@ class Game extends React.Component {
 		this.state = { //initial
 			history:   props.game.history,
 			blackNext: props.game.history.length % 2 != 0,
-			move:      props.game.history.length - 1
+			move:      props.game.history.length - 1,
+			completed: props.game.completed,
+			result:    props.game.result
 		}
 
 	}
 
 	componentWillMount() {
 		gv.callback = (data, id) => { // Comes in from gameroom.js.erb
-			if (data.winner) {
+			if (data.message) {
 				return this.gameOver(data);
 			} else if (id == this.props.game.webid) {
 				this.setState({
@@ -28,12 +30,16 @@ class Game extends React.Component {
 	gameOver(data) {
 		//timer.stop()
 		//this.setState({win/loss info})
+		this.setState({
+			completed: true,
+			result:    data.message
+		})
 	}
 
 	handleClick(i) {
 		console.log('handling a click')
 		// Check that it's your turn
-		if (this.props.color != this.state.blackNext) {
+		if ((this.props.color != this.state.blackNext) || this.state.completed) {
 			return;
 		}
 
@@ -41,7 +47,7 @@ class Game extends React.Component {
 		const current = history[history.length - 1]
 		const squares = current.slice()
 
-		if (squares[i] || calculateWinner(squares))
+		if (squares[i])
 			return;
 		this.state.blackNext ? squares[i] = 'B' : squares[i] = 'W'
 
@@ -76,7 +82,6 @@ class Game extends React.Component {
 	render() {
 		const history = this.state.history
 		const current = history[this.state.move]
-		const winner = calculateWinner(current)
 
 		const moves = history.map((step, move) => {
 			const desc = move ?
@@ -89,15 +94,16 @@ class Game extends React.Component {
 			);
 		});
 
-		let status
-		if (winner)
-			status = `Winner: ${winner}`
-		else
-			status = this.props.color == this.state.blackNext
+		let result, indicator
+		if (this.state.completed)
+			result = this.state.result
+
+		indicator = this.props.color == this.state.blackNext
 		return (
 			<game>
 				<Board squares={current} onClick={(i) => this.handleClick(i)}/>
-				<Infobox status={status} moves={moves} moveNum={this.state.move} jumpTo={(m) => this.jumpTo(m)}
+				<Infobox result={result} indicator={indicator} moves={moves} moveNum={this.state.move}
+						 jumpTo={(m) => this.jumpTo(m)}
 						 pass={() => this.pass()} p1={this.props.p1} p2={this.props.p2}/>
 			</game>
 		);
@@ -108,16 +114,20 @@ class Infobox extends React.Component {
 	render() {
 		//temporary
 		let p1indicator, p2indicator
-		if (this.props.status) {
-			p1indicator = <span className="indicator">    &lt;--</span>
-			p2indicator = ''
+		if (!this.props.result) {
+			if (this.props.indicator) {
+				p1indicator = <span className="indicator">    &lt;--</span>
+				p2indicator = ''
+			} else {
+				p2indicator = <span className="indicator">    &lt;--</span>
+				p1indicator = ''
+			}
 		} else {
-			p2indicator = <span className="indicator">    &lt;--</span>
-			p1indicator = ''
+			p1indicator = p2indicator = ''
 		}
-
 		return (
 			<div id="controlBox">
+				{this.props.result}
 				<div className="player-name">{this.props.p2.display_name}{p2indicator}</div>
 				<div id="history-buttons">
 					<control onClick={() => this.props.jumpTo(1)}> &lt;&lt; </control>
@@ -186,26 +196,4 @@ class Square extends React.Component {
 			</stone>
 		);
 	}
-}
-// ========================================
-
-
-function calculateWinner(squares) {
-	// const lines = [
-	//     [0, 1, 2],
-	//     [3, 4, 5],
-	//     [6, 7, 8],
-	//     [0, 3, 6],
-	//     [1, 4, 7],
-	//     [2, 5, 8],
-	//     [0, 4, 8],
-	//     [2, 4, 6],
-	// ];
-	// for (let i = 0; i < lines.length; i++) {
-	//     const [a, b, c] = lines[i];
-	//     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-	//         return squares[a];
-	//     }
-	// }
-	return null;
 }
