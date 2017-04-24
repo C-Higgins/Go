@@ -3,9 +3,9 @@ class Lobby extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			test:  '12345',
-			games: JSON.parse(props.game_data.games),
-			modal: props.button_data.modaltest
+			games:      JSON.parse(props.game_data.games),
+			show_modal: props.show_modal,
+			buttons:    props.button_data
 		};
 	}
 
@@ -38,24 +38,40 @@ class Lobby extends React.Component {
 		this.setState({games: refreshedGames})
 	}
 
-	buttonClick(type) {
-		switch (type) {
-			case 'create':
-				this.setState({
-					test: '67890'
-				})
-		}
+	close_modal(which) {
+		let buttons = this.state.buttons.slice()
+		buttons[which].selected = false
+		this.setState({
+			show_modal: null,
+			buttons:    buttons
+		})
+		history.replaceState(null, null, '/');
 	}
 
-	//modal() {
-	//	this.setState({modal: this.props.button_data.modaltest})
-	//}
+	open_modal(which) {
+		let buttons = this.state.buttons.slice()
+		buttons[which].selected = true
+		this.setState({
+			show_modal: which,
+			buttons:    buttons
+		})
+	}
 
 	render() {
-
+		const buttons = this.state.buttons.map((b, i) => {
+			return <BigButton text={b.text}
+							  disabled={b.disabled}
+							  selected={i == this.state.show_modal}
+							  onClick={() => this.open_modal(i)}
+							  key={i}
+			/>
+		})
 		return (
 			<div id="lobbywrapper" data-room-id="lobby">
-				{this.state.modal}
+				{this.state.show_modal !== null &&
+				<Modal authenticity_token={this.props.auth} id={this.props.game_data.me.id} type={this.state.show_modal}
+					   close_modal={(which) => this.close_modal(which)}/>
+				}
 				<div id="shameless-plug">
 					<span id="plug-header">rgo</span><br/>
 					<span id="plug-body">Chris Higgins<br/><a href="https://github.com/C-Higgins/Go">Github</a></span>
@@ -64,12 +80,7 @@ class Lobby extends React.Component {
 					<Games games={this.state.games} me={this.props.game_data.me}/>
 				</div>
 				<div id="button-container">
-					<BigButton text={this.props.button_data.create.text} link={this.props.button_data.create.link}
-							   remote='true'/>
-					<BigButton text={this.props.button_data.friend.text} link={this.props.button_data.friend.link}
-							   remote='true' disabled="true"/>
-					<BigButton text={this.props.button_data.computer.text} link={this.props.button_data.computer.link}
-							   remote='true'/>
+					{buttons}
 				</div>
 
 			</div>)

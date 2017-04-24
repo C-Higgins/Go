@@ -9,10 +9,9 @@ class GamesController < ApplicationController
 	end
 
 	def new
-		@modal = 'new'
+		@modal = 0
 		@game  = Game.new
 		respond_to do |format|
-			format.js { render template: 'layouts/modal' } #modal.js.erb
 			format.html {
 				redirect_to root_path(modal: @modal)
 			}

@@ -6,34 +6,23 @@ class BigButton extends React.Component {
 		}
 	}
 
-	componentDidMount() {
-		$('body').bind("DOMNodeRemoved", (e) => {
-			if (e.target.id == 'modal')
-				this.setState({selected: false})
-		});
-	}
-
 	handleClick() {
 		if (!this.props.disabled)
-			this.setState({selected: true})
+			this.props.open()
 	}
 
 	render() {
-		if (!this.props.disabled) {
-			var link = (<a data-remote={this.props.remote} href={this.props.link}>
-				<span></span>
-			</a>)
-		}
-
 		let classes = 'game-creation-button'
-		if (this.state.selected) classes += ' selected';
+		if (this.props.selected) classes += ' selected';
 		if (this.props.disabled) classes += ' disabled';
 
 		return (
-			<div onClick={() => this.handleClick()}
+			<div onClick={() => this.props.onClick()}
 				 className={classes}>
 				{this.props.text}
-				{link}
+				<a href="#">
+					<span> </span>
+				</a>
 			</div>
 		);
 
