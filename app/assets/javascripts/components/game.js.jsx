@@ -8,7 +8,8 @@ class Game extends React.Component {
 			blackNext: props.game.history.length % 2 != 0,
 			move:      props.game.history.length - 1,
 			completed: props.game.completed,
-			result:    props.game.result
+			result:    props.game.result,
+			resign:    false
 		}
 
 	}
@@ -38,6 +39,7 @@ class Game extends React.Component {
 
 	handleClick(i) {
 		console.log('handling a click')
+		this.setState({resign: false})
 		// Check that it's your turn
 		if ((this.props.color != this.state.blackNext) || this.state.completed) {
 			return;
@@ -71,6 +73,17 @@ class Game extends React.Component {
 		})
 	}
 
+	resign() {
+		if (this.state.resign) {
+			App.gameRoom.send({
+				resign: true
+			})
+			this.setState({resign: false})
+		} else {
+			this.setState({resign: true})
+		}
+	}
+
 	jumpTo(step) {
 		if ((step >= this.state.history.length) || step < 0) return;
 		this.setState({
@@ -102,9 +115,16 @@ class Game extends React.Component {
 		return (
 			<game>
 				<Board squares={current} onClick={(i) => this.handleClick(i)}/>
-				<Infobox result={result} indicator={indicator} moves={moves} moveNum={this.state.move}
+				<Infobox result={result}
+						 indicator={indicator}
+						 moves={moves}
+						 moveNum={this.state.move}
 						 jumpTo={(m) => this.jumpTo(m)}
-						 pass={() => this.pass()} p1={this.props.p1} p2={this.props.p2}/>
+						 resignConfirmation={this.state.resign}
+						 pass={() => this.pass()}
+						 resign={() => this.resign()}
+						 p1={this.props.p1}
+						 p2={this.props.p2}/>
 			</game>
 		);
 	}
@@ -142,7 +162,8 @@ class Infobox extends React.Component {
 					<control onClick={() => this.props.pass()}>Pass</control>
 					<control>Takeback</control>
 					<control>Draw</control>
-					<control>Resign</control>
+					<control
+						onClick={() => this.props.resign()}>{this.props.resignConfirmation ? 'Sure?' : 'Resign'}</control>
 				</div>
 				<div className="player-name">{this.props.p1.display_name}{p1indicator}</div>
 			</div>
