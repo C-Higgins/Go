@@ -14,17 +14,46 @@ class Game extends React.Component {
 
 	}
 
-	componentWillMount() {
-		gv.callback = (data, id) => { // Comes in from gameroom.js.erb
-			if (data.message) {
-				return this.gameOver(data);
-			} else if (id == this.props.game.webid) {
-				this.setState({
-					history:   this.state.history.concat(data.move),
-					move:      this.state.move + 1,
-					blackNext: !this.state.blackNext
-				})
-			}
+	componentDidMount() {
+		let react = this
+		if (wrapper = document.getElementById('gamewrapper')) {
+			App.gameRoom = App.cable.subscriptions.create({channel: "GameroomChannel", room: wrapper.dataset.roomId}, {
+				connected: function () {
+					// Called when the subscription is ready for use on the server
+					console.log('connected to room')
+					$(document).on('page:change', function () {
+						this.unsubscribe();
+					})
+				},
+
+				disconnected: function () {
+					// Called when the subscription has been terminated by the server
+					console.log('left room')
+				},
+				received:     function (data) {
+					let id = JSON.parse(this.identifier).room
+					console.log('websocket data recieved on channel   ' + id)
+					react.router(data, id)
+				}
+			})
+		}
+	}
+
+	router(data, id) {
+		// Comes in from componentdidmount
+		if (data.message) {
+			this.gameOver(data);
+		} else if (data.draw_request) {
+			this.receive_draw(data.requester)
+		} else if (data.takeback_request) {
+			this.receive_takeback(data.requester)
+		}
+		else if (id == this.props.game.webid) {
+			this.setState({
+				history:   this.state.history.concat(data.move),
+				move:      this.state.move + 1,
+				blackNext: !this.state.blackNext
+			})
 		}
 	}
 
@@ -71,6 +100,44 @@ class Game extends React.Component {
 				pass: true,
 			}
 		})
+	}
+
+	offer_takeback() {
+		App.gameRoom.send({
+			takeback_request: true,
+			requester:        this.props.me.id
+		})
+	}
+
+	receive_takeback(requester) {
+		if (requester == this.props.me.id) {
+			//I sent a takeback request
+		} else {
+			//I received a takeback request
+		}
+	}
+
+	accept_takeback() {
+
+	}
+
+	offer_draw() {
+		App.gameRoom.send({
+			draw_request: true,
+			requester:    this.props.me.id
+		})
+	}
+
+	receive_draw(requester) {
+		if (requester == this.props.me.id) {
+			//I sent a draw request
+		} else {
+			//I received a draw request
+		}
+	}
+
+	accept_draw() {
+
 	}
 
 	resign() {
@@ -121,10 +188,13 @@ class Game extends React.Component {
 						 moveNum={this.state.move}
 						 jumpTo={(m) => this.jumpTo(m)}
 						 resignConfirmation={this.state.resign}
-						 pass={() => this.pass()}
-						 resign={() => this.resign()}
 						 p1={this.props.p1}
-						 p2={this.props.p2}/>
+						 p2={this.props.p2}
+						 pass={() => this.pass()}
+						 takeback={() => this.offer_takeback()}
+						 draw={() => this.offer_draw()}
+						 resign={() => this.resign()}
+				/>
 			</game>
 		);
 	}

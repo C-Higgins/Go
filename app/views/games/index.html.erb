@@ -1,6 +1,6 @@
 <%= render 'layouts/modal', modal: params[:modal] if params[:modal] %>
 
-
+<% m = render 'layouts/modal', layout: false %>
 <%= react_component 'Lobby', {
 	game_data:   {
 		games:  @games,
@@ -19,6 +19,7 @@
 		computer: {
 			text: 'Play against Computer',
 			link: ''
-		}
+		},
+		modaltest: m
 	}
 } %>

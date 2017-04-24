@@ -3,19 +3,13 @@ let gv = {};
 class Games extends React.Component { //Games is the same variable as 'Games' in the index erb helper
 	constructor(props) {
 		super(props);
-		this.state = {
-			games: JSON.parse(this.props.games)  //this games is the @games from the controller
-		};
-	}
-
-	componentWillMount() {
-		gv.callback = (refreshedGames) => { // Comes in from lobby.js.erb
-			this.setState({games: refreshedGames})
-		}
+		//this.state = {
+		//	games: JSON.parse(this.props.games)  //this games is the @games from the controller
+		//};
 	}
 
 	render() {
-		let games = this.state.games.map((g) => {
+		let games = this.props.games.map((g) => {
 			const classname = this.props.me.id == g.players[0].id ? 'game mine' : 'game'
 			const link = g.players.every((p) => {
 				return p.id != this.props.me.id

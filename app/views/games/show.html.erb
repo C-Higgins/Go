@@ -15,5 +15,5 @@
 		end
 	%>
 
-	<%= react_component 'Game', {game: @game, p1: p1, p2: p2, color: color} %>
+	<%= react_component 'Game', {game: @game, me: @current_user, p1: p1, p2: p2, color: color} %>
 </div>

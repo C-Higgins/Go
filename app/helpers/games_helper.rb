@@ -62,6 +62,11 @@ module GamesHelper
 					loser:   sender,
 					winner:  game.players.where.not(id: sender.id).first
 				}
+			when 'draw'
+				result = {
+					message: result_message('draw'),
+					draw:    true
+				}
 			else
 				return
 		end
