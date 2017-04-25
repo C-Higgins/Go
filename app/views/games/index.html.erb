@@ -3,6 +3,7 @@
 	game_data:   {
 		games:  @games,
 		me:     @current_user,
+		games_in_progress: @current_user.games.where(in_progress: true),
 		remote: true
 	},
 	button_data: [{
