@@ -1,14 +1,24 @@
-<div id="lobbywrapper" data-room-id="lobby">
-	<div id="shameless-plug">
-		<span id="plug-header">rgo</span><br>
-		<span id="plug-body">Chris Higgins<br><a href="https://github.com/C-Higgins/Go">Github</a></span>
-	</div>
-	<div id="gameList">
-		<%= react_component 'Games', {games: @games, me: @current_user} %>
-	</div>
-	<div id="button-container">
-		<%= react_component 'BigButton', {text: 'Create Game', link: new_game_path, remote: true} %>
-		<%= react_component 'BigButton', {text: 'Play with Friend', link: '', remote: true, disabled: true} %>
-		<%= react_component 'BigButton', {text: 'Play against Computer', link: '', remote: true, disabled: true} %>
-	</div>
-</div>
+<!-- Hi there! This might look like a mess after compilation into React elements. If you'd like a cleaner look, please check the Github repo. -->
+<%= react_component 'Lobby', {
+	game_data:   {
+		games:  @games,
+		me:     @current_user,
+		games_in_progress: @current_user.games.where(in_progress: true).any?,
+		remote: true
+	},
+	button_data: [{
+					  text:     'Create Game',
+					  selected: false
+				  }, {
+					  text:     'Play with Friend',
+					  selected: false,
+					  disabled: true
+				  }, {
+					  text:     'Play against Computer',
+					  selected: false,
+					  disabled: true
+				  }
+				 ],
+	show_modal:  params[:modal] ? params[:modal].to_i : nil,
+	auth:        form_authenticity_token
+} %>

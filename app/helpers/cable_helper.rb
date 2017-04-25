@@ -9,6 +9,6 @@ module CableHelper
 	end
 
 	def update_waiters! game
-		ActionCable.server.broadcast 'waiting', {p1: game.players.first.name, p2: game.players.second.name, id: game.webid}
+		ActionCable.server.broadcast 'waiting', {p1: game.players.first.id, p2: game.players.second.id, id: game.webid}
 	end
 end

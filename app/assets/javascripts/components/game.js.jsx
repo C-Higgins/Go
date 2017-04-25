@@ -6,34 +6,71 @@ class Game extends React.Component {
 		this.state = { //initial
 			history:   props.game.history,
 			blackNext: props.game.history.length % 2 != 0,
-			move:      props.game.history.length - 1
+			move:      props.game.history.length - 1,
+			completed: props.game.completed,
+			result:    props.game.result,
+			resign:    false
 		}
 
 	}
 
-	componentWillMount() {
-		gv.callback = (data, id) => { // Comes in from gameroom.js.erb
-			if (data.winner) {
-				return this.gameOver(data);
-			} else if (id == this.props.game.webid) {
-				this.setState({
-					history:   this.state.history.concat(data.move),
-					move:      this.state.move + 1,
-					blackNext: !this.state.blackNext
-				})
-			}
+	componentDidMount() {
+		let react = this
+		if (wrapper = document.getElementById('gamewrapper')) {
+			App.gameRoom = App.cable.subscriptions.create({channel: "GameroomChannel", room: wrapper.dataset.roomId}, {
+				connected: function () {
+					// Called when the subscription is ready for use on the server
+					console.log('connected to room')
+					$(document).on('page:change', function () {
+						this.unsubscribe();
+					})
+				},
+
+				disconnected: function () {
+					// Called when the subscription has been terminated by the server
+					console.log('left room')
+				},
+				received:     function (data) {
+					let id = JSON.parse(this.identifier).room
+					console.log('websocket data recieved on channel   ' + id)
+					react.router(data, id)
+				}
+			})
+		}
+	}
+
+	router(data, id) {
+		// Comes in from componentdidmount
+		if (data.message) {
+			this.gameOver(data);
+		} else if (data.draw_request) {
+			this.receive_draw(data.requester)
+		} else if (data.takeback_request) {
+			this.receive_takeback(data.requester)
+		}
+		else if (id == this.props.game.webid) {
+			this.setState({
+				history:   this.state.history.concat(data.move),
+				move:      this.state.move + 1,
+				blackNext: !this.state.blackNext
+			})
 		}
 	}
 
 	gameOver(data) {
 		//timer.stop()
 		//this.setState({win/loss info})
+		this.setState({
+			completed: true,
+			result:    data.message
+		})
 	}
 
 	handleClick(i) {
 		console.log('handling a click')
+		this.setState({resign: false})
 		// Check that it's your turn
-		if (this.props.color != this.state.blackNext) {
+		if ((this.props.color != this.state.blackNext) || this.state.completed) {
 			return;
 		}
 
@@ -41,7 +78,7 @@ class Game extends React.Component {
 		const current = history[history.length - 1]
 		const squares = current.slice()
 
-		if (squares[i] || calculateWinner(squares))
+		if (squares[i])
 			return;
 		this.state.blackNext ? squares[i] = 'B' : squares[i] = 'W'
 
@@ -65,6 +102,55 @@ class Game extends React.Component {
 		})
 	}
 
+	offer_takeback() {
+		App.gameRoom.send({
+			takeback_request: true,
+			requester:        this.props.me.id
+		})
+	}
+
+	receive_takeback(requester) {
+		if (requester == this.props.me.id) {
+			//I sent a takeback request
+		} else {
+			//I received a takeback request
+		}
+	}
+
+	accept_takeback() {
+
+	}
+
+	offer_draw() {
+		App.gameRoom.send({
+			draw_request: true,
+			requester:    this.props.me.id
+		})
+	}
+
+	receive_draw(requester) {
+		if (requester == this.props.me.id) {
+			//I sent a draw request
+		} else {
+			//I received a draw request
+		}
+	}
+
+	accept_draw() {
+
+	}
+
+	resign() {
+		if (this.state.resign) {
+			App.gameRoom.send({
+				resign: true
+			})
+			this.setState({resign: false})
+		} else {
+			this.setState({resign: true})
+		}
+	}
+
 	jumpTo(step) {
 		if ((step >= this.state.history.length) || step < 0) return;
 		this.setState({
@@ -76,7 +162,6 @@ class Game extends React.Component {
 	render() {
 		const history = this.state.history
 		const current = history[this.state.move]
-		const winner = calculateWinner(current)
 
 		const moves = history.map((step, move) => {
 			const desc = move ?
@@ -89,16 +174,27 @@ class Game extends React.Component {
 			);
 		});
 
-		let status
-		if (winner)
-			status = `Winner: ${winner}`
-		else
-			status = this.props.color == this.state.blackNext
+		let result, indicator
+		if (this.state.completed)
+			result = this.state.result
+
+		indicator = this.props.color == this.state.blackNext
 		return (
 			<game>
 				<Board squares={current} onClick={(i) => this.handleClick(i)}/>
-				<Infobox status={status} moves={moves} moveNum={this.state.move} jumpTo={(m) => this.jumpTo(m)}
-						 pass={() => this.pass()} p1={this.props.p1} p2={this.props.p2}/>
+				<Infobox result={result}
+						 indicator={indicator}
+						 moves={moves}
+						 moveNum={this.state.move}
+						 jumpTo={(m) => this.jumpTo(m)}
+						 resignConfirmation={this.state.resign}
+						 p1={this.props.p1}
+						 p2={this.props.p2}
+						 pass={() => this.pass()}
+						 takeback={() => this.offer_takeback()}
+						 draw={() => this.offer_draw()}
+						 resign={() => this.resign()}
+				/>
 			</game>
 		);
 	}
@@ -108,16 +204,20 @@ class Infobox extends React.Component {
 	render() {
 		//temporary
 		let p1indicator, p2indicator
-		if (this.props.status) {
-			p1indicator = <span className="indicator">    &lt;--</span>
-			p2indicator = ''
+		if (!this.props.result) {
+			if (this.props.indicator) {
+				p1indicator = <span className="indicator">    &lt;--</span>
+				p2indicator = ''
+			} else {
+				p2indicator = <span className="indicator">    &lt;--</span>
+				p1indicator = ''
+			}
 		} else {
-			p2indicator = <span className="indicator">    &lt;--</span>
-			p1indicator = ''
+			p1indicator = p2indicator = ''
 		}
-
 		return (
 			<div id="controlBox">
+				{this.props.result}
 				<div className="player-name">{this.props.p2.display_name}{p2indicator}</div>
 				<div id="history-buttons">
 					<control onClick={() => this.props.jumpTo(1)}> &lt;&lt; </control>
@@ -132,7 +232,8 @@ class Infobox extends React.Component {
 					<control onClick={() => this.props.pass()}>Pass</control>
 					<control>Takeback</control>
 					<control>Draw</control>
-					<control>Resign</control>
+					<control
+						onClick={() => this.props.resign()}>{this.props.resignConfirmation ? 'Sure?' : 'Resign'}</control>
 				</div>
 				<div className="player-name">{this.props.p1.display_name}{p1indicator}</div>
 			</div>
@@ -186,26 +287,4 @@ class Square extends React.Component {
 			</stone>
 		);
 	}
-}
-// ========================================
-
-
-function calculateWinner(squares) {
-	// const lines = [
-	//     [0, 1, 2],
-	//     [3, 4, 5],
-	//     [6, 7, 8],
-	//     [0, 3, 6],
-	//     [1, 4, 7],
-	//     [2, 5, 8],
-	//     [0, 4, 8],
-	//     [2, 4, 6],
-	// ];
-	// for (let i = 0; i < lines.length; i++) {
-	//     const [a, b, c] = lines[i];
-	//     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-	//         return squares[a];
-	//     }
-	// }
-	return null;
 }

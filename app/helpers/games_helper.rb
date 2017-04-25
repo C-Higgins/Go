@@ -10,7 +10,7 @@ module GamesHelper
 	def getNewBoard game, move
 		if (move['pass'])
 			return {board: nil, ko: nil, end_of_game: true} if game.history.last == game.history[-2] # last move was also a pass
-			return game.history.last, nil # normal pass
+			return {board: game.history.last, ko: nil} # normal pass
 		end
 
 		board  = Array.new(game.history.last)
@@ -62,13 +62,23 @@ module GamesHelper
 					loser:   sender,
 					winner:  game.players.where.not(id: sender.id).first
 				}
+			when 'draw'
+				result = {
+					message: result_message('draw'),
+					draw:    true
+				}
 			else
 				return
 		end
 
 		game.update_attributes(in_progress: false, completed: true, result: result[:message])
-		result[:winner].involvements.find_by(game_id: game.id).update_attributes(winner: true)
-		result[:loser].involvements.find_by(game_id: game.id).update_attributes(winner: false)
+		if result[:draw]
+			game.white_player.involvements.find_by(game_id: game.id).update_attributes(draw: true, winner: false)
+			game.black_player.involvements.find_by(game_id: game.id).update_attributes(draw: true, winner: false)
+		else
+			result[:winner].involvements.find_by(game_id: game.id).update_attributes(winner: true)
+			result[:loser].involvements.find_by(game_id: game.id).update_attributes(winner: false)
+		end
 		GameroomChannel.broadcast_to(game, result)
 	end
 
@@ -77,7 +87,8 @@ module GamesHelper
 
 	def calc_winner game
 		board  = Array.new(game.history.last)
-		filled = fill_territory board
+		#filled = fill_territory board       implement this
+		filled = board
 
 		case filled.count('W') <=> filled.count('B')
 			when 1
@@ -89,6 +100,7 @@ module GamesHelper
 			when 0
 				{
 					message: result_message('draw'),
+					draw: true,
 					winner:  nil,
 					loser:   nil
 				}
@@ -147,6 +159,7 @@ module GamesHelper
 	# Note this modifies board
 	def getDeadGroup board, square, target
 		return [] if board[square] != target
+		board = Array.new(board)
 		queue = [square]
 		dead  = []
 		until queue.empty? do
@@ -175,7 +188,7 @@ module GamesHelper
 		dimensions = Math.sqrt(board.size) #19
 		return {
 			left:  index % dimensions != 0 ? index - 1 : index,
-			right: index + 1 % dimensions != 0 ? index + 1 : index,
+			right: (index + 1) % dimensions != 0 ? index + 1 : index,
 			up:    index >= dimensions ? index-dimensions : index,
 			down:  index < dimensions * (dimensions - 1) ? index + dimensions : index
 		}

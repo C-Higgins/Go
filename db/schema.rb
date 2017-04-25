@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(version: 20170227201600) do
 		t.datetime "updated_at", null: false
 		t.boolean "color"
 		t.boolean "winner"
+		t.boolean "draw"
 		t.index ["game_id"], name: "index_involvements_on_game_id", using: :btree
 		t.index ["player_id"], name: "index_involvements_on_player_id", using: :btree
 	end

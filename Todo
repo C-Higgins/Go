@@ -1,7 +1,11 @@
 - Implement scoring
+- Play with friend button
+- Chat
+- Takeback
+- Abort before game start
 - Refactor history send/receive nonsense
 	- use gem sgf
-- Chat
+
 - index on webid
 
 
