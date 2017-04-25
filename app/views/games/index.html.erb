@@ -1,9 +1,9 @@
-<%# m = render 'layouts/modal', layout: false %>
+<!-- Hi there! This might look like a mess after compilation into React elements. If you'd like a cleaner look, please check the Github repo. -->
 <%= react_component 'Lobby', {
 	game_data:   {
 		games:  @games,
 		me:     @current_user,
-		games_in_progress: @current_user.games.where(in_progress: true),
+		games_in_progress: @current_user.games.where(in_progress: true).any?,
 		remote: true
 	},
 	button_data: [{

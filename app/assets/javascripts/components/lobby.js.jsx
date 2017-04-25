@@ -51,7 +51,7 @@ class Lobby extends React.Component {
 			return <BigButton text={b.text}
 							  disabled={b.disabled}
 							  selected={i == this.state.show_modal}
-							  onClick={() => this.open_modal(i)}
+							  onClick={() => b.disabled ? null : this.open_modal(i)}
 							  key={i}
 			/>
 		})
@@ -59,7 +59,7 @@ class Lobby extends React.Component {
 			<div id="lobbywrapper" data-room-id="lobby">
 				{this.state.show_modal !== null &&
 				<Modal authenticity_token={this.props.auth}
-					   games={this.props.game_data.games_in_progress}
+					   games_in_progress={this.props.game_data.games_in_progress}
 					   type={this.state.show_modal}
 					   createGame={() => this.createGame(this.props.game_data.me.id)}
 					   close_modal={(which) => this.close_modal(which)}/>

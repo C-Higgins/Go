@@ -76,7 +76,7 @@ class Modal extends React.Component {
 						X
 					</span>
 					<div id="modalBody">
-						{!!this.props.games.length &&
+						{this.props.games_in_progress &&
 						'Note: You have games in progress. Creating a new game will not interrupt ongoing games.'
 						}
 
