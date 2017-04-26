@@ -21,4 +21,4 @@
 				 ],
 	show_modal:  params[:modal] ? params[:modal].to_i : nil,
 	auth:        form_authenticity_token
-} %>
+}, {prerender: true} %>
