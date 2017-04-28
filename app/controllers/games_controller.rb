@@ -9,20 +9,19 @@ class GamesController < ApplicationController
 	end
 
 	def new
-		@modal = 0
 		@game  = Game.new
-		respond_to do |format|
-			format.html {
-				redirect_to root_path(modal: @modal)
-			}
-
-		end
+			# respond_to do |format|
+			# 	format.html {
+			# 		redirect_to root_path(modal: @modal)
+			# 	}
+			#
+			# end
 	end
 
 	def create
 		pending_games(@current_user).destroy_all #Remove old pending games
 		params[:game][:timer] = params[:game][:timer].to_i*60 #minutes to seconds
-		@game                 = current_user.games.build(params.require(:game).permit(:timer, :inc))
+		@game = current_user.games.build(params.require(:game).permit(:timer, :inc, :private))
 		@game.history = [Array.new(361).fill('')]
 		case params[:color]
 			when 'white'

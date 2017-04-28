@@ -3,9 +3,9 @@ class Lobby extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			games:      JSON.parse(props.game_data.games),
-			show_modal: props.show_modal,
-			buttons:    props.button_data
+			games:   JSON.parse(props.game_data.games),
+			modal:   props.modal,
+			buttons: props.button_data
 		};
 	}
 
@@ -17,12 +17,14 @@ class Lobby extends React.Component {
 		this.setState({games: refreshedGames})
 	}
 
-	close_modal(which) {
-		let buttons = this.state.buttons.slice()
-		buttons[which].selected = false
+	close_modal() {
+		const buttons = this.state.buttons.map((b) => {
+			b.selected = false;
+			return b;
+		})
 		this.setState({
-			show_modal: null,
-			buttons:    buttons
+			modal:   this.props.modals.none,
+			buttons: buttons
 		})
 		history.replaceState(null, null, '/');
 	}
@@ -31,8 +33,8 @@ class Lobby extends React.Component {
 		let buttons = this.state.buttons.slice()
 		buttons[which].selected = true
 		this.setState({
-			show_modal: which,
-			buttons:    buttons
+			modal:   which,
+			buttons: buttons
 		})
 	}
 
@@ -42,7 +44,7 @@ class Lobby extends React.Component {
 					return JSON.parse(s.identifier).channel == 'WaitingChannel'
 				}))
 				this.waitSubscribe(user);
-			this.setState({show_modal: null})
+			this.setState({modal: this.props.modals.none})
 		}, 0)
 	}
 
@@ -50,19 +52,19 @@ class Lobby extends React.Component {
 		const buttons = this.state.buttons.map((b, i) => {
 			return <BigButton text={b.text}
 							  disabled={b.disabled}
-							  selected={i == this.state.show_modal}
+							  selected={i == this.state.modal}
 							  onClick={() => b.disabled ? null : this.open_modal(i)}
 							  key={i}
 			/>
 		})
 		return (
 			<div id="lobbywrapper" data-room-id="lobby">
-				{this.state.show_modal !== null &&
+				{this.state.modal !== -1 &&
 				<Modal authenticity_token={this.props.auth}
+					   private={this.state.modal == this.props.modals.private}
 					   games_in_progress={this.props.game_data.games_in_progress}
-					   type={this.state.show_modal}
 					   createGame={() => this.createGame(this.props.game_data.me.id)}
-					   close_modal={(which) => this.close_modal(which)}/>
+					   close_modal={() => this.close_modal()}/>
 				}
 				<div id="shameless-plug">
 					<span id="plug-header">rgo</span><br/>
