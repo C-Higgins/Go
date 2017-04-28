@@ -4,6 +4,7 @@ class Game extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = { //initial
+			ready:     props.ready,
 			history:   props.game.history,
 			blackNext: props.game.history.length % 2 != 0,
 			move:      props.game.history.length - 1,
@@ -47,14 +48,21 @@ class Game extends React.Component {
 			this.receive_draw(data.requester)
 		} else if (data.takeback_request) {
 			this.receive_takeback(data.requester)
-		}
-		else if (id == this.props.game.webid) {
+		} else if (data.friend_joined) {
+			this.startGame(data.friend_joined)
+		} else if (id == this.props.game.webid) {
 			this.setState({
 				history:   this.state.history.concat(data.move),
 				move:      this.state.move + 1,
 				blackNext: !this.state.blackNext
 			})
 		}
+	}
+
+	startGame(game) {
+		// Need to set the player 2 in here somehow, since when the page loaded there was not one, and trying to render
+		// the game without one causes null error
+		this.setState({ready: true})
 	}
 
 	gameOver(data) {
@@ -160,6 +168,18 @@ class Game extends React.Component {
 	}
 
 	render() {
+		if (!this.state.ready) {
+
+			return (
+				<game>
+					this is a private game
+				</game>
+			);
+
+
+		}
+
+
 		const history = this.state.history
 		const current = history[this.state.move]
 

@@ -32,25 +32,29 @@ class GamesController < ApplicationController
 				current_user.involvements.last.update(color: !!rand(2))
 		end
 		@game.save
+		redirect_to @game if @game.private
 		refresh_games_list!
-		@game
+
 	end
 
 	def show
 		@game = Game.find_by(webid: params[:webid]) #these @vars are magically sent to the view
-		return if (@game.players.include?(@current_user) && @game.players.count < 2)
 
 		if @game.players.count >=2
 			# Join as spectator
 		else
 			# Join as player
-			unless current_user.nil?
+			unless current_user.nil? || @game.players.include?(@current_user)
 				@game.players << current_user
 				current_user.involvements.last.update(color: !@game.involvements.first.color)
 				@game.update(in_progress: true)
 				@game.save
-				update_waiters! @game
-				refresh_games_list!
+				if @game.private
+					join @game
+				else
+					update_waiters! @game
+					refresh_games_list!
+				end
 			end
 
 			# Change this part when anon users implemented

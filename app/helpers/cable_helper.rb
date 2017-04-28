@@ -11,4 +11,8 @@ module CableHelper
 	def update_waiters! game
 		ActionCable.server.broadcast 'waiting', {p1: game.players.first.id, p2: game.players.second.id, id: game.webid}
 	end
+
+	def join game
+		GameroomChannel.broadcast_to(@game, {friend_joined: game})
+	end
 end
