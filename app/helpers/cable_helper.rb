@@ -13,6 +13,6 @@ module CableHelper
 	end
 
 	def join game
-		GameroomChannel.broadcast_to(@game, {friend_joined: game})
+		GameroomChannel.broadcast_to(game, {friend_joined: game})
 	end
 end
