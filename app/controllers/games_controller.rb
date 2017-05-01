@@ -50,7 +50,7 @@ class GamesController < ApplicationController
 				@game.update(in_progress: true)
 				@game.save
 				if @game.private
-					join @game
+					join(@game, @current_user)
 				else
 					update_waiters! @game
 					refresh_games_list!

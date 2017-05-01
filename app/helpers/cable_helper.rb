@@ -12,7 +12,7 @@ module CableHelper
 		ActionCable.server.broadcast 'waiting', {p1: game.players.first.id, p2: game.players.second.id, id: game.webid}
 	end
 
-	def join game
-		GameroomChannel.broadcast_to(game, {friend_joined: game})
+	def join(game, user)
+		GameroomChannel.broadcast_to(game, {friend_joined: user, game: game})
 	end
 end

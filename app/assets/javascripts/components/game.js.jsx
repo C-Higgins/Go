@@ -1,16 +1,11 @@
 let gv = {};
 
-class Game extends React.Component {
+class GameRoom extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = { //initial
-			ready:     props.ready,
-			history:   props.game.history,
-			blackNext: props.game.history.length % 2 != 0,
-			move:      props.game.history.length - 1,
-			completed: props.game.completed,
-			result:    props.game.result,
-			resign:    false
+		this.state = {
+			ready: props.ready,
+			p2:    props.p2,
 		}
 
 	}
@@ -49,7 +44,7 @@ class Game extends React.Component {
 		} else if (data.takeback_request) {
 			this.receive_takeback(data.requester)
 		} else if (data.friend_joined) {
-			this.startGame(data.friend_joined)
+			this.startGame(data)
 		} else if (id == this.props.game.webid) {
 			this.setState({
 				history:   this.state.history.concat(data.move),
@@ -59,10 +54,32 @@ class Game extends React.Component {
 		}
 	}
 
-	startGame(game) {
+	startGame(data) {
 		// Need to set the player 2 in here somehow, since when the page loaded there was not one, and trying to render
 		// the game without one causes null error
-		this.setState({ready: true})
+		this.setState({p2: data.friend_joined, ready: true})
+	}
+
+	render() {
+		if (!this.state.ready) {
+			return (<WaitingRoom />)
+		} else {
+			return (<Game {...this.props} p2={this.state.p2}/>)
+		}
+	}
+}
+class Game extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			history:   props.game.history,
+			blackNext: props.game.history.length % 2 != 0,
+			move:      props.game.history.length - 1,
+			completed: props.game.completed,
+			result:    props.game.result,
+			resign:    false
+		}
+
 	}
 
 	gameOver(data) {
@@ -168,18 +185,6 @@ class Game extends React.Component {
 	}
 
 	render() {
-		if (!this.state.ready) {
-
-			return (
-				<game>
-					this is a private game
-				</game>
-			);
-
-
-		}
-
-
 		const history = this.state.history
 		const current = history[this.state.move]
 
@@ -220,6 +225,18 @@ class Game extends React.Component {
 	}
 }
 
+function WaitingRoom(props) {
+	return (
+		<game>
+			<div id="private-game-wait">
+				<input type="text" className="copy-box force-select" value={document.location.href} readOnly/>
+				<p style={{fontSize: "1.5em"}}>
+					Waiting for other player. You will play with the first person to visit this link.
+				</p>
+			</div>
+		</game>
+	);
+}
 class Infobox extends React.Component {
 	render() {
 		//temporary

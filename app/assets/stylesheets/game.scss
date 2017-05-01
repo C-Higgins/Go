@@ -89,6 +89,22 @@ $boardcolor: #b17e45;
 				}
 			}
 		}
+
+		#private-game-wait {
+			padding-top: 150px;
+
+			margin:      auto;
+			text-align:  center;
+
+			.copy-box {
+				width:      550px;
+				font-size:  2em;
+				color:      #707070;
+				text-align: center;
+				padding:    15px;
+				border:     1px dashed #cccccc;
+			}
+		}
 	}
 }
 
