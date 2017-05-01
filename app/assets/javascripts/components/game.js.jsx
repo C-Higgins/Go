@@ -55,8 +55,6 @@ class GameRoom extends React.Component {
 	}
 
 	startGame(data) {
-		// Need to set the player 2 in here somehow, since when the page loaded there was not one, and trying to render
-		// the game without one causes null error
 		this.setState({p2: data.friend_joined, ready: true})
 	}
 
@@ -230,6 +228,7 @@ function WaitingRoom(props) {
 		<game>
 			<div id="private-game-wait">
 				<input type="text" className="copy-box force-select" value={document.location.href} readOnly/>
+				<button className="copy-button"/>
 				<p style={{fontSize: "1.5em"}}>
 					Waiting for other player. You will play with the first person to visit this link.
 				</p>
