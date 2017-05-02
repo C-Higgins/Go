@@ -89,6 +89,44 @@ $boardcolor: #b17e45;
 				}
 			}
 		}
+
+		#private-game-wait {
+			padding-top: 150px;
+
+			margin:      auto;
+			text-align:  center;
+
+			.copy-box {
+				width:      550px;
+				font-size:  2em;
+				color:      #707070;
+				text-align: center;
+				padding:    15px;
+				border:     1px dashed #cccccc;
+
+				&.flash {
+					background-color: #f3b563;
+				}
+			}
+			.copy-button {
+				width:            60px;
+				height:           60px;
+				vertical-align:   top;
+				margin-left:      5px;
+
+				background-color: white;
+				border:           1px solid #cccccc;
+				outline:          none;
+				cursor:           pointer;
+
+				&:hover {
+					background-color: #f3b563;
+				}
+				&:after {
+					content: 'Copy';
+				}
+			}
+		}
 	}
 }
 
