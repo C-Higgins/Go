@@ -65,14 +65,14 @@ class Lobby extends React.Component {
 					   private={this.state.modal == this.props.modals.private}
 					   games_in_progress={this.props.game_data.games_in_progress}
 					   createGame={() => this.createGame(this.props.game_data.me.id)}
-					   close_modal={() => this.close_modal()} />
+					   close_modal={() => this.close_modal()}/>
 				}
 				<div id="shameless-plug">
 					<span id="plug-header">rgo</span><br />
 					<span id="plug-body">Chris Higgins<br /><a href="https://github.com/C-Higgins/Go">Github</a></span>
 				</div>
 				<div id="gameList">
-					<Games games={this.state.games} me={this.props.game_data.me} />
+					<Games games={this.state.games} me={this.props.game_data.me}/>
 				</div>
 				<div id="button-container">
 					{buttons}
@@ -84,22 +84,21 @@ class Lobby extends React.Component {
 
 
 	waitSubscribe(user) {
-		const lobby = this;
 		App.waiting = App.cable.subscriptions.create({channel: 'WaitingChannel', room: 'waiting', user: user}, {
-			connected: function() {
+			connected: () => {
 				// Called when the subscription is ready for use on the server
 				console.log('joined waiting channel')
 			},
 
-			disconnected: function() {
+			disconnected: () => {
 				// Called when the subscription has been terminated by the server
 				console.log('left lobby')
 			},
 
-			received: function(data) {
-				const id = lobby.props.game_data.me.id;
+			received: data => {
+				const id = this.props.game_data.me.id;
 				if (id == data.p1 || id == data.p2) {
-					this.unsubscribe();
+					App.waiting.unsubscribe();
 					window.location = '/g/' + data.id
 				}
 
@@ -109,26 +108,22 @@ class Lobby extends React.Component {
 	};
 
 	lobbySubscribe(user) {
-		const lobby = this;
 		let wrapper = document.getElementById('lobbywrapper');
 		if (wrapper) {
 			App.lobby = App.cable.subscriptions.create({channel: 'LobbyChannel', room: 'lobby', user: user}, {
-				connected: function() {
+				connected: () => {
 					// Called when the subscription is ready for use on the server
 					console.log('connected to lobby');
-					$(document).on('page:change', function() {
-						this.unsubscribe();
-					})
 				},
 
-				disconnected: function() {
+				disconnected: () => {
 					// Called when the subscription has been terminated by the server
 					console.log('left lobby')
 				},
 
-				received: function(games) {
+				received: games => {
 					console.log('websocket data recieved in lobby');
-					lobby.router(JSON.parse(games));
+					this.router(JSON.parse(games));
 				},
 			})
 		}

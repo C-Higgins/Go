@@ -1,38 +1,35 @@
-let gv = {};
-
 class GameRoom extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			ready: props.ready,
-			p2:    props.p2,
+			ready:              props.ready,
+			p2:                 props.p2,
+			history:            props.game.history,
+			blackNext:          props.game.history.length % 2 != 0,
+			move:               props.game.history.length - 1,
+			completed:          props.game.completed,
+			result:             props.game.result,
+			resignConfirmation: false,
 		}
 
 	}
 
 	componentDidMount() {
-		let react = this
-		if (wrapper = document.getElementById('gamewrapper')) {
-			App.gameRoom = App.cable.subscriptions.create({channel: "GameroomChannel", room: wrapper.dataset.roomId}, {
-				connected: function () {
-					// Called when the subscription is ready for use on the server
-					console.log('connected to room')
-					$(document).on('page:change', function () {
-						this.unsubscribe();
-					})
-				},
-
-				disconnected: function () {
-					// Called when the subscription has been terminated by the server
-					console.log('left room')
-				},
-				received:     function (data) {
-					let id = JSON.parse(this.identifier).room
-					console.log('websocket data recieved on channel   ' + id)
-					react.router(data, id)
-				}
-			})
-		}
+		App.gameRoom = App.cable.subscriptions.create({channel: "GameroomChannel", room: wrapper.dataset.roomId}, {
+			connected:    () => {
+				// Called when the subscription is ready for use on the server
+				console.log('connected to room')
+			},
+			disconnected: () => {
+				// Called when the subscription has been terminated by the server
+				console.log('left room')
+			},
+			received:     data => {
+				let id = JSON.parse(App.gameRoom.identifier).room
+				console.log('websocket data recieved on channel   ' + id)
+				this.router(data, id)
+			}
+		})
 	}
 
 	router(data, id) {
@@ -58,27 +55,6 @@ class GameRoom extends React.Component {
 		this.setState({p2: data.friend_joined, ready: true})
 	}
 
-	render() {
-		if (!this.state.ready) {
-			return (<WaitingRoom />)
-		} else {
-			return (<Game {...this.props} p2={this.state.p2}/>)
-		}
-	}
-}
-class Game extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			history:   props.game.history,
-			blackNext: props.game.history.length % 2 != 0,
-			move:      props.game.history.length - 1,
-			completed: props.game.completed,
-			result:    props.game.result,
-			resign:    false
-		}
-
-	}
 
 	gameOver(data) {
 		//timer.stop()
@@ -91,7 +67,7 @@ class Game extends React.Component {
 
 	handleClick(i) {
 		console.log('handling a click')
-		this.setState({resign: false})
+		this.setState({resignConfirmation: false})
 		// Check that it's your turn
 		if ((this.props.color != this.state.blackNext) || this.state.completed) {
 			return;
@@ -164,13 +140,13 @@ class Game extends React.Component {
 	}
 
 	resign() {
-		if (this.state.resign) {
+		if (this.state.resignConfirmation) {
 			App.gameRoom.send({
 				resign: true
 			})
-			this.setState({resign: false})
+			this.setState({resignConfirmation: false})
 		} else {
-			this.setState({resign: true})
+			this.setState({resignConfirmation: true})
 		}
 	}
 
@@ -183,44 +159,145 @@ class Game extends React.Component {
 	}
 
 	render() {
-		const history = this.state.history
-		const current = history[this.state.move]
-
-		const moves = history.map((step, move) => {
-			const desc = move ?
-				'Move #' + move :
-				'Game start';
-			return (
-				<li key={move}>
-					<a href="#" onClick={() => this.jumpTo(move)}>{desc}</a>
-				</li>
-			);
-		});
-
-		let result, indicator
-		if (this.state.completed)
-			result = this.state.result
-
-		indicator = this.props.color == this.state.blackNext
-		return (
-			<game>
-				<Board squares={current} onClick={(i) => this.handleClick(i)}/>
-				<Infobox result={result}
-						 indicator={indicator}
-						 moves={moves}
-						 moveNum={this.state.move}
-						 jumpTo={(m) => this.jumpTo(m)}
-						 resignConfirmation={this.state.resign}
-						 p1={this.props.p1}
-						 p2={this.props.p2}
-						 pass={() => this.pass()}
-						 takeback={() => this.offer_takeback()}
-						 draw={() => this.offer_draw()}
-						 resign={() => this.resign()}
+		if (!this.state.ready) {
+			return (<WaitingRoom />)
+		} else {
+			return (<Game {...this.props}
+						  {...this.state}
+						  p2={this.state.p2}
+						  handleClick={(i) => this.handleClick(i)}
+						  pass={() => this.pass()}
+						  offer_takeback={() => this.offer_takeback()}
+						  offer_draw={() => this.offer_draw()}
+						  resign={() => this.resign()}
+						  jumpTo={(move) => this.jumpTo(move)}
 				/>
-			</game>
-		);
+			)
+		}
 	}
+}
+function Game(props) {
+	const history = props.history
+	const current = history[props.move]
+
+	const moves = history.map((step, move) => {
+		const desc = move ?
+			'Move #' + move :
+			'Game start';
+		return (
+			<li key={move}>
+				<a href="#" onClick={() => props.jumpTo(move)}>{desc}</a>
+			</li>
+		);
+	});
+
+	let result, indicator
+	if (props.completed)
+		result = props.result
+
+	indicator = props.color == props.blackNext
+	return (
+		<game>
+			<Board squares={current} onClick={(i) => props.handleClick(i)}/>
+			<Infobox result={result}
+					 indicator={indicator}
+					 moves={moves}
+					 moveNum={props.move}
+					 jumpTo={(m) => props.jumpTo(m)}
+					 resignConfirmation={props.resignConfirmation}
+					 p1={props.p1}
+					 p2={props.p2}
+					 pass={() => props.pass()}
+					 takeback={() => props.offer_takeback()}
+					 draw={() => props.offer_draw()}
+					 resign={() => props.resign()}
+			/>
+		</game>
+	);
+}
+
+function Infobox(props) {
+	//temporary
+	let p1indicator, p2indicator
+	if (!props.result) {
+		if (props.indicator) {
+			p1indicator = <span className="indicator">    &lt;--</span>
+			p2indicator = ''
+		} else {
+			p2indicator = <span className="indicator">    &lt;--</span>
+			p1indicator = ''
+		}
+	} else {
+		p1indicator = p2indicator = ''
+	}
+
+	return (
+		<div id="controlBox">
+			{props.result}
+			<div className="player-name">{props.p2.display_name}{p2indicator}</div>
+			<div id="history-buttons">
+				<control onClick={() => props.jumpTo(1)}> &lt;&lt; </control>
+				<control onClick={() => props.jumpTo(props.moveNum - 1)}> &lt; </control>
+				<control onClick={() => props.jumpTo(props.moveNum + 1)}> &gt; </control>
+				<control onClick={() => props.jumpTo(props.moves.length - 1)}> &gt;&gt; </control>
+			</div>
+			<div id="moveList">
+				<ol>{props.moves}</ol>
+			</div>
+			<div id="history-buttons">
+				<control onClick={() => props.pass()}>Pass</control>
+				<control>Takeback</control>
+				<control>Draw</control>
+				<control
+					onClick={() => props.resign()}>{props.resignConfirmation ? 'Sure?' : 'Resign'}</control>
+			</div>
+			<div className="player-name">{props.p1.display_name}{p1indicator}</div>
+		</div>
+	)
+}
+
+function Board(props) {
+	const squares = props.squares.slice()
+	const pieces = squares.map((s, i) => {
+		return <Square value={s} index={i} key={i} onClick={() => props.onClick(i)}/>
+	})
+	return (
+		<board>
+			{pieces}
+		</board>
+	);
+}
+
+function Square(props) {
+	function calcStyle() {
+		const size = 19;
+		const pixels = 30; //the square width
+		const xmult = props.index % size;
+		const ymult = Math.floor(props.index / size);
+		const position = {transform: `translate(${pixels * xmult + 15}px, ${pixels * ymult + 15}px)`}
+
+		let piece = props.value;
+		if (piece == 'W') {
+			return {
+				...position,
+				backgroundImage: `url('../images/whitedot.png')`
+			}
+		} else if (piece == 'B') {
+			return {
+				...position,
+				backgroundImage: `url('../images/blackdot.png')`
+			}
+		} else {
+			return position;
+		}
+	}
+
+	return (
+		<stone key={props.index} style={calcStyle()}
+			   onClick={() => props.onClick()}>
+		</stone>
+	);
+
 }
 
 class WaitingRoom extends React.Component {
@@ -256,93 +333,5 @@ class WaitingRoom extends React.Component {
 			</game>
 		)
 			;
-	}
-}
-class Infobox extends React.Component {
-	render() {
-		//temporary
-		let p1indicator, p2indicator
-		if (!this.props.result) {
-			if (this.props.indicator) {
-				p1indicator = <span className="indicator">    &lt;--</span>
-				p2indicator = ''
-			} else {
-				p2indicator = <span className="indicator">    &lt;--</span>
-				p1indicator = ''
-			}
-		} else {
-			p1indicator = p2indicator = ''
-		}
-		return (
-			<div id="controlBox">
-				{this.props.result}
-				<div className="player-name">{this.props.p2.display_name}{p2indicator}</div>
-				<div id="history-buttons">
-					<control onClick={() => this.props.jumpTo(1)}> &lt;&lt; </control>
-					<control onClick={() => this.props.jumpTo(this.props.moveNum - 1)}> &lt; </control>
-					<control onClick={() => this.props.jumpTo(this.props.moveNum + 1)}> &gt; </control>
-					<control onClick={() => this.props.jumpTo(this.props.moves.length - 1)}> &gt;&gt; </control>
-				</div>
-				<div id="moveList">
-					<ol>{this.props.moves}</ol>
-				</div>
-				<div id="history-buttons">
-					<control onClick={() => this.props.pass()}>Pass</control>
-					<control>Takeback</control>
-					<control>Draw</control>
-					<control
-						onClick={() => this.props.resign()}>{this.props.resignConfirmation ? 'Sure?' : 'Resign'}</control>
-				</div>
-				<div className="player-name">{this.props.p1.display_name}{p1indicator}</div>
-			</div>
-		)
-	}
-}
-
-class Board extends React.Component {
-	render() {
-		const squares = this.props.squares.slice()
-		const pieces = squares.map((s, i) => {
-			return <Square value={s} index={i} key={i} onClick={() => this.props.onClick(i)}/>
-		})
-		return (
-			<board>
-				{pieces}
-			</board>
-		);
-	}
-}
-
-class Square extends React.Component {
-	calcStyle() {
-		const size = 19;
-		const pixels = 30; //the square width
-		const xmult = this.props.index % size;
-		const ymult = Math.floor(this.props.index / size);
-		const position = {transform: `translate(${pixels * xmult + 15}px, ${pixels * ymult + 15}px)`}
-
-		let piece = this.props.value;
-		if (piece == 'W') {
-			return {
-				...position,
-				backgroundImage: `url('../images/whitedot.png')`
-			}
-		} else if (piece == 'B') {
-			return {
-				...position,
-				backgroundImage: `url('../images/blackdot.png')`
-			}
-		} else {
-			return position;
-		}
-	}
-
-	render() {
-		return (
-			<stone key={this.props.index} style={this.calcStyle()}
-				   onClick={() => this.props.onClick()}>
-
-			</stone>
-		);
 	}
 }
