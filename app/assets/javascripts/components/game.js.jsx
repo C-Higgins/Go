@@ -223,18 +223,40 @@ class Game extends React.Component {
 	}
 }
 
-function WaitingRoom(props) {
-	return (
-		<game>
-			<div id="private-game-wait">
-				<input type="text" className="copy-box force-select" value={document.location.href} readOnly/>
-				<button className="copy-button"/>
-				<p style={{fontSize: "1.5em"}}>
-					Waiting for other player. You will play with the first person to visit this link.
-				</p>
-			</div>
-		</game>
-	);
+class WaitingRoom extends React.Component {
+	constructor(props) {
+		super(props)
+		this.state = {flash: false}
+		this.copy = this.copy.bind(this)
+	}
+
+	copy() {
+		this.setState({flash: true})
+		document.querySelector('.copy-box').select()
+		document.execCommand('copy')
+		window.getSelection().removeAllRanges()
+		setTimeout(() => {
+			this.setState({flash: false})
+		}, 70)
+	}
+
+	render() {
+		let classes = 'copy-box force-select'
+		if (this.state.flash) classes += ' flash'
+
+		return (
+			<game>
+				<div id="private-game-wait">
+					<input type="text" className={classes} value={document.location.href} readOnly/>
+					<button className="copy-button" onClick={this.copy}/>
+					<p style={{fontSize: "1.5em"}}>
+						Waiting for other player. You will play with the first person to visit this link.
+					</p>
+				</div>
+			</game>
+		)
+			;
+	}
 }
 class Infobox extends React.Component {
 	render() {

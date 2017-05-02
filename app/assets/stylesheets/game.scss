@@ -103,6 +103,10 @@ $boardcolor: #b17e45;
 				text-align: center;
 				padding:    15px;
 				border:     1px dashed #cccccc;
+
+				&.flash {
+					background-color: #f3b563;
+				}
 			}
 			.copy-button {
 				width:            60px;
