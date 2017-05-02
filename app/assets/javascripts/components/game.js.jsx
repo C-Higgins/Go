@@ -15,7 +15,7 @@ class GameRoom extends React.Component {
 	}
 
 	componentDidMount() {
-		App.gameRoom = App.cable.subscriptions.create({channel: "GameroomChannel", room: wrapper.dataset.roomId}, {
+		App.gameRoom = App.cable.subscriptions.create({channel: "GameroomChannel", room: this.props.game.webid}, {
 			connected:    () => {
 				// Called when the subscription is ready for use on the server
 				console.log('connected to room')
