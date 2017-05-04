@@ -1,5 +1,3 @@
-let gv = {};
-
 class Games extends React.Component { //Games is the same variable as 'Games' in the index erb helper
 	constructor(props) {
 		super(props);

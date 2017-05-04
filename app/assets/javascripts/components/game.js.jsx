@@ -10,6 +10,7 @@ class GameRoom extends React.Component {
 			completed:          props.game.completed,
 			result:             props.game.result,
 			resignConfirmation: false,
+			messages:           [],
 		}
 
 	}
@@ -34,8 +35,12 @@ class GameRoom extends React.Component {
 
 	router(data, id) {
 		// Comes in from componentdidmount
-		if (data.message) {
+		if (data.game_over) {
 			this.gameOver(data);
+		} else if (data.chat) {
+			this.setState((prevState) => ({
+				messages: prevState.messages.concat({author: data.author, message: data.message})
+			}))
 		} else if (data.draw_request) {
 			this.receive_draw(data.requester)
 		} else if (data.takeback_request) {
@@ -158,6 +163,14 @@ class GameRoom extends React.Component {
 		});
 	}
 
+	sendChat(message) {
+		App.gameRoom.send({
+			chat:    true,
+			message: message,
+			author:  this.props.me.display_name,
+		})
+	}
+
 	render() {
 		if (!this.state.ready) {
 			return (<WaitingRoom />)
@@ -171,6 +184,8 @@ class GameRoom extends React.Component {
 						  offer_draw={() => this.offer_draw()}
 						  resign={() => this.resign()}
 						  jumpTo={(move) => this.jumpTo(move)}
+						  messages={this.state.messages}
+						  sendChat={(m) => this.sendChat(m)}
 				/>
 			)
 		}
@@ -211,6 +226,9 @@ function Game(props) {
 					 takeback={() => props.offer_takeback()}
 					 draw={() => props.offer_draw()}
 					 resign={() => props.resign()}
+
+					 messages={props.messages}
+					 sendChat={(m) => props.sendChat(m)}
 			/>
 		</game>
 	);
@@ -252,6 +270,7 @@ function Infobox(props) {
 					onClick={() => props.resign()}>{props.resignConfirmation ? 'Sure?' : 'Resign'}</control>
 			</div>
 			<div className="player-name">{props.p1.display_name}{p1indicator}</div>
+			<Chat messages={props.messages} sendChat={(m) => props.sendChat(m)}/>
 		</div>
 	)
 }

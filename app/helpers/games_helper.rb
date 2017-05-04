@@ -79,6 +79,7 @@ module GamesHelper
 			result[:winner].involvements.find_by(game_id: game.id).update_attributes(winner: true)
 			result[:loser].involvements.find_by(game_id: game.id).update_attributes(winner: false)
 		end
+		result.game_over = true
 		GameroomChannel.broadcast_to(game, result)
 	end
 

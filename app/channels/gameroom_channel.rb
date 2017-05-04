@@ -14,9 +14,10 @@ class GameroomChannel < ApplicationCable::Channel
 
 	def receive data # Sender is in self.connection.user
 		@game = Game.find_by(webid: params[:room])
+		return GameroomChannel.broadcast_to(@game, data) if data['chat']
 		return if @game.completed || data.nil?
 		return GameroomChannel.broadcast_to(@game, data) if data['draw_request']
-		return end_game @game, data, self.connection.user if data.keys.any? { |key| ['resign', 'draw', 'abort'].include? key }
+		return end_game @game, data, self.connection.user if data.keys.any? {|key| ['resign', 'draw', 'abort'].include? key}
 
 		new = getNewBoard(@game, data['newMove'])
 		return end_game @game, data if new[:end_of_game]
