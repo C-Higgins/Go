@@ -49,17 +49,18 @@ class GameroomChannel < ApplicationCable::Channel
 		if data['move'] #New move or pass
 			data['move']['color'] = self.connection.user.involvements.where(game_id: @game.id).first.color ? 'B' : 'W'
 			new                   = getNewBoard(@game, data['move'])
+			score                 = territory(@game.history.last)
 
 			if new[:end_of_game]
 				result = end_game(@game, data)
-				GameroomChannel.broadcast_to(game, game_over: result[:message])
+				GameroomChannel.broadcast_to(game, game_over: result[:message], score: score)
 			elsif !new[:board].nil?
 				@game.update_attributes(
 					history: @game.history.push(new[:board]),
 					move:    @game.move+1,
 					ko:      new[:ko]
 				) &&
-					GameroomChannel.broadcast_to(@game, move: [@game.history.last])
+					GameroomChannel.broadcast_to(@game, move: [@game.history.last], score: score)
 			end
 
 		elsif data['draw_request']

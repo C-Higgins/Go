@@ -101,7 +101,7 @@ module GamesHelper
 			when 0
 				{
 					message: result_message('draw'),
-					draw: true,
+					draw:    true,
 					winner:  nil,
 					loser:   nil
 				}
@@ -148,7 +148,7 @@ module GamesHelper
 		captured    = []
 		targetColor = opposite_of(board[square])
 		deathBoard  = Array.new(board)
-		getDirections(board, square).each_value { |d| captured.concat getDeadGroup(deathBoard, d, targetColor) }
+		getDirections(board, square).each_value {|d| captured.concat getDeadGroup(deathBoard, d, targetColor)}
 		return captured
 	end
 
@@ -170,7 +170,7 @@ module GamesHelper
 			dirs     = getDirections(board, n)
 			# If there is an empty square adjacent, group is not dead
 			return [] if board.values_at(*dirs.values).include? ''
-			dirs.each_value { |dir| queue.push(dir) if board[dir]==target }
+			dirs.each_value {|dir| queue.push(dir) if board[dir]==target}
 		end
 		return dead
 	end
@@ -178,21 +178,45 @@ module GamesHelper
 	def clearStones board, deaths
 		return board if deaths.empty?
 		newBoard = Array.new(board)
-		deaths.each { |i| newBoard[i] = '' }
+		deaths.each {|i| newBoard[i] = ''}
 		return newBoard
 	end
 
+	# @return {white: int, black:int}
+	def territory(board)
+		target      = ''
+		replacement = '!'
+		board       = Array.new(board)
+		square      = board.index(target)
+		until square.nil?
+			queue = [square]
+			hits  = []
+			until queue.empty? do
+				n        = queue.shift
+				board[n] = replacement
+				dirs     = getDirections(board, n)
+				# If it hits two, group is neutral
+				hits     |= board.values_at(*dirs.values)
+				dirs.each_value {|dir| queue |= [dir] if board[dir]==target}
+			end
+			square = board.index(target)
+			board.map! {|c| c==replacement ? c=hits.first : c} unless hits.keep_if {|ascii| ascii > '!'}.size > 1
+		end
+		return {white: board.count('W'), black: board.count('B')}
+	end
 
 	# @return hash of form {direction: index}
 	# if OOB return same index
-	def getDirections board, index
+	def getDirections board, index, filter=nil
 		dimensions = Math.sqrt(board.size) #19
-		return {
+		directions = {
 			left:  index % dimensions != 0 ? index - 1 : index,
 			right: (index + 1) % dimensions != 0 ? index + 1 : index,
 			up:    index >= dimensions ? index-dimensions : index,
 			down:  index < dimensions * (dimensions - 1) ? index + dimensions : index
 		}
+		return directions unless filter
+		return directions[filter]
 	end
 
 	def opposite_of color

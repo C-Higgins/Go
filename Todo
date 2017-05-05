@@ -1,5 +1,4 @@
 - Implement scoring
-- Chat
 - Takeback
 - Abort before game start
 - Refactor history send/receive nonsense
