@@ -41,6 +41,7 @@ class GameroomChannel < ApplicationCable::Channel
 				message: data['chat'],
 				author:  self.connection.user.display_name
 			}
+			@game.update_attributes(messages: @game.messages.push(res))
 			return GameroomChannel.broadcast_to(@game, chat: res)
 		end
 		return if @game.completed || data.nil?

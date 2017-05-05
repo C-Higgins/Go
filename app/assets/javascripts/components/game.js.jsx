@@ -10,7 +10,7 @@ class GameRoom extends React.Component {
 			completed:          props.game.completed,
 			result:             props.game.result,
 			resignConfirmation: false,
-			messages:           [],
+			messages:           props.game.messages,
 		}
 
 	}

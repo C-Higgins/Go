@@ -4,6 +4,7 @@ class Game < ApplicationRecord
 
 	before_create :randomize_id
 	serialize :history, JSON
+	serialize :messages, JSON
 
 	#validates :webid, presence: true, uniqueness: true
 

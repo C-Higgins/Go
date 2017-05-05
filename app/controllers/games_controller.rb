@@ -21,8 +21,9 @@ class GamesController < ApplicationController
 	def create
 		pending_games(@current_user).destroy_all #Remove old pending games
 		params[:game][:timer] = params[:game][:timer].to_i*60 #minutes to seconds
-		@game = current_user.games.build(params.require(:game).permit(:timer, :inc, :private))
-		@game.history = [Array.new(361).fill('')]
+		@game                 = current_user.games.build(params.require(:game).permit(:timer, :inc, :private))
+		@game.history         = [Array.new(361).fill('')]
+		@game.messages        = []
 		case params[:color]
 			when 'white'
 				current_user.involvements.last.update(color: false)

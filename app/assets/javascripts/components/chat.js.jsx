@@ -19,10 +19,15 @@ class Chat extends React.Component {
 		}
 	}
 
+	componentDidMount() {
+		this.messagesDiv.scrollTop = this.messagesDiv.scrollHeight
+	}
+
 
 	checkKey(event) {
 		if (event.keyCode !== 13) return;
 		event.preventDefault();
+		if (event.target.value === '') return;
 		this.setState({textareaValue: ''});
 		this.props.sendChat(event.target.value);
 		console.log(`sending ${event.target.value}`)
