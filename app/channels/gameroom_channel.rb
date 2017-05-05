@@ -12,18 +12,63 @@ class GameroomChannel < ApplicationCable::Channel
 		#start user left game timer
 	end
 
-	def receive data # Sender is in self.connection.user
-		@game = Game.find_by(webid: params[:room])
-		return GameroomChannel.broadcast_to(@game, data) if data['chat']
-		return if @game.completed || data.nil?
-		return GameroomChannel.broadcast_to(@game, data) if data['draw_request']
-		return end_game @game, data, self.connection.user if data.keys.any? {|key| ['resign', 'draw', 'abort'].include? key}
+	def receive data # the sender is in self.connection.user
+		# Send:
+		#  game_over: string
+		#  chat: {
+		#  message: string
+		#  author: string
+		#  }
+		#  friend_joined: <Player>
+		#  move: string[]
+		#  drawr:
+		#  taker:
+		#
+		# Receive:
+		#  move: {
+		#  pass: bool
+		#  index: int
+		#  }
+		#  chat: string
+		#  resign: bool
+		#  offerd: bool
+		#  offert: bool
 
-		new = getNewBoard(@game, data['newMove'])
-		return end_game @game, data if new[:end_of_game]
-		unless new[:board].nil?
-			@game.update_attributes(history: @game.history.push(new[:board]), move: @game.move+1, ko: new[:ko])
-			GameroomChannel.broadcast_to(@game, move: [@game.history.last]) if @game.save
+		@game = Game.find_by(webid: params[:room])
+
+		if data['chat']
+			res = {
+				message: data['chat'],
+				author:  self.connection.user.display_name
+			}
+			return GameroomChannel.broadcast_to(@game, chat: res)
+		end
+		return if @game.completed || data.nil?
+
+		if data['move'] #New move or pass
+			data['move']['color'] = self.connection.user.involvements.where(game_id: @game.id).first.color ? 'B' : 'W'
+			new                   = getNewBoard(@game, data['move'])
+
+			if new[:end_of_game]
+				result = end_game(@game, data)
+				GameroomChannel.broadcast_to(game, game_over: result[:message])
+			elsif !new[:board].nil?
+				@game.update_attributes(
+					history: @game.history.push(new[:board]),
+					move:    @game.move+1,
+					ko:      new[:ko]
+				) &&
+					GameroomChannel.broadcast_to(@game, move: [@game.history.last])
+			end
+
+		elsif data['draw_request']
+
+
+		elsif data['takeback_request']
+
+		elsif data.keys.any? {|key| ['resign', 'draw', 'abort'].include? key}
+			result = end_game(@game, data, self.connection.user)
+			GameroomChannel.broadcast_to(@game, game_over: result[:message])
 		end
 	end
 end

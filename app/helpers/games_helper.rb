@@ -53,7 +53,7 @@ module GamesHelper
 	def end_game game, data, sender=nil
 		type = data.keys.last
 		case type
-			when 'newMove' #Game ended naturally
+			when 'move' #Game ended naturally
 				result = calc_winner @game
 			when 'resign'
 				loser_color = sender.involvements.find_by(game_id: game.id).color
@@ -79,8 +79,8 @@ module GamesHelper
 			result[:winner].involvements.find_by(game_id: game.id).update_attributes(winner: true)
 			result[:loser].involvements.find_by(game_id: game.id).update_attributes(winner: false)
 		end
-		result.game_over = true
-		GameroomChannel.broadcast_to(game, result)
+		return result
+
 	end
 
 
