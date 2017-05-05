@@ -9,7 +9,7 @@ class WaitingChannel < ApplicationCable::Channel
 	#
 	def unsubscribed
 		leaver = Player.find_by(id: params[:user])
-		pending_games(leaver).destroy_all
+		pending_games(leaver).where(private: false).destroy_all
 		refresh_games_list!
 		# Any cleanup needed when channel is unsubscribed
 	end

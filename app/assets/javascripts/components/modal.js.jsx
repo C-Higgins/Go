@@ -72,7 +72,7 @@ class Modal extends React.Component {
 		return (
 			<div id='modal'>
 				<div id='modalContainer'>
-					<span id="modal-close" onClick={() => this.props.close_modal(this.props.type)}>
+					<span id="modal-close" onClick={() => this.props.close_modal()}>
 						X
 					</span>
 					<div id="modalBody">
@@ -84,6 +84,7 @@ class Modal extends React.Component {
 							  method="post">
 							<input name="utf8" type="hidden" value="✓"/>
 							<input type='hidden' name='authenticity_token' value={this.props.authenticity_token}/>
+							<input type='hidden' name='game[private]' value={this.props.private}/>
 
 							<input step="1" defaultValue="10" className="rangeslider-minutes" min="1" max="120"
 								   type="range"

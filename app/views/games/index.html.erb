@@ -12,13 +12,19 @@
 				  }, {
 					  text:     'Play with Friend',
 					  selected: false,
-					  disabled: true
+					  disabled: false
 				  }, {
 					  text:     'Play against Computer',
 					  selected: false,
 					  disabled: true
 				  }
 				 ],
-	show_modal:  params[:modal] ? params[:modal].to_i : nil,
+	modal:       params[:modal] ? params[:modal].to_i : -1, #modal type (integer)
+	modals:      {
+		none:     -1,
+		create:   0,
+		private:  1,
+		computer: 2
+	},
 	auth:        form_authenticity_token
-} %>
+}, {prerender: true} %>
