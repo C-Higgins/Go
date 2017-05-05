@@ -43,14 +43,47 @@ $boardcolor: #b17e45;
 		}
 
 		#controlBox {
-
-			$totalHeight: 300px;
+			$totalHeight: 170px;
 			$buttonHeight: 20px;
 			$spanHeight: 20px;
 			$width: 249px;
 			width:    $width;
 			position: relative;
-			margin:   auto 0 auto 20px;
+			margin:   0 0 0 20px;
+
+			#chat {
+				$chatHeight: 600-$totalHeight - $spanHeight*2 - $buttonHeight - 20px;
+				$inputHeight: 48px;
+				height:     $chatHeight;
+				margin-top: 20px;
+
+				background: white;
+				outline:    1px solid #cccccc;
+
+				.chat-messages {
+					height:        $chatHeight - $inputHeight;
+					overflow-wrap: break-word;
+					overflow:      scroll;
+					padding:       10px;
+
+					p {
+						margin: .3em 0;
+					}
+
+				}
+
+				.chat-input {
+					height:     $inputHeight;
+					position:   absolute;
+					bottom:     0;
+					width:      100%;
+					border:     none;
+					border-top: 1px solid #cccccc;
+					outline:    none;
+					resize:     none;
+					padding:    5px;
+				}
+			}
 
 			.player-name {
 				padding:     5px;
