@@ -57,8 +57,6 @@ class GamesController < ApplicationController
 					refresh_games_list!
 				end
 			end
-
-			# Change this part when anon users implemented
 		end
 		@game
 	end

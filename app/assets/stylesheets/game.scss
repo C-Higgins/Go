@@ -10,6 +10,28 @@ $boardcolor: #b17e45;
 						   not supported by any browser */
 }
 
+i {
+	@mixin circle-icon {
+		content:        '';
+		border-radius:  50%;
+		width:          1em;
+		height:         1em;
+		display:        inline-block;
+		box-shadow:     0 0 1px black;
+		vertical-align: bottom;
+		margin-right:   5px;
+	}
+
+	&.circle-white:before {
+		@include circle-icon;
+		background: white;
+	}
+	&.circle-black:before {
+		@include circle-icon;
+		background: #222222;
+	}
+}
+
 #gamewrapper {
 	margin-top: 50px;
 	game {
@@ -90,6 +112,13 @@ $boardcolor: #b17e45;
 				font-size:   1.3em;
 				font-weight: bold;
 				border:      1px solid #cccccc;
+			}
+			.score {
+				float:       right;
+				font-weight: normal;
+			}
+			.rating {
+				font-weight: normal;
 			}
 
 			#moveList {

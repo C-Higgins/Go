@@ -11,6 +11,7 @@ class GameRoom extends React.Component {
 			result:             props.game.result,
 			resignConfirmation: false,
 			messages:           props.game.messages,
+			score:              props.game.score,
 		}
 
 	}
@@ -61,7 +62,9 @@ class GameRoom extends React.Component {
 				} else if (data.takeback_request) {
 					this.receive_takeback(data.requester)
 				} else if (data.friend_joined) {
-					this.setState({p2: data.friend_joined, ready: true})
+					let p2 = data.friend_joined
+					p2.color = !this.props.p1.color
+					this.setState({p2: p2, ready: true})
 				} else if (data.move) {
 					this.setState({
 						history:   this.state.history.concat(data.move),
@@ -86,7 +89,7 @@ class GameRoom extends React.Component {
 		console.log('handling a click')
 		this.setState({resignConfirmation: false})
 		// Check that it's your turn
-		if ((this.props.color != this.state.blackNext) || this.state.completed) {
+		if ((this.props.color !== this.state.blackNext) || this.state.completed) {
 			return;
 		}
 
@@ -109,7 +112,7 @@ class GameRoom extends React.Component {
 		// -> gameroom_channel#receive
 	}
 
-	pass() {
+	static pass() {
 		App.gameRoom.send({
 			move: {
 				pass: true,
@@ -117,7 +120,7 @@ class GameRoom extends React.Component {
 		})
 	}
 
-	offer_takeback() {
+	static offer_takeback() {
 		App.gameRoom.send({
 			takeback_request: true
 		})
@@ -135,7 +138,7 @@ class GameRoom extends React.Component {
 
 	}
 
-	offer_draw() {
+	static offer_draw() {
 		App.gameRoom.send({
 			draw_request: true
 		})
@@ -172,7 +175,7 @@ class GameRoom extends React.Component {
 		});
 	}
 
-	sendChat(message) {
+	static sendChat(message) {
 		App.gameRoom.send({
 			chat: message
 		})
@@ -214,15 +217,12 @@ function Game(props) {
 		);
 	});
 
-	let result, indicator
-	if (props.completed)
-		result = props.result
 
-	indicator = props.color == props.blackNext
+	const indicator = props.p1.color === props.blackNext
 	return (
 		<game>
 			<Board squares={current} onClick={(i) => props.handleClick(i)}/>
-			<Infobox result={result}
+			<Infobox result={props.result}
 					 indicator={indicator}
 					 moves={moves}
 					 moveNum={props.move}
@@ -244,23 +244,15 @@ function Game(props) {
 
 function Infobox(props) {
 	//temporary
-	let p1indicator, p2indicator
-	if (!props.result) {
-		if (props.indicator) {
-			p1indicator = <span className="indicator">    &lt;--</span>
-			p2indicator = ''
-		} else {
-			p2indicator = <span className="indicator">    &lt;--</span>
-			p1indicator = ''
-		}
-	} else {
-		p1indicator = p2indicator = ''
-	}
+	const indicator = <span className="indicator">    &lt;--</span>
 
 	return (
 		<div id="controlBox">
 			{props.result}
-			<div className="player-name">{props.p2.display_name}{p2indicator}</div>
+			<PlayerInfo
+				player={props.p2}
+				indicator={!props.indicator && !props.result && indicator}
+			/>
 			<div id="history-buttons">
 				<control onClick={() => props.jumpTo(1)}> &lt;&lt; </control>
 				<control onClick={() => props.jumpTo(props.moveNum - 1)}> &lt; </control>
@@ -277,10 +269,30 @@ function Infobox(props) {
 				<control
 					onClick={() => props.resign()}>{props.resignConfirmation ? 'Sure?' : 'Resign'}</control>
 			</div>
-			<div className="player-name">{props.p1.display_name}{p1indicator}</div>
+			<PlayerInfo
+				player={props.p1}
+				indicator={props.indicator && !props.result && indicator}
+				score={props.score}
+			/>
 			<Chat messages={props.messages} sendChat={(m) => props.sendChat(m)}/>
 		</div>
 	)
+
+	function PlayerInfo(props) {
+		return (
+			<div className="player-name">
+				<i className={`circle-${getColor(props.player.color)}`}/>
+				{props.player.display_name}
+				{props.indicator}
+				{props.rating && <span className="rating"> ({props.rating})</span>}
+				{props.score && <span className="score">{props.score}</span>}
+			</div>
+		)
+	}
+
+	function getColor(bool) {
+		return bool ? 'black' : 'white'
+	}
 }
 
 function Board(props) {

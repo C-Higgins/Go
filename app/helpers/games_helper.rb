@@ -27,7 +27,7 @@ module GamesHelper
 		# Can't place a stone in a ko position that only captures one stone
 		# One may not capture just one stone, if that stone was played on the previous move, and that move also captured just one stone.
 		# First check if you just captured anything
-		captured      = getCapturedStones(board, square)
+		captured = getCapturedStones(board, square)
 		if captured.any?
 			if captured.size == 1 # Captured only one stone, so check/set ko
 				if captured[0] == ko # illegal move, trying to capture the ko stone
@@ -58,13 +58,13 @@ module GamesHelper
 			when 'resign'
 				loser_color = sender.involvements.find_by(game_id: game.id).color
 				result      = {
-					message: result_message('resign', !loser_color, loser_color),
+					message: result_message(:resign, !loser_color, loser_color),
 					loser:   sender,
 					winner:  game.players.where.not(id: sender.id).first
 				}
 			when 'draw'
 				result = {
-					message: result_message('draw'),
+					message: result_message(:draw),
 					draw:    true
 				}
 			else
@@ -79,7 +79,7 @@ module GamesHelper
 			result[:winner].involvements.find_by(game_id: game.id).update_attributes(winner: true)
 			result[:loser].involvements.find_by(game_id: game.id).update_attributes(winner: false)
 		end
-		return result
+		return result.slice(:message, :score)
 
 	end
 
@@ -87,29 +87,29 @@ module GamesHelper
 	private
 
 	def calc_winner game
-		board  = Array.new(game.history.last)
-		#filled = fill_territory board       implement this
-		filled = board
-
-		case filled.count('W') <=> filled.count('B')
+		score = territory(game.history.last)
+		case score[:white] <=> score[:black]
 			when 1
 				{
-					message: result_message('score', 'White', 'Black'),
+					message: result_message(:score, 'White'),
 					winner:  game.white_player,
-					loser:   game.black_player
+					loser:   game.black_player,
+					score:   score,
 				}
 			when 0
 				{
-					message: result_message('draw'),
+					message: result_message(:draw),
 					draw:    true,
 					winner:  nil,
-					loser:   nil
+					loser:   nil,
+					score:   score,
 				}
 			when -1
 				{
-					message: result_message('score', 'Black', 'White'),
+					message: result_message(:score, 'Black'),
 					winner:  game.black_player,
-					loser:   game.white_player
+					loser:   game.white_player,
+					score:   score,
 				}
 		end
 	end
@@ -122,19 +122,19 @@ module GamesHelper
 		winner = bool_to_string winner unless winner.is_a? String
 		loser  = bool_to_string loser unless loser.is_a? String
 		case type
-			when 'score'
+			when :score
 				"#{winner} is victorious."
-			when 'resign'
+			when :resign
 				"#{loser} resigned. #{winner} is victorious."
-			when 'time'
+			when :time
 				"#{loser}'s time expired. #{winner} is victorious."
-			when 'draw'
+			when :draw
 				'Draw.'
-			when 'agree'
+			when :agreement
 				"#{loser} agreed to draw."
-			when 'leave'
+			when :leave
 				"#{loser} left the game. #{winner} is victorious."
-			when 'abort'
+			when :abort
 				'Game aborted.'
 			else
 				'Unknown result.'
@@ -197,7 +197,7 @@ module GamesHelper
 				board[n] = replacement
 				dirs     = getDirections(board, n)
 				# If it hits two, group is neutral
-				hits     |= board.values_at(*dirs.values)
+				hits |= board.values_at(*dirs.values)
 				dirs.each_value {|dir| queue |= [dir] if board[dir]==target}
 			end
 			square = board.index(target)

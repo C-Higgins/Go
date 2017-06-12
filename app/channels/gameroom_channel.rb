@@ -14,7 +14,13 @@ class GameroomChannel < ApplicationCable::Channel
 
 	def receive data # the sender is in self.connection.user
 		# Send:
-		#  game_over: string
+		#  game_over: {
+		#  message: string
+		#  score {
+		#  white: int
+		#  black: int
+		# }
+		# }
 		#  chat: {
 		#  message: string
 		#  author: string
@@ -52,8 +58,7 @@ class GameroomChannel < ApplicationCable::Channel
 
 			if new[:end_of_game]
 				result = end_game(@game, data)
-				score  = territory(@game.history.last)
-				GameroomChannel.broadcast_to(game, game_over: result[:message], score: score)
+				GameroomChannel.broadcast_to(game, game_over: result)
 			elsif !new[:board].nil?
 				@game.update_attributes(
 					history: @game.history.push(new[:board]),
@@ -70,7 +75,7 @@ class GameroomChannel < ApplicationCable::Channel
 
 		elsif (data.keys & ['resign', 'draw', 'abort']).any?
 			result = end_game(@game, data, self.connection.user)
-			GameroomChannel.broadcast_to(@game, game_over: result[:message])
+			GameroomChannel.broadcast_to(@game, game_over: result)
 		end
 	end
 end
