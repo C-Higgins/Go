@@ -183,6 +183,7 @@ module GamesHelper
 	end
 
 	# @return {white: int, black:int}
+	# This is temporary. When making real implementation see GNUGo docs, chapters 15 and 17
 	def territory(board)
 		target      = ''
 		replacement = '!'
