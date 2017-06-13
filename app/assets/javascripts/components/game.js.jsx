@@ -5,7 +5,7 @@ class GameRoom extends React.Component {
 			ready:              props.ready,
 			p2:                 props.p2,
 			history:            props.game.history,
-			blackNext:          props.game.history.length % 2 != 0,
+			blackNext:          props.game.history.length % 2 !== 0,
 			move:               props.game.history.length - 1,
 			completed:          props.game.completed,
 			result:             props.game.result,
@@ -81,7 +81,7 @@ class GameRoom extends React.Component {
 		//this.setState({win/loss info})
 		this.setState({
 			completed: true,
-			result:    result,
+			result:    result.message,
 		})
 	}
 
@@ -89,9 +89,7 @@ class GameRoom extends React.Component {
 		console.log('handling a click')
 		this.setState({resignConfirmation: false})
 		// Check that it's your turn
-		if ((this.props.color !== this.state.blackNext) || this.state.completed) {
-			return;
-		}
+		if (!this.isMyTurn()) return
 
 		const history = this.state.history
 		const current = history[history.length - 1]
@@ -99,7 +97,7 @@ class GameRoom extends React.Component {
 
 		if (squares[i])
 			return;
-		this.state.blackNext ? squares[i] = 'B' : squares[i] = 'W'
+		squares[i] = this.state.blackNext
 
 		//set board state here without setting move list
 
@@ -112,7 +110,8 @@ class GameRoom extends React.Component {
 		// -> gameroom_channel#receive
 	}
 
-	static pass() {
+	pass() {
+		if (!this.isMyTurn()) return
 		App.gameRoom.send({
 			move: {
 				pass: true,
@@ -120,7 +119,7 @@ class GameRoom extends React.Component {
 		})
 	}
 
-	static offer_takeback() {
+	offer_takeback() {
 		App.gameRoom.send({
 			takeback_request: true
 		})
@@ -138,7 +137,7 @@ class GameRoom extends React.Component {
 
 	}
 
-	static offer_draw() {
+	offer_draw() {
 		App.gameRoom.send({
 			draw_request: true
 		})
@@ -175,10 +174,14 @@ class GameRoom extends React.Component {
 		});
 	}
 
-	static sendChat(message) {
+	sendChat(message) {
 		App.gameRoom.send({
 			chat: message
 		})
+	}
+
+	isMyTurn() {
+		return ((this.props.color === this.state.blackNext) && !this.props.completed)
 	}
 
 	render() {
@@ -264,8 +267,8 @@ function Infobox(props) {
 			</div>
 			<div id="history-buttons">
 				<control onClick={() => props.pass()}>Pass</control>
-				<control>Takeback</control>
-				<control>Draw</control>
+				<control style={{textDecoration: 'line-through'}}>Takeback</control>
+				<control style={{textDecoration: 'line-through'}}>Draw</control>
 				<control
 					onClick={() => props.resign()}>{props.resignConfirmation ? 'Sure?' : 'Resign'}</control>
 			</div>
@@ -316,12 +319,12 @@ function Square(props) {
 		const position = {transform: `translate(${pixels * xmult + 15}px, ${pixels * ymult + 15}px)`}
 
 		let piece = props.value;
-		if (piece == 'W') {
+		if (piece === false) {
 			return {
 				...position,
 				backgroundImage: `url('../images/whitedot.png')`
 			}
-		} else if (piece == 'B') {
+		} else if (piece === true) {
 			return {
 				...position,
 				backgroundImage: `url('../images/blackdot.png')`

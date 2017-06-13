@@ -53,12 +53,13 @@ class GameroomChannel < ApplicationCable::Channel
 		return if @game.completed || data.nil?
 
 		if data['move'] #New move or pass
-			data['move']['color'] = self.connection.user.involvements.where(game_id: @game.id).first.color ? 'B' : 'W'
+			return if @game.history.length % 2 == data['move']['color'] #not your turn
+			data['move']['color'] = self.connection.user.involvements.where(game_id: @game.id).first.color
 			new                   = getNewBoard(@game, data['move'])
 
 			if new[:end_of_game]
 				result = end_game(@game, data)
-				GameroomChannel.broadcast_to(game, game_over: result)
+				GameroomChannel.broadcast_to(@game, game_over: result)
 			elsif !new[:board].nil?
 				@game.update_attributes(
 					history: @game.history.push(new[:board]),

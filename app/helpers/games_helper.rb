@@ -73,11 +73,11 @@ module GamesHelper
 
 		game.update_attributes(in_progress: false, completed: true, result: result[:message])
 		if result[:draw]
-			game.white_player.involvements.find_by(game_id: game.id).update_attributes(draw: true, winner: false)
-			game.black_player.involvements.find_by(game_id: game.id).update_attributes(draw: true, winner: false)
+			game.white_player.involvements.find_by(game_id: game.id).update_attributes(draw: true, winner: false, score: score[:white])
+			game.black_player.involvements.find_by(game_id: game.id).update_attributes(draw: true, winner: false, score: score[:black])
 		else
-			result[:winner].involvements.find_by(game_id: game.id).update_attributes(winner: true)
-			result[:loser].involvements.find_by(game_id: game.id).update_attributes(winner: false)
+			result[:winner].involvements.find_by(game_id: game.id).update_attributes(winner: true, score: result[:score].values.max)
+			result[:loser].involvements.find_by(game_id: game.id).update_attributes(winner: false, score: result[:score].values.min)
 		end
 		return result.slice(:message, :score)
 
@@ -91,14 +91,14 @@ module GamesHelper
 		case score[:white] <=> score[:black]
 			when 1
 				{
-					message: result_message(:score, 'White'),
+					message: result_message(:score, 'White', 'Black', score),
 					winner:  game.white_player,
 					loser:   game.black_player,
 					score:   score,
 				}
 			when 0
 				{
-					message: result_message(:draw),
+					message: result_message(:draw, nil, nil, score),
 					draw:    true,
 					winner:  nil,
 					loser:   nil,
@@ -106,7 +106,7 @@ module GamesHelper
 				}
 			when -1
 				{
-					message: result_message(:score, 'Black'),
+					message: result_message(:score, 'Black', 'White', score),
 					winner:  game.black_player,
 					loser:   game.white_player,
 					score:   score,
@@ -118,18 +118,18 @@ module GamesHelper
 		bool ? 'Black' : 'White'
 	end
 
-	def result_message type, winner=nil, loser=nil
+	def result_message type, winner=nil, loser=nil, score=nil
 		winner = bool_to_string winner unless winner.is_a? String
 		loser  = bool_to_string loser unless loser.is_a? String
 		case type
 			when :score
-				"#{winner} is victorious."
+				"#{winner} is victorious. Territory count: #{score[winner.downcase.to_sym]} - #{score[loser.downcase.to_sym]}"
 			when :resign
 				"#{loser} resigned. #{winner} is victorious."
 			when :time
 				"#{loser}'s time expired. #{winner} is victorious."
 			when :draw
-				'Draw.'
+				"Draw. Territory count: #{score[winner.downcase.to_sym]} - #{score[loser.downcase.to_sym]}"
 			when :agreement
 				"#{loser} agreed to draw."
 			when :leave
@@ -146,7 +146,7 @@ module GamesHelper
 	# square: index of newest move
 	def getCapturedStones(board, square)
 		captured    = []
-		targetColor = opposite_of(board[square])
+		targetColor = !board[square]
 		deathBoard  = Array.new(board)
 		getDirections(board, square).each_value {|d| captured.concat getDeadGroup(deathBoard, d, targetColor)}
 		return captured
@@ -201,9 +201,9 @@ module GamesHelper
 				dirs.each_value {|dir| queue |= [dir] if board[dir]==target}
 			end
 			square = board.index(target)
-			board.map! {|c| c==replacement ? c=hits.first : c} unless hits.keep_if {|ascii| ascii > '!'}.size > 1
+			board.map! {|c| c==replacement ? c=hits.first : c} unless hits.keep_if {|s| s.in? [true, false]}.size > 1
 		end
-		return {white: board.count('W'), black: board.count('B')}
+		return {white: board.count(false), black: board.count(true)}
 	end
 
 	# @return hash of form {direction: index}
@@ -219,14 +219,6 @@ module GamesHelper
 		return directions unless filter
 		return directions[filter]
 	end
-
-	def opposite_of color
-		return 'W' if color == 'B'
-		return 'B' if color == 'W'
-		return ''
-	end
-
-
 end
 
 #  O O X -
