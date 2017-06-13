@@ -45,9 +45,14 @@ class GameroomChannel < ApplicationCable::Channel
 		@game = Game.find_by(webid: params[:room])
 
 		if data['chat']
+			if self.connection.user.anonymous
+				author = "<#{self.connection.user.involvements.where(game_id: @game.id).first.color ? 'Black' : 'White'}>"
+			else
+				author = self.connection.user.display_name
+			end
 			res = {
 				message: data['chat'],
-				author:  self.connection.user.display_name
+				author:  author
 			}
 			broadcast_chat(res)
 		end
