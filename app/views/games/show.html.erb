@@ -2,25 +2,34 @@
 		'You are spectating. This is not fully implemented and some things may break.'
 	end %>
 
-<div id="gamewrapper" data-room-id="<%= @game.webid %>">
+<div id="gamewrapper">
+	<!-- there must be a better way to do this -->
 	<% inv = current_user.involvements.find_by(game_id: @game.id) %>
 	<% inv.nil? ? color='spec' : color=inv.color %>
+	<% players = @game.players.select(:id, :display_name) %>
 	<%
 		if @game.players[1] == @current_user
-			p1 = @game.players[1]
-			p2 = @game.players[0]
+			p1 = players[1]
+			p2 = players[0]
 		else
-			p1 = @game.players[0]
-			p2 = @game.players[1]
+			p1 = players[0]
+			p2 = players[1]
+		end
+
+		p1j = p1.as_json
+		p1j[:color] = p1.involvements.find_by(game_id: @game.id).color
+		if p2
+			p2j         = p2.as_json
+			p2j[:color] = !p1j[:color]
 		end
 	%>
 
 	<%= react_component 'GameRoom', {
-		game:  @game,
+		game:  @game.attributes.except('created_at', 'updated_at'),
 		ready: @game.players.count > 1,
-		me:    @current_user,
-		p1:    p1,
-		p2:    p2,
+		me:    @current_user.slice('id', 'display_name'),
+		p1:    p1j,
+		p2:    p2j,
 		color: color
 	} %>
 </div>

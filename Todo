@@ -1,12 +1,15 @@
-- Implement scoring
-- Chat
+Features:
 - Takeback
 - Abort before game start
+- Make profile, signup links etc not look shitty
+
+Bugs:
+
+
+Code issues:
 - Refactor history send/receive nonsense
 	- use gem sgf
-
 - index on webid
-
 
 
 Send: move such as 'W122'

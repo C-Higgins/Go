@@ -5,12 +5,13 @@ class GameRoom extends React.Component {
 			ready:              props.ready,
 			p2:                 props.p2,
 			history:            props.game.history,
-			blackNext:          props.game.history.length % 2 != 0,
+			blackNext:          props.game.history.length % 2 !== 0,
 			move:               props.game.history.length - 1,
 			completed:          props.game.completed,
 			result:             props.game.result,
 			resignConfirmation: false,
 			messages:           props.game.messages,
+			score:              props.game.score,
 		}
 
 	}
@@ -54,18 +55,22 @@ class GameRoom extends React.Component {
 					this.gameOver(data.game_over);
 				} else if (data.chat) {
 					this.setState((prevState) => ({
-						messages: prevState.messages.concat({author: data.chat.author, message: data.chat.message})
+						messages: prevState.messages.concat(data.chat)
 					}))
 				} else if (data.draw_request) {
 					this.receive_draw(data.requester)
 				} else if (data.takeback_request) {
 					this.receive_takeback(data.requester)
 				} else if (data.friend_joined) {
-					this.setState({p2: data.friend_joined, ready: true})
+					let p2 = data.friend_joined
+					p2.color = !this.props.p1.color
+					this.setState({p2: p2, ready: true})
 				} else if (data.move) {
+					const newHistory = this.state.history.concat(data.move)
+					const move = newHistory.length - 1
 					this.setState({
-						history:   this.state.history.concat(data.move),
-						move:      this.state.move + 1,
+						history:   newHistory,
+						move:      move,
 						blackNext: !this.state.blackNext
 					})
 				}
@@ -78,7 +83,7 @@ class GameRoom extends React.Component {
 		//this.setState({win/loss info})
 		this.setState({
 			completed: true,
-			result:    result,
+			result:    result.message,
 		})
 	}
 
@@ -86,9 +91,7 @@ class GameRoom extends React.Component {
 		console.log('handling a click')
 		this.setState({resignConfirmation: false})
 		// Check that it's your turn
-		if ((this.props.color != this.state.blackNext) || this.state.completed) {
-			return;
-		}
+		if (!this.isMyTurn()) return
 
 		const history = this.state.history
 		const current = history[history.length - 1]
@@ -96,7 +99,7 @@ class GameRoom extends React.Component {
 
 		if (squares[i])
 			return;
-		this.state.blackNext ? squares[i] = 'B' : squares[i] = 'W'
+		squares[i] = this.state.blackNext
 
 		//set board state here without setting move list
 
@@ -110,6 +113,7 @@ class GameRoom extends React.Component {
 	}
 
 	pass() {
+		if (!this.isMyTurn()) return
 		App.gameRoom.send({
 			move: {
 				pass: true,
@@ -167,8 +171,7 @@ class GameRoom extends React.Component {
 	jumpTo(step) {
 		if ((step >= this.state.history.length) || step < 0) return;
 		this.setState({
-			move:    step,
-			xIsNext: (!(step % 2)),
+			move: step
 		});
 	}
 
@@ -176,6 +179,10 @@ class GameRoom extends React.Component {
 		App.gameRoom.send({
 			chat: message
 		})
+	}
+
+	isMyTurn() {
+		return ((this.props.color === this.state.blackNext) && !this.props.completed)
 	}
 
 	render() {
@@ -214,15 +221,12 @@ function Game(props) {
 		);
 	});
 
-	let result, indicator
-	if (props.completed)
-		result = props.result
 
-	indicator = props.color == props.blackNext
+	const indicator = props.p1.color === props.blackNext
 	return (
 		<game>
 			<Board squares={current} onClick={(i) => props.handleClick(i)}/>
-			<Infobox result={result}
+			<Infobox result={props.result}
 					 indicator={indicator}
 					 moves={moves}
 					 moveNum={props.move}
@@ -242,45 +246,74 @@ function Game(props) {
 	);
 }
 
-function Infobox(props) {
-	//temporary
-	let p1indicator, p2indicator
-	if (!props.result) {
-		if (props.indicator) {
-			p1indicator = <span className="indicator">    &lt;--</span>
-			p2indicator = ''
-		} else {
-			p2indicator = <span className="indicator">    &lt;--</span>
-			p1indicator = ''
-		}
-	} else {
-		p1indicator = p2indicator = ''
+class Infobox extends React.Component {
+
+	constructor(props) {
+		super(props)
 	}
 
+	componentDidUpdate(prevProps) {
+		if (this.props.moves.length > prevProps.moves.length) {
+			this.moveListDiv.scrollTop = this.moveListDiv.scrollHeight
+		}
+	}
+
+	componentDidMount() {
+		this.moveListDiv.scrollTop = this.moveListDiv.scrollHeight
+	}
+
+	render() {
+		//temporary
+		const indicator = <span className="indicator">    &lt;---</span>
+		return (
+			<div id="controlBox">
+				<PlayerInfo
+					player={this.props.p2}
+					indicator={!this.props.indicator && !this.props.result && indicator}
+				/>
+				<div className="control-container">
+					<control onClick={() => this.props.jumpTo(1)}> &lt;&lt; </control>
+					<control onClick={() => this.props.jumpTo(this.props.moveNum - 1)}> &lt; </control>
+					<control onClick={() => this.props.jumpTo(this.props.moveNum + 1)}> &gt; </control>
+					<control onClick={() => this.props.jumpTo(this.props.moves.length - 1)}> &gt;&gt; </control>
+				</div>
+				<div id="moveList" ref={(div => {
+					this.moveListDiv = div
+				})}>
+					<ol>{this.props.moves}</ol>
+				</div>
+				<div className="control-container">
+					<control onClick={() => this.props.pass()}>Pass</control>
+					<control style={{textDecoration: 'line-through'}}>Takeback</control>
+					<control style={{textDecoration: 'line-through'}}>Draw</control>
+					<control
+						onClick={() => this.props.resign()}>{this.props.resignConfirmation ? 'Sure?' : 'Resign'}</control>
+				</div>
+				<PlayerInfo
+					player={this.props.p1}
+					indicator={this.props.indicator && !this.props.result && indicator}
+					score={this.props.score}
+				/>
+				<Chat messages={this.props.messages} sendChat={(m) => this.props.sendChat(m)}/>
+			</div>
+		)
+	}
+}
+
+function PlayerInfo(props) {
 	return (
-		<div id="controlBox">
-			{props.result}
-			<div className="player-name">{props.p2.display_name}{p2indicator}</div>
-			<div id="history-buttons">
-				<control onClick={() => props.jumpTo(1)}> &lt;&lt; </control>
-				<control onClick={() => props.jumpTo(props.moveNum - 1)}> &lt; </control>
-				<control onClick={() => props.jumpTo(props.moveNum + 1)}> &gt; </control>
-				<control onClick={() => props.jumpTo(props.moves.length - 1)}> &gt;&gt; </control>
-			</div>
-			<div id="moveList">
-				<ol>{props.moves}</ol>
-			</div>
-			<div id="history-buttons">
-				<control onClick={() => props.pass()}>Pass</control>
-				<control>Takeback</control>
-				<control>Draw</control>
-				<control
-					onClick={() => props.resign()}>{props.resignConfirmation ? 'Sure?' : 'Resign'}</control>
-			</div>
-			<div className="player-name">{props.p1.display_name}{p1indicator}</div>
-			<Chat messages={props.messages} sendChat={(m) => props.sendChat(m)}/>
+		<div className="player-name">
+			<i className={`circle-${getColor(props.player.color)}`}/>
+			{props.player.display_name}
+			{props.indicator}
+			{props.rating && <span className="rating"> ({props.rating})</span>}
+			{props.score && <span className="score">{props.score}</span>}
 		</div>
 	)
+
+	function getColor(bool) {
+		return bool ? 'black' : 'white'
+	}
 }
 
 function Board(props) {
@@ -304,12 +337,12 @@ function Square(props) {
 		const position = {transform: `translate(${pixels * xmult + 15}px, ${pixels * ymult + 15}px)`}
 
 		let piece = props.value;
-		if (piece == 'W') {
+		if (piece === false) {
 			return {
 				...position,
 				backgroundImage: `url('../images/whitedot.png')`
 			}
-		} else if (piece == 'B') {
+		} else if (piece === true) {
 			return {
 				...position,
 				backgroundImage: `url('../images/blackdot.png')`
