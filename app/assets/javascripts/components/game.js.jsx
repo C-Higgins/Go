@@ -55,7 +55,7 @@ class GameRoom extends React.Component {
 					this.gameOver(data.game_over);
 				} else if (data.chat) {
 					this.setState((prevState) => ({
-						messages: prevState.messages.concat({author: data.chat.author, message: data.chat.message})
+						messages: prevState.messages.concat(data.chat)
 					}))
 				} else if (data.draw_request) {
 					this.receive_draw(data.requester)
@@ -66,9 +66,11 @@ class GameRoom extends React.Component {
 					p2.color = !this.props.p1.color
 					this.setState({p2: p2, ready: true})
 				} else if (data.move) {
+					const newHistory = this.state.history.concat(data.move)
+					const move = newHistory.length - 1
 					this.setState({
-						history:   this.state.history.concat(data.move),
-						move:      this.state.move + 1,
+						history:   newHistory,
+						move:      move,
 						blackNext: !this.state.blackNext
 					})
 				}
@@ -169,8 +171,7 @@ class GameRoom extends React.Component {
 	jumpTo(step) {
 		if ((step >= this.state.history.length) || step < 0) return;
 		this.setState({
-			move:    step,
-			xIsNext: (!(step % 2)),
+			move: step
 		});
 	}
 
@@ -245,53 +246,70 @@ function Game(props) {
 	);
 }
 
-function Infobox(props) {
-	//temporary
-	const indicator = <span className="indicator">    &lt;--</span>
+class Infobox extends React.Component {
 
-	return (
-		<div id="controlBox">
-			{props.result}
-			<PlayerInfo
-				player={props.p2}
-				indicator={!props.indicator && !props.result && indicator}
-			/>
-			<div id="history-buttons">
-				<control onClick={() => props.jumpTo(1)}> &lt;&lt; </control>
-				<control onClick={() => props.jumpTo(props.moveNum - 1)}> &lt; </control>
-				<control onClick={() => props.jumpTo(props.moveNum + 1)}> &gt; </control>
-				<control onClick={() => props.jumpTo(props.moves.length - 1)}> &gt;&gt; </control>
-			</div>
-			<div id="moveList">
-				<ol>{props.moves}</ol>
-			</div>
-			<div id="history-buttons">
-				<control onClick={() => props.pass()}>Pass</control>
-				<control style={{textDecoration: 'line-through'}}>Takeback</control>
-				<control style={{textDecoration: 'line-through'}}>Draw</control>
-				<control
-					onClick={() => props.resign()}>{props.resignConfirmation ? 'Sure?' : 'Resign'}</control>
-			</div>
-			<PlayerInfo
-				player={props.p1}
-				indicator={props.indicator && !props.result && indicator}
-				score={props.score}
-			/>
-			<Chat messages={props.messages} sendChat={(m) => props.sendChat(m)}/>
-		</div>
-	)
+	constructor(props) {
+		super(props)
+	}
 
-	function PlayerInfo(props) {
+	componentDidUpdate(prevProps) {
+		if (this.props.moves.length > prevProps.moves.length) {
+			this.moveListDiv.scrollTop = this.moveListDiv.scrollHeight
+		}
+	}
+
+	componentDidMount() {
+		this.moveListDiv.scrollTop = this.moveListDiv.scrollHeight
+	}
+
+	render() {
+		//temporary
+		const indicator = <span className="indicator">    &lt;---</span>
 		return (
-			<div className="player-name">
-				<i className={`circle-${getColor(props.player.color)}`}/>
-				{props.player.display_name}
-				{props.indicator}
-				{props.rating && <span className="rating"> ({props.rating})</span>}
-				{props.score && <span className="score">{props.score}</span>}
+			<div id="controlBox">
+				<PlayerInfo
+					player={this.props.p2}
+					indicator={!this.props.indicator && !this.props.result && indicator}
+				/>
+				<div className="control-container">
+					<control onClick={() => this.props.jumpTo(1)}> &lt;&lt; </control>
+					<control onClick={() => this.props.jumpTo(this.props.moveNum - 1)}> &lt; </control>
+					<control onClick={() => this.props.jumpTo(this.props.moveNum + 1)}> &gt; </control>
+					<control onClick={() => this.props.jumpTo(this.props.moves.length - 1)}> &gt;&gt; </control>
+				</div>
+				<div id="moveList" ref={(div => {
+					this.moveListDiv = div
+				})}>
+					<ol>{this.props.moves}</ol>
+				</div>
+				<div className="control-container">
+					<control onClick={() => this.props.pass()}>Pass</control>
+					<control style={{textDecoration: 'line-through'}}>Takeback</control>
+					<control style={{textDecoration: 'line-through'}}>Draw</control>
+					<control
+						onClick={() => this.props.resign()}>{this.props.resignConfirmation ? 'Sure?' : 'Resign'}</control>
+				</div>
+				<PlayerInfo
+					player={this.props.p1}
+					indicator={this.props.indicator && !this.props.result && indicator}
+					score={this.props.score}
+				/>
+				<Chat messages={this.props.messages} sendChat={(m) => this.props.sendChat(m)}/>
 			</div>
 		)
 	}
+}
+
+function PlayerInfo(props) {
+	return (
+		<div className="player-name">
+			<i className={`circle-${getColor(props.player.color)}`}/>
+			{props.player.display_name}
+			{props.indicator}
+			{props.rating && <span className="rating"> ({props.rating})</span>}
+			{props.score && <span className="score">{props.score}</span>}
+		</div>
+	)
 
 	function getColor(bool) {
 		return bool ? 'black' : 'white'

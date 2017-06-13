@@ -113,9 +113,8 @@ i {
 				font-weight: bold;
 				border:      1px solid #cccccc;
 			}
-			.score {
-				float:       right;
-				font-weight: normal;
+			.indicator {
+				float: right;
 			}
 			.rating {
 				font-weight: normal;
@@ -133,8 +132,9 @@ i {
 				}
 			}
 
-			#history-buttons {
+			.control-container {
 				height:       $buttonHeight;
+				width:        $width;
 				border:       1px solid #cccccc;
 				border-width: 0 0 0 1px;
 

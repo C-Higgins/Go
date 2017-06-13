@@ -30,12 +30,16 @@ class Chat extends React.Component {
 		if (event.target.value === '') return;
 		this.setState({textareaValue: ''});
 		this.props.sendChat(event.target.value);
-		console.log(`sending ${event.target.value}`)
 	}
 
 	render() {
+		const systemStyle = {fontStyle: 'italic'}
 		const messages = this.props.messages.map((message, i) => {
-			return <p key={i}><strong>{message.author}: </strong>{message.message}</p>
+			return (
+				<p key={i} style={message.system ? systemStyle : null}>
+					{message.author && <strong>{message.author}: </strong>}{message.message}
+				</p>
+			)
 		})
 
 
