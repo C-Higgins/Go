@@ -303,7 +303,7 @@ class Infobox extends React.Component {
 function PlayerInfo(props) {
 	return (
 		<div className="player-name">
-			<i className={`circle-${getColor(props.player.color)}`}/>
+			<i className={`circle-${getColor(props.player.color)}`}>&nbsp;</i>
 			{props.player.display_name}
 			{props.indicator}
 			{props.rating && <span className="rating"> ({props.rating})</span>}
