@@ -1,7 +1,10 @@
 Features:
 - Takeback
 - Abort before game start
-- Make profile, signup links etc not look shitty
+- Make profile page
+- make session errors look not shitty
+- Timer
+- Rating
 
 Bugs:
 
@@ -10,6 +13,7 @@ Code issues:
 - Refactor history send/receive nonsense
 	- use gem sgf
 - index on webid
+- board algorithms are shit
 
 
 Send: move such as 'W122'

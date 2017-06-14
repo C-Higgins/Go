@@ -1,0 +1,62 @@
+i {
+	@mixin circle-icon {
+		content:        '';
+		border-radius:  50%;
+		width:          16px;
+		height:         16px;
+		display:        inline-block;
+		vertical-align: middle;
+	}
+	@mixin circle-icon-large {
+		@include circle-icon;
+		width:  32px;
+		height: 32px;
+	}
+	@mixin circle-icon-half {
+		@include circle-icon-large;
+
+		border-right-color:  white;
+		border-top-color:    white;
+		border-left-color:   #222222;
+		border-bottom-color: #222222;
+		border-style:        solid;
+		border-width:        16px;
+		box-shadow:          0 0 1px black;
+
+		-webkit-transform:   rotate(45deg);
+		-moz-transform:      rotate(45deg);
+		-o-transform:        rotate(45deg);
+		-ms-transform:       rotate(45deg);
+		transform:           rotate(45deg);
+	}
+
+	&.circle {
+		&-white {
+			&:before {
+				@include circle-icon;
+				background: white;
+				box-shadow: 0 0 1px black;
+			}
+			&-large:before {
+				@include circle-icon-large;
+				background: white;
+				box-shadow: 0 0 1px black;
+			}
+		}
+		&-black {
+			&:before {
+				@include circle-icon;
+				background: #222222;
+			}
+			&-large:before {
+				@include circle-icon-large;
+				background: #222222;
+			}
+		}
+		&-half {
+			&-large:before {
+				@include circle-icon-half;
+			}
+		}
+	}
+}

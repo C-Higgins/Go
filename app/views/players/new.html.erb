@@ -1,13 +1,17 @@
-<%= form_for(@player, url: signup_path) do |f| %>
-	<%= render 'shared/error_messages' %>
-	<%= f.label :name, class: 'example', id: 'example2' %>
-	<%= f.text_field :name %>
+<div id="wrapper">
 
-	<%= f.label :password %>
-	<%= f.password_field :password %>
+	<div id="side-header-container">
+		<span id="plug-header">signup</span>
+	</div>
+	<div id="form-container">
+		<%= form_for(@player, url: signup_path) do |f| %>
+			<%= render 'shared/error_messages' %>
 
-	<%= f.label :password_confirmation, "Confirmation" %>
-	<%= f.password_field :password_confirmation %>
+			<%= f.text_field :name, class: 'text-field', placeholder: 'Username' %>
+			<%= f.password_field :password, class: 'text-field', placeholder: 'Password' %>
+			<%= f.password_field :password_confirmation, class: 'text-field', placeholder: 'Confirm Password' %>
 
-	<%= f.submit "Create my account" %>
-<% end -%>
+			<%= f.submit "Go", class: 'submit-button' %>
+		<% end -%>
+	</div>
+</div>

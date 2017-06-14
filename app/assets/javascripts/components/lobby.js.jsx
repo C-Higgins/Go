@@ -59,7 +59,7 @@ class Lobby extends React.Component {
 			/>
 		});
 		return (
-			<div id="lobbywrapper" data-room-id="lobby">
+			<div id="wrapper" data-room-id="lobby">
 				{this.state.modal !== -1 &&
 				<Modal authenticity_token={this.props.auth}
 					   private={this.state.modal == this.props.modals.private}
@@ -108,7 +108,7 @@ class Lobby extends React.Component {
 	};
 
 	lobbySubscribe(user) {
-		let wrapper = document.getElementById('lobbywrapper');
+		let wrapper = document.getElementById('wrapper');
 		if (wrapper) {
 			App.lobby = App.cable.subscriptions.create({channel: 'LobbyChannel', room: 'lobby', user: user}, {
 				connected: () => {

@@ -1,12 +1,14 @@
-<h1>Login</h1>
-<p>Find me in app/views/sessions/new.html.erb</p>
+<div id="wrapper">
 
-<%= form_for(:session, url: login_path) do |f| %>
-	<%= f.label :name %>
-	<%= f.text_field :name %>
+	<div id="side-header-container">
+		<span id="plug-header">login</span>
+	</div>
+	<div id="form-container">
+		<%= form_for(:session, url: login_path) do |f| %>
+			<%= f.text_field :name, placeholder: 'Username', class: 'text-field' %>
+			<%= f.password_field :password, placeholder: 'Password', class: 'text-field' %>
 
-	<%= f.label :password %>
-	<%= f.password_field :password %>
-
-	<%= f.submit "Log in" %>
-<% end %>
+			<%= f.submit "Go", class: 'submit-button' %>
+		<% end %>
+	</div>
+</div>

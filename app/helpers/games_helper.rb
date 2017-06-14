@@ -208,7 +208,7 @@ def territory(board)
 		board.map! do |char|
 			next char unless char == replacement
 			next 'N' if hits.keep_if {|s| s.in? [true, false]}.size > 1
-			next hits.first
+			hits.first
 		end
 	end
 	return {white: board.count(false), black: board.count(true)}

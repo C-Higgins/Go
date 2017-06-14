@@ -6,187 +6,161 @@ $boardcolor: #b17e45;
 	-moz-user-select:      none; /* Firefox */
 	-ms-user-select:       none; /* Internet Explorer/Edge */
 	user-select:           none;
-	/* Non-prefixed version, currently
-						   not supported by any browser */
 }
 
-i {
-	@mixin circle-icon {
-		content:        '';
-		border-radius:  50%;
-		width:          1em;
-		height:         1em;
-		display:        inline-block;
-		box-shadow:     0 0 1px black;
-		vertical-align: bottom;
-		margin-right:   5px;
+game {
+	display:        flex;
+	flex-direction: row;
+
+	board {
+		background:        $boardcolor url('../images/board.png');
+		background-repeat: no-repeat;
+		background-size:   contain;
+		min-width:         600px;
+		min-height:        600px;
+		position:          relative;
+
+		&:hover {
+			cursor: pointer;
+		}
+
+		stone {
+			position:        absolute;
+			z-index:         1;
+			font-size:       20px;
+			width:           $boardpx;
+			height:          $boardpx;
+			line-height:     $boardpx;
+			text-align:      center;
+			background-size: contain;
+
+			@include no-select;
+		}
 	}
 
-	&.circle-white:before {
-		@include circle-icon;
-		background: white;
-	}
-	&.circle-black:before {
-		@include circle-icon;
-		background: #222222;
-	}
-}
+	#controlBox {
+		$totalHeight: 170px;
+		$buttonHeight: 20px;
+		$spanHeight: 20px;
+		$width: 249px;
+		width:    $width;
+		position: relative;
+		margin:   0 0 0 20px;
 
-#gamewrapper {
-	margin-top: 50px;
-	game {
-		display:        flex;
-		flex-direction: row;
+		#chat {
+			$chatHeight: 600-$totalHeight - $spanHeight*2 - $buttonHeight - 20px;
+			$inputHeight: 48px;
+			height:     $chatHeight;
+			margin-top: 20px;
 
-		board {
-			background:        $boardcolor url('../images/board.png');
-			background-repeat: no-repeat;
-			background-size:   contain;
-			min-width:         600px;
-			min-height:        600px;
-			position:          relative;
+			background: white;
+			outline:    1px solid #cccccc;
 
-			&:hover {
-				cursor: pointer;
+			.chat-messages {
+				height:        $chatHeight - $inputHeight;
+				overflow-wrap: break-word;
+				overflow-y:    scroll;
+				padding:       10px;
+
+				p {
+					margin: .3em 0;
+				}
+
 			}
 
-			stone {
-				position:        absolute;
-				z-index:         1;
-				font-size:       20px;
-				width:           $boardpx;
-				height:          $boardpx;
-				line-height:     $boardpx;
-				text-align:      center;
-				background-size: contain;
+			.chat-input {
+				height:     $inputHeight;
+				position:   absolute;
+				bottom:     0;
+				width:      100%;
+				border:     none;
+				border-top: 1px solid #cccccc;
+				outline:    none;
+				resize:     none;
+				padding:    5px;
+			}
+		}
 
+		.player-name {
+			padding:     5px;
+			margin-left: 5px;
+			font-size:   1.333333333em;
+			font-weight: bold;
+			border:      1px solid #cccccc;
+		}
+		.indicator {
+			float: right;
+		}
+		.rating {
+			font-weight: normal;
+		}
+
+		#moveList {
+			padding-top: $spanHeight;
+			overflow-y:  scroll;
+			height:      $totalHeight - $buttonHeight - $spanHeight;
+			border:      1px solid #cccccc;
+
+			ol {
+				-webkit-margin-before: 0px;
+				padding-left:          30px;
+			}
+		}
+
+		.control-container {
+			height:       $buttonHeight;
+			width:        $width;
+			border:       1px solid #cccccc;
+			border-width: 0 0 0 1px;
+
+			control {
+				display:      inline-block;
+				border:       1px solid #cccccc;
+				border-width: 0 1px 0 0;
+				background:   white;
+				width:        ($width - 1)/4;
+				text-align:   center;
+				line-height:  $buttonHeight;
+				cursor:       pointer;
 				@include no-select;
 			}
 		}
+	}
 
-		#controlBox {
-			$totalHeight: 170px;
-			$buttonHeight: 20px;
-			$spanHeight: 20px;
-			$width: 249px;
-			width:    $width;
-			position: relative;
-			margin:   0 0 0 20px;
+	#private-game-wait {
+		padding-top: 150px;
 
-			#chat {
-				$chatHeight: 600-$totalHeight - $spanHeight*2 - $buttonHeight - 20px;
-				$inputHeight: 48px;
-				height:     $chatHeight;
-				margin-top: 20px;
+		margin:      auto;
+		text-align:  center;
 
-				background: white;
-				outline:    1px solid #cccccc;
+		.copy-box {
+			width:      550px;
+			font-size:  2em;
+			color:      #707070;
+			text-align: center;
+			padding:    15px;
+			border:     1px dashed #cccccc;
 
-				.chat-messages {
-					height:        $chatHeight - $inputHeight;
-					overflow-wrap: break-word;
-					overflow:      scroll;
-					padding:       10px;
-
-					p {
-						margin: .3em 0;
-					}
-
-				}
-
-				.chat-input {
-					height:     $inputHeight;
-					position:   absolute;
-					bottom:     0;
-					width:      100%;
-					border:     none;
-					border-top: 1px solid #cccccc;
-					outline:    none;
-					resize:     none;
-					padding:    5px;
-				}
-			}
-
-			.player-name {
-				padding:     5px;
-				font-size:   1.3em;
-				font-weight: bold;
-				border:      1px solid #cccccc;
-			}
-			.indicator {
-				float: right;
-			}
-			.rating {
-				font-weight: normal;
-			}
-
-			#moveList {
-				padding-top: $spanHeight;
-				overflow-y:  scroll;
-				height:      $totalHeight - $buttonHeight - $spanHeight;
-				border:      1px solid #cccccc;
-
-				ol {
-					-webkit-margin-before: 0px;
-					padding-left:          30px;
-				}
-			}
-
-			.control-container {
-				height:       $buttonHeight;
-				width:        $width;
-				border:       1px solid #cccccc;
-				border-width: 0 0 0 1px;
-
-				control {
-					display:      inline-block;
-					border:       1px solid #cccccc;
-					border-width: 0 1px 0 0;
-					background:   white;
-					width:        ($width - 1)/4;
-					text-align:   center;
-					line-height:  $buttonHeight;
-					cursor:       pointer;
-					@include no-select;
-				}
+			&.flash {
+				background-color: #f3b563;
 			}
 		}
+		.copy-button {
+			width:            60px;
+			height:           60px;
+			vertical-align:   top;
+			margin-left:      5px;
 
-		#private-game-wait {
-			padding-top: 150px;
+			background-color: white;
+			border:           1px solid #cccccc;
+			outline:          none;
+			cursor:           pointer;
 
-			margin:      auto;
-			text-align:  center;
-
-			.copy-box {
-				width:      550px;
-				font-size:  2em;
-				color:      #707070;
-				text-align: center;
-				padding:    15px;
-				border:     1px dashed #cccccc;
-
-				&.flash {
-					background-color: #f3b563;
-				}
+			&:hover {
+				background-color: #f3b563;
 			}
-			.copy-button {
-				width:            60px;
-				height:           60px;
-				vertical-align:   top;
-				margin-left:      5px;
-
-				background-color: white;
-				border:           1px solid #cccccc;
-				outline:          none;
-				cursor:           pointer;
-
-				&:hover {
-					background-color: #f3b563;
-				}
-				&:after {
-					content: 'Copy';
-				}
+			&:after {
+				content: 'Copy';
 			}
 		}
 	}

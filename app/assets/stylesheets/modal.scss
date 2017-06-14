@@ -51,23 +51,13 @@
 				right:      0;
 
 				button[type='submit'] {
-					border:     none;
-					background: #cccccc;
+					border:     1px solid #cccccc;
+					background: white;
 					height:     55px;
 					width:      55px;
 					cursor:     pointer;
-
-					&#submit-black {
-						border-radius: 5px 0px 0px 5px;
-						border-right:  1px solid white;
-					}
-					&#submit-white {
-						border-radius: 0px 5px 5px 0px;
-						border-left:   1px solid white;
-					}
-					&#submit-rand {
-
-					}
+					margin:     10px 25px 0 10px;
+					box-shadow: 0px 3px 10px 0px #aaaaaa;
 				}
 			}
 
