@@ -1,7 +1,8 @@
 Features:
 - Takeback
 - Abort before game start
-- Make profile, signup links etc not look shitty
+- Make profile page
+- make session errors look not shitty
 - Timer
 - Rating
 
