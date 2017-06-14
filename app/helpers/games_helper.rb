@@ -205,7 +205,11 @@ def territory(board)
 			dirs.each_value {|dir| queue |= [dir] if board[dir]==target}
 		end
 		square = board.index(target)
-		board.map! {|c| c==replacement ? c=hits.first : c} unless hits.keep_if {|s| s.in? [true, false]}.size > 1
+		board.map! do |char|
+			next char unless char == replacement
+			next 'N' if hits.keep_if {|s| s.in? [true, false]}.size > 1
+			next hits.first
+		end
 	end
 	return {white: board.count(false), black: board.count(true)}
 end
