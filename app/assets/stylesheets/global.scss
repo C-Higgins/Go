@@ -36,3 +36,9 @@ body {
 	-ms-user-select:     all;
 	user-select:         all;
 }
+
+#wrapper {
+	display:         flex;
+	justify-content: center;
+	margin-top:      50px;
+}

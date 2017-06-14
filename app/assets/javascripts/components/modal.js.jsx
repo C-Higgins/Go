@@ -95,9 +95,12 @@ class Modal extends React.Component {
 								   name="game[inc]" id="game_inc"
 							/>
 
-							<button name="color" type="submit" value="black" id="submit-black">Black</button>
-							<button name="color" type="submit" value="rand" id="submit-rand">Rand</button>
-							<button name="color" type="submit" value="white" id="submit-white">White</button>
+							<button name="color" type="submit" value="black" id="submit-black"><i
+								className="circle-black-large"/></button>
+							<button name="color" type="submit" value="rand" id="submit-rand"><i
+								className="circle-half-large"/></button>
+							<button name="color" type="submit" value="white" id="submit-white"><i
+								className="circle-white-large"/></button>
 						</form>
 					</div>
 				</div>

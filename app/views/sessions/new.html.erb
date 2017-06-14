@@ -1,12 +1,16 @@
-<h1>Login</h1>
-<p>Find me in app/views/sessions/new.html.erb</p>
+<div id="wrapper">
 
-<%= form_for(:session, url: login_path) do |f| %>
-	<%= f.label :name %>
-	<%= f.text_field :name %>
+	<div id="shameless-plug">
+		<span id="plug-header">login</span><br/>
+		<span id="plug-body">Chris Higgins<br/><a href="https://github.com/C-Higgins/Go">Github</a></span>
+	</div>
+	<%= form_for(:session, url: login_path) do |f| %>
+		<%= f.label :name %>
+		<%= f.text_field :name %>
 
-	<%= f.label :password %>
-	<%= f.password_field :password %>
+		<%= f.label :password %>
+		<%= f.password_field :password %>
 
-	<%= f.submit "Log in" %>
-<% end %>
+		<%= f.submit "Log in" %>
+	<% end %>
+</div>

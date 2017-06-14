@@ -10,6 +10,7 @@ Code issues:
 - Refactor history send/receive nonsense
 	- use gem sgf
 - index on webid
+- board algorithms are shit
 
 
 Send: move such as 'W122'
