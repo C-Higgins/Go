@@ -1,0 +1,38 @@
+#form-container {
+	margin-top: 60px;
+	width:      100%;
+	text-align: center;
+
+	form {
+		display:        flex;
+		flex-direction: column;
+		margin:         auto;
+		font-size:      1em;
+		width:          40%;
+		min-width:      300px;
+
+		.text-field {
+			height:        3em;
+			outline:       none;
+			margin-bottom: 30px;
+			padding:       0 5px;
+		}
+		.submit-button {
+			outline:          none;
+			border:           1px solid #cccccc;
+			background-color: white;
+			color:            #707070;
+			font-weight:      bold;
+			box-shadow:       0px 3px 10px 0px #aaaaaa;
+			cursor:           pointer;
+
+			width:            100px;
+			padding:          5px 20px;
+			margin-left:      auto;
+			&:hover {
+				background-color: #f3b563;
+				border-color:     #f3b563;
+			}
+		}
+	}
+}

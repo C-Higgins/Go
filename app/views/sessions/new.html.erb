@@ -1,16 +1,14 @@
 <div id="wrapper">
 
-	<div id="shameless-plug">
-		<span id="plug-header">login</span><br/>
-		<span id="plug-body">Chris Higgins<br/><a href="https://github.com/C-Higgins/Go">Github</a></span>
+	<div id="side-header-container">
+		<span id="plug-header">login</span>
 	</div>
-	<%= form_for(:session, url: login_path) do |f| %>
-		<%= f.label :name %>
-		<%= f.text_field :name %>
+	<div id="form-container">
+		<%= form_for(:session, url: login_path) do |f| %>
+			<%= f.text_field :name, placeholder: 'Username', class: 'text-field' %>
+			<%= f.password_field :password, placeholder: 'Password', class: 'text-field' %>
 
-		<%= f.label :password %>
-		<%= f.password_field :password %>
-
-		<%= f.submit "Log in" %>
-	<% end %>
+			<%= f.submit "Go", class: 'submit-button' %>
+		<% end %>
+	</div>
 </div>

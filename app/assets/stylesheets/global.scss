@@ -10,6 +10,7 @@ html {
 *, *:before, *:after {
 	box-sizing: inherit;
 }
+
 body {
 
 	background-image: linear-gradient(to bottom, #d7d7d7 0%, #eeeeee 116px);
@@ -39,6 +40,21 @@ body {
 
 #wrapper {
 	display:         flex;
-	justify-content: center;
+	justify-content: left;
 	margin-top:      50px;
+}
+
+#side-header-container {
+
+	text-align: right;
+	margin:     20px 40px 0 0px;
+	width:      190px;
+	#plug-header {
+		font-family: 'georgia', serif;
+		font-size:   50px;
+	}
+	#plug-body {
+		display:    block;
+		text-align: right;
+	}
 }
