@@ -1,4 +1,4 @@
-<% games = @player.games %>
+<% games = @player.games.where(in_progress: true).or(@player.games.where(completed: true)) %>
 <% invs = @player.involvements %>
 
 
@@ -33,9 +33,9 @@
 			</div>
 		</div>
 		<div id="list-block">
-			<% if @player.games.any? %>
+			<% if games.any? %>
 
-				<% @player.games.reverse_each do |g| %>
+				<% games.reverse_each do |g| %>
 					<a href="<%= game_path g %>">
 						<div class="listing">
 							<%= g.players.first.display_name %> vs <%= g.players.second.display_name %> <br/>
