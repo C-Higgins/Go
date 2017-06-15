@@ -1,15 +1,54 @@
+<% games = @player.games %>
+<% invs = @player.involvements %>
+
+
 <div id="wrapper">
 	<div id="side-header-container">
 		<span id="plug-header"><%= @player.name.downcase %></span>
 	</div>
 	<div id="game-history-container">
-		<% if @player.games.any? %>
+		<div id="header-block">
+			<div id="headings">
+				<span class="heading">Lorem: Ipsum</span>
+				<span class="heading">Dolor: Sit</span>
+				<span class="heading">Amet: Quod</span>
+			</div>
+			<div id="tabs">
+				<div class="tab active">
+					All (<%= games.count %>)
+				</div>
+				<div class="tab">
+					Wins (<%= invs.where(winner: true).count %>)
+				</div>
+				<div class="tab">
+					Losses (<%= invs.where(winner: false).count %>)
+				</div>
+				<div class="tab">
+					Draws (<%= invs.where(draw: true).count %>)
+				</div>
+				<div class="tab">
+					Ongoing (<%= games.where(in_progress: true).count %>)
+				</div>
 
-			<% @player.games.each do |g| %>
-				<li><%= link_to "#{g.players.first.display_name} vs. #{g.players.last.display_name}", g %>
-			<% end -%>
-		<% else %>
-			<li>No games :(</li>
-		<% end %>
+			</div>
+		</div>
+		<div id="list-block">
+			<% if @player.games.any? %>
+
+				<% @player.games.reverse_each do |g| %>
+					<a href="<%= game_path g %>">
+						<div class="listing">
+							<%= g.players.first.display_name %> vs <%= g.players.second.display_name %> <br/>
+							<%= g.result %> <br/>
+							<%= time_ago_in_words(g.created_at).capitalize %> ago
+						</div>
+					</a>
+				<% end -%>
+			<% else %>
+				<div class="listing">No games</div>
+			<% end %>
+		</div>
+
+
 	</div>
 </div>

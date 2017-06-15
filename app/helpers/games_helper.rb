@@ -56,8 +56,8 @@ module GamesHelper
 			when 'move' #Game ended naturally
 				result = calc_winner @game
 				if result[:draw]
-					game.white_player.involvements.find_by(game_id: game.id).update_attributes(draw: true, winner: false, score: result[:score[:white]])
-					game.black_player.involvements.find_by(game_id: game.id).update_attributes(draw: true, winner: false, score: result[:score[:black]])
+					game.white_player.involvements.find_by(game_id: game.id).update_attributes(draw: true, winner: false, score: result[:score][:white])
+					game.black_player.involvements.find_by(game_id: game.id).update_attributes(draw: true, winner: false, score: result[:score][:black])
 				else
 					result[:winner].involvements.find_by(game_id: game.id).update_attributes(winner: true, score: result[:score].values.max)
 					result[:loser].involvements.find_by(game_id: game.id).update_attributes(winner: false, score: result[:score].values.min)

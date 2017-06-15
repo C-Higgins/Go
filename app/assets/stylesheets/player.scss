@@ -1,5 +1,74 @@
 #game-history-container {
-	margin-top: 60px;
+
 	width:      100%;
+	margin:     auto;
+	margin-top: 30px;
 	text-align: center;
+
+	#header-block {
+		background-color: white;
+		height:           150px;
+		position:         relative;
+		border:           1px solid #cccccc;
+
+		#headings {
+			display:         flex;
+			justify-content: space-around;
+			align-items:     center;
+
+			height:          70px;
+
+			.heading {
+				font-size: 24px;
+			}
+		}
+
+		#tabs {
+			display:         flex;
+			justify-content: flex-start;
+			align-items:     flex-end;
+			margin-left:     80px;
+			position:        absolute;
+			bottom:          0;
+			margin-bottom:   -1px;
+		}
+		.tab {
+			height:           25px;
+			background-color: white;
+			width:            80px;
+			border-bottom:    1px solid #cccccc;
+			cursor:           pointer;
+			line-height:      2em;
+			&:hover {
+				background-color: #f3b563;
+			}
+
+			&.active {
+				z-index:             1;
+				background-color:    #dddddd;
+				padding-top:         3px;
+				border-bottom-color: #dddddd;
+				height:              28px;
+				box-shadow:          0 5px 15px rgba(0, 0, 0, .6);
+			}
+		}
+
+	}
+	#list-block {
+		margin:           0 50px;
+		padding:          5px 10px;
+		min-height:       400px;
+		background-color: #dddddd;
+		border:           1px solid #cccccc;
+		border-top:       none;
+		position:         relative;
+		z-index:          2;
+		box-shadow:       0 10px 10px rgba(0, 0, 0, .3);
+		.listing {
+			border:           1px solid #cccccc;
+			background-color: white;
+			height:           120px;
+			margin-bottom:    5px;
+		}
+	}
 }
