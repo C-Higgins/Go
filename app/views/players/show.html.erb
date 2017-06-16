@@ -1,54 +1,22 @@
-<% games = @player.games.where(in_progress: true).or(@player.games.where(completed: true)) %>
 <% invs = @player.involvements %>
+<% games = invs.joins(:game).where(games: {completed: true}) #.or in progress true %>
 
 
-<div id="wrapper">
-	<div id="side-header-container">
-		<span id="plug-header"><%= @player.name.downcase %></span>
-	</div>
-	<div id="game-history-container">
-		<div id="header-block">
-			<div id="headings">
-				<span class="heading"></span>
-				<span class="heading">Header</span>
-				<span class="heading"></span>
-			</div>
-			<div id="tabs">
-				<div class="tab active">
-					All (<%= games.count %>)
-				</div>
-				<div class="tab">
-					Wins (<%= invs.where(winner: true).count %>)
-				</div>
-				<div class="tab">
-					Losses (<%= invs.where(winner: false).count %>)
-				</div>
-				<div class="tab">
-					Draws (<%= invs.where(draw: true).count %>)
-				</div>
-				<div class="tab">
-					Ongoing (<%= games.where(in_progress: true).count %>)
-				</div>
+<%= react_component 'Profile', {
+	playerName: @player.display_name.downcase,
+	games:      games.as_json(
+		include: {
+			game: {
+				only:    [:webid, :history, :created_at, :result, :in_progress, :completed],
+				include: {
+					players: {
+						only: [:display_name]
+					}
+				}
+			},
 
-			</div>
-		</div>
-		<div id="list-block">
-			<% if games.any? %>
+		},
+		only:    [:winner, :draw, :score]
+	)
 
-				<% games.reverse_each do |g| %>
-					<a href="<%= game_path g %>">
-						<div class="listing">
-							<%= g.players.first.display_name %> vs <%= g.players.second.display_name %> <br/>
-							<%= g.result %> <br/>
-							<%= time_ago_in_words(g.created_at).capitalize %> ago
-						</div>
-					</a>
-				<% end -%>
-			<% else %>
-				<div class="listing">No games</div>
-			<% end %>
-		</div>
-
-
-	</div>
-</div>
+} %>
