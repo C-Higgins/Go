@@ -1,9 +1,10 @@
 #game-history-container {
 
-	width:      100%;
-	margin:     auto;
-	margin-top: 30px;
-	text-align: center;
+	width:        100%;
+	margin:       auto;
+	margin-top:   30px;
+	margin-right: 40px;
+	text-align:   center;
 
 	#header-block {
 		background-color: white;
@@ -72,13 +73,21 @@
 			margin-bottom:    5px;
 			position:         relative;
 
+			display:          flex;
+			flex-direction:   row-reverse;
+			justify-content:  flex-end;
+
 			board {
+				display:  grid;
 				height:   $listingHeight - 20px;
 				width:    $listingHeight - 20px;
-				display:  grid;
-				position: absolute;
+				position: relative;
 				left:     10px;
 				top:      10px;
+			}
+
+			.game-info {
+				margin: auto;
 			}
 		}
 	}

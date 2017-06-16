@@ -225,7 +225,7 @@ function Game(props) {
 	const indicator = props.p1.color === props.blackNext
 	return (
 		<game>
-			<Board squares={current} onClick={(i) => props.handleClick(i)} size={600}/>
+			<Board squares={current} gameOver={props.completed} onClick={(i) => props.handleClick(i)} size={600}/>
 			<Infobox result={props.result}
 					 indicator={indicator}
 					 moves={moves}
@@ -319,7 +319,7 @@ function PlayerInfo(props) {
 function Board(props) {
 	const squares = props.squares.slice()
 	const pieces = squares.map((s, i) => {
-		if (s === '' && props.type === 'small')
+		if (s === '' && (props.type === 'small' || props.gameOver))
 			return null
 		return <Square value={s} index={i} key={i} onClick={() => props.onClick(i)} boardSize={props.size}
 		/>

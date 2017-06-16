@@ -20,7 +20,7 @@ class Profile extends React.Component {
 			if (g.winner === false) return losses.push(g)
 		})
 
-
+		let resultColor
 		return (
 			<div id="wrapper">
 				<div id="side-header-container">
@@ -54,12 +54,21 @@ class Profile extends React.Component {
 					</div>
 					<div id="list-block">
 						{this.props.games.reverse().map((g) => {
-							return (<a href={"localhost:3000/g/" + g.game.webid}>
+							if (g.winner === true) {
+								resultColor = 'green'
+							} else if (g.winner === false && g.draw === false) {
+								resultColor = 'red'
+							} else {
+								resultColor = ''
+							}
+
+							return (<a href={"http://localhost:3000/g/" + g.game.webid}>
 									<div className="listing">
-										{g.game.players[0].display_name} vs {g.game.players[1].display_name}
-										<br/>
-										{g.game.result}
-										<br/>
+										<div className="game-info">
+											{g.game.players[0].display_name} vs {g.game.players[1].display_name}
+											<br/>
+											<span style={{color: resultColor}}>{g.game.result}</span>
+										</div>
 										<Board squares={g.game.history[g.game.history.length - 1]}
 											   size={130 /*This is .listing height-20*/}
 											   type="small"
