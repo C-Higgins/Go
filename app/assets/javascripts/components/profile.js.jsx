@@ -9,6 +9,18 @@ class Profile extends React.Component {
 
 
 	render() {
+		let wins = []
+		let losses = []
+		let draws = []
+		let ongoings = []
+		this.props.games.forEach(g => {
+			if (g.game.in_progress === true) ongoings.push(g)
+			if (g.draw === true) return draws.push(g)
+			if (g.winner === true) return wins.push(g)
+			if (g.winner === false) return losses.push(g)
+		})
+
+
 		return (
 			<div id="wrapper">
 				<div id="side-header-container">
@@ -26,29 +38,36 @@ class Profile extends React.Component {
 								All ({this.props.games.length})
 							</div>
 							<div className="tab">
-								Wins ({})
+								Wins ({wins.length})
 							</div>
 							<div className="tab">
-								Losses ({})
+								Losses ({losses.length})
 							</div>
 							<div className="tab">
-								Draws ({})
+								Draws ({draws.length})
 							</div>
 							<div className="tab">
-								Ongoing ({})
+								Ongoing ({ongoings.length})
 							</div>
 
 						</div>
 					</div>
 					<div id="list-block">
-						{/*{this.props.games.forEach((g) => {*/}
-						{/*return (<a href="link">*/}
-						{/*<div className="listing">*/}
-						{/*{g.players[0].display_name} vs {g.players[1].display_name}*/}
-						{/*</div>*/}
-						{/*</a>*/}
-						{/*)*/}
-						{/*})}*/}
+						{this.props.games.reverse().map((g) => {
+							return (<a href={"localhost:3000/g/" + g.game.webid}>
+									<div className="listing">
+										{g.game.players[0].display_name} vs {g.game.players[1].display_name}
+										<br/>
+										{g.game.result}
+										<br/>
+										<Board squares={g.game.history[g.game.history.length - 1]}
+											   size={130 /*This is .listing height-20*/}
+											   type="small"
+										/>
+									</div>
+								</a>
+							)
+						})}
 						<div className="listing">No games</div>
 
 					</div>

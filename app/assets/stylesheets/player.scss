@@ -65,10 +65,21 @@
 		z-index:          2;
 		box-shadow:       0 10px 10px rgba(0, 0, 0, .3);
 		.listing {
+			$listingHeight: 150px; //If you change this, also change board size prop in Player.js.jsx to render correctly
 			border:           1px solid #cccccc;
 			background-color: white;
-			height:           120px;
+			height:           $listingHeight;
 			margin-bottom:    5px;
+			position:         relative;
+
+			board {
+				height:   $listingHeight - 20px;
+				width:    $listingHeight - 20px;
+				display:  grid;
+				position: absolute;
+				left:     10px;
+				top:      10px;
+			}
 		}
 	}
 }
