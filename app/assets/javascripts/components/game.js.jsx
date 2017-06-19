@@ -361,7 +361,11 @@ function Square(props) {
 			height:          pixelString,
 		}
 	} else {
-		stoneStyle = position;
+		stoneStyle = {
+			...position,
+			width:  pixelString,
+			height: pixelString,
+		}
 	}
 
 	return (

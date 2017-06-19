@@ -4,23 +4,52 @@ class Profile extends React.Component {
 		super(props);
 		this.state = {
 			activeTab: 0,
+			table:     {
+				All:      [],
+				Wins:     [],
+				Losses:   [],
+				Draws:    [],
+				Ongoings: [],
+			},
+			gamesList: []
 		};
+	}
+
+	componentDidMount() {
+		let w = []
+		let l = []
+		let d = []
+		let o = []
+		const allGames = this.props.games.reverse()
+		allGames.forEach(g => {
+			if (g.game.in_progress === true) o.push(g)
+			if (g.draw === true) return d.push(g)
+			if (g.winner === true) return w.push(g)
+			if (g.winner === false) return l.push(g)
+		})
+
+		this.setState({table: {All: allGames, Wins: w, Losses: l, Draws: d, Ongoings: o}, gamesList: allGames})
+	}
+
+	changeTab(i) {
+		this.setState({
+			activeTab: i,
+			gamesList: this.state.table[Object.keys(this.state.table)[i]]
+		})
 	}
 
 
 	render() {
-		let wins = []
-		let losses = []
-		let draws = []
-		let ongoings = []
-		this.props.games.forEach(g => {
-			if (g.game.in_progress === true) ongoings.push(g)
-			if (g.draw === true) return draws.push(g)
-			if (g.winner === true) return wins.push(g)
-			if (g.winner === false) return losses.push(g)
+		const TAB_TEXT = Object.keys(this.state.table).map((k) => {
+			return `${k}: (${this.state.table[k].length})`
+		})
+		const tabs = TAB_TEXT.map((s, i) => {
+			const active = i === this.state.activeTab ? 'tab active' : 'tab'
+			return <div className={active} key={i}
+						onClick={() => this.changeTab(i)}>{s}</div>
 		})
 
-		let resultColor
+
 		return (
 			<div id="wrapper">
 				<div id="side-header-container">
@@ -28,62 +57,53 @@ class Profile extends React.Component {
 				</div>
 				<div id="game-history-container">
 					<div id="header-block">
-						<div id="headings">
-							<span className="heading"></span>
-							<span className="heading">Header</span>
-							<span className="heading"></span>
-						</div>
 						<div id="tabs">
-							<div className="tab active">
-								All ({this.props.games.length})
-							</div>
-							<div className="tab">
-								Wins ({wins.length})
-							</div>
-							<div className="tab">
-								Losses ({losses.length})
-							</div>
-							<div className="tab">
-								Draws ({draws.length})
-							</div>
-							<div className="tab">
-								Ongoing ({ongoings.length})
-							</div>
-
+							{tabs}
 						</div>
 					</div>
-					<div id="list-block">
-						{this.props.games.reverse().map((g) => {
-							if (g.winner === true) {
-								resultColor = 'green'
-							} else if (g.winner === false && g.draw === false) {
-								resultColor = 'red'
-							} else {
-								resultColor = ''
-							}
-
-							return (<a href={"http://localhost:3000/g/" + g.game.webid}>
-									<div className="listing">
-										<div className="game-info">
-											{g.game.players[0].display_name} vs {g.game.players[1].display_name}
-											<br/>
-											<span style={{color: resultColor}}>{g.game.result}</span>
-										</div>
-										<Board squares={g.game.history[g.game.history.length - 1]}
-											   size={130 /*This is .listing height-20*/}
-											   type="small"
-										/>
-									</div>
-								</a>
-							)
-						})}
-						<div className="listing">No games</div>
-
-					</div>
+					<GameList games={this.state.gamesList}/>
 
 
 				</div>
 			</div>
 		)
 	}
+}
+
+function GameList(props) {
+	let resultClass;
+	const games = props.games.map((g) => {
+		if (g.winner === true) {
+			resultClass = 'win'
+		} else if (g.winner === false && g.draw !== true) {
+			resultClass = 'loss'
+		} else {
+			resultClass = ''
+		}
+
+		date = (new Date(g.game.created_at)).toDateString()
+
+		return (<a href={"/g/" + g.game.webid} key={g.game.webid}>
+				<div className={'listing ' + resultClass}>
+					<Board squares={g.game.history[g.game.history.length - 1]}
+						   size={130 /*This is .listing height-20*/}
+						   type="small"
+					/>
+					<div className="game-info">
+						<span className="date">{date}</span>
+						<div className="left col-2">{g.game.players[0].display_name}</div>
+						<span className="vs">vs</span>
+						<div className="right col-2">{g.game.players[1].display_name}</div>
+						<div className="bottom"><span>{g.game.result}</span></div>
+
+					</div>
+				</div>
+			</a>
+		)
+	})
+	return (
+		<div id="list-block">
+			{!!games.length ? games : 'None found'}
+		</div>
+	)
 }

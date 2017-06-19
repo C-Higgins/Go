@@ -1,34 +1,21 @@
 #game-history-container {
 
-	width:        100%;
-	margin:       auto;
+	width:        750px;
 	margin-top:   30px;
 	margin-right: 40px;
 	text-align:   center;
 
 	#header-block {
 		background-color: white;
-		height:           150px;
+		height:           40px;
 		position:         relative;
 		border:           1px solid #cccccc;
 
-		#headings {
-			display:         flex;
-			justify-content: space-around;
-			align-items:     center;
-
-			height:          70px;
-
-			.heading {
-				font-size: 24px;
-			}
-		}
-
 		#tabs {
 			display:         flex;
-			justify-content: flex-start;
+			justify-content: center;
 			align-items:     flex-end;
-			margin-left:     80px;
+			margin-left:     40px;
 			position:        absolute;
 			bottom:          0;
 			margin-bottom:   -1px;
@@ -36,7 +23,7 @@
 		.tab {
 			height:           25px;
 			background-color: white;
-			width:            80px;
+			width:            90px;
 			border-bottom:    1px solid #cccccc;
 			cursor:           pointer;
 			line-height:      2em;
@@ -56,12 +43,10 @@
 
 	}
 	#list-block {
-		margin:           0 50px;
+		margin:           0 10px;
 		padding:          5px 10px;
-		min-height:       400px;
+		min-height:       30px;
 		background-color: #dddddd;
-		border:           1px solid #cccccc;
-		border-top:       none;
 		position:         relative;
 		z-index:          2;
 		box-shadow:       0 10px 10px rgba(0, 0, 0, .3);
@@ -74,20 +59,59 @@
 			position:         relative;
 
 			display:          flex;
-			flex-direction:   row-reverse;
-			justify-content:  flex-end;
+			flex-direction:   row;
 
 			board {
-				display:  grid;
-				height:   $listingHeight - 20px;
-				width:    $listingHeight - 20px;
-				position: relative;
-				left:     10px;
-				top:      10px;
+				display: grid;
+				height:  $listingHeight - 20px;
+				width:   $listingHeight - 20px;
+				margin:  10px;
 			}
 
 			.game-info {
-				margin: auto;
+				display:         flex;
+				flex-wrap:       wrap;
+				justify-content: space-around;
+				align-items:     flex-end;
+				position:        relative;
+				width:           100%;
+
+				.col-2 {
+					width:     40%;
+					font-size: 1.5em;
+				}
+				.left {
+					text-align: right;
+				}
+				.right {
+					text-align: left;
+				}
+				.bottom {
+					width: 100%;
+					span {
+						position: relative;
+						bottom:   15px;
+					}
+				}
+				.vs {
+					font-size: 3em;
+					position:  absolute;
+					left:      0;
+					right:     0;
+					top:       30%;
+				}
+
+				.date {
+					position: absolute;
+					top:      10px;
+					right:    10px
+				}
+			}
+			&.win .bottom span {
+				color: green;
+			}
+			&.loss .bottom span {
+				color: red;
 			}
 		}
 	}

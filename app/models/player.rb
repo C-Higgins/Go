@@ -2,7 +2,7 @@ class Player < ApplicationRecord
 	has_many :involvements, inverse_of: :player
 	has_many :games, through: :involvements
 
-	validates :name, presence: true, length: {maximum: 16, minimum: 2},
+	validates :name, presence: true, length: {maximum: 14, minimum: 2},
 			  uniqueness:      {case_sensitive: false}
 	validates :password, presence: true, length: {minimum: 6}, allow_nil: true
 
