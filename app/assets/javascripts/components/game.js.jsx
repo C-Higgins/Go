@@ -225,7 +225,7 @@ function Game(props) {
 	const indicator = props.p1.color === props.blackNext
 	return (
 		<game>
-			<Board squares={current} onClick={(i) => props.handleClick(i)}/>
+			<Board squares={current} gameOver={props.completed} onClick={(i) => props.handleClick(i)} size={600}/>
 			<Infobox result={props.result}
 					 indicator={indicator}
 					 moves={moves}
@@ -319,45 +319,60 @@ function PlayerInfo(props) {
 function Board(props) {
 	const squares = props.squares.slice()
 	const pieces = squares.map((s, i) => {
-		return <Square value={s} index={i} key={i} onClick={() => props.onClick(i)}/>
+		if (s === '' && (props.type === 'small' || props.gameOver))
+			return null
+		return <Square value={s} index={i} key={i} onClick={() => props.onClick(i)} boardSize={props.size}
+		/>
+
 	})
 	return (
-		<board>
+		<board
+			style={{minWidth: `${props.size}px`, minHeight: `${props.size}px`}}>
 			{pieces}
 		</board>
 	);
 }
 
 function Square(props) {
-	function calcStyle() {
-		const size = 19;
-		const pixels = 30; //the square width
-		const xmult = props.index % size;
-		const ymult = Math.floor(props.index / size);
-		const position = {transform: `translate(${pixels * xmult + 15}px, ${pixels * ymult + 15}px)`}
+	const size = 19; //Dimensions
+	const pixels = props.boardSize / 20; //the square width
+	const borderSize = props.boardSize / 40; //Width of board borders
+	const xmult = props.index % size;
+	const ymult = Math.floor(props.index / size);
+	const position = {transform: `translate(${pixels * xmult + borderSize}px, ${pixels * ymult + borderSize}px)`}
+	const piece = props.value;
+	const pixelString = `${pixels}px`;
 
-		let piece = props.value;
-		if (piece === false) {
-			return {
-				...position,
-				backgroundImage: `url('../images/whitedot.png')`
-			}
-		} else if (piece === true) {
-			return {
-				...position,
-				backgroundImage: `url('../images/blackdot.png')`
-			}
-		} else {
-			return position;
+	let stoneStyle
+	if (piece === false) {
+		stoneStyle = {
+			...position,
+			backgroundImage: `url('../images/whitedot.png')`,
+			backgroundSize:  pixelString,
+			width:           pixelString,
+			height:          pixelString,
+		}
+	} else if (piece === true) {
+		stoneStyle = {
+			...position,
+			backgroundImage: `url('../images/blackdot.png')`,
+			backgroundSize:  pixelString,
+			width:           pixelString,
+			height:          pixelString,
+		}
+	} else {
+		stoneStyle = {
+			...position,
+			width:  pixelString,
+			height: pixelString,
 		}
 	}
 
 	return (
-		<stone key={props.index} style={calcStyle()}
+		<stone key={props.index} style={stoneStyle}
 			   onClick={() => props.onClick()}>
 		</stone>
 	);
-
 }
 
 class WaitingRoom extends React.Component {

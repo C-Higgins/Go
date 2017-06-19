@@ -1,15 +1,22 @@
-<div id="wrapper">
-	<div id="side-header-container">
-		<span id="plug-header"><%= @player.name.downcase %></span>
-	</div>
-	<div id="game-history-container">
-		<% if @player.games.any? %>
+<% invs = @player.involvements %>
+<% games = invs.joins(:game).where(games: {completed: true}).or(invs.joins(:game).where(games: {in_progress: true})) %>
 
-			<% @player.games.each do |g| %>
-				<li><%= link_to "#{g.players.first.display_name} vs. #{g.players.last.display_name}", g %>
-			<% end -%>
-		<% else %>
-			<li>No games :(</li>
-		<% end %>
-	</div>
-</div>
+
+<%= react_component 'Profile', {
+	playerName: @player.display_name.downcase,
+	games:      games.as_json(
+		include: {
+			game: {
+				only:    [:webid, :history, :created_at, :result, :in_progress, :completed],
+				include: {
+					players: {
+						only: [:display_name]
+					}
+				}
+			},
+
+		},
+		only:    [:winner, :draw, :score]
+	)
+
+} %>

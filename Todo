@@ -1,7 +1,6 @@
 Features:
 - Takeback
 - Abort before game start
-- Make profile page
 - make session errors look not shitty
 - Timer
 - Rating
@@ -14,6 +13,7 @@ Code issues:
 	- use gem sgf
 - index on webid
 - board algorithms are shit
+- Profile should make api call after mount, not be sent the list initially
 
 
 Send: move such as 'W122'

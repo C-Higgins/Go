@@ -1,5 +1,118 @@
 #game-history-container {
-	margin-top: 60px;
-	width:      100%;
-	text-align: center;
+
+	width:        750px;
+	margin-top:   30px;
+	margin-right: 40px;
+	text-align:   center;
+
+	#header-block {
+		background-color: white;
+		height:           40px;
+		position:         relative;
+		border:           1px solid #cccccc;
+
+		#tabs {
+			display:         flex;
+			justify-content: center;
+			align-items:     flex-end;
+			margin-left:     40px;
+			position:        absolute;
+			bottom:          0;
+			margin-bottom:   -1px;
+		}
+		.tab {
+			height:           25px;
+			background-color: white;
+			width:            90px;
+			border-bottom:    1px solid #cccccc;
+			cursor:           pointer;
+			line-height:      2em;
+			&:hover {
+				background-color: #f3b563;
+			}
+
+			&.active {
+				z-index:             1;
+				background-color:    #dddddd;
+				padding-top:         3px;
+				border-bottom-color: #dddddd;
+				height:              28px;
+				box-shadow:          0 5px 15px rgba(0, 0, 0, .6);
+			}
+		}
+
+	}
+	#list-block {
+		margin:           0 10px;
+		padding:          5px 10px;
+		min-height:       30px;
+		background-color: #dddddd;
+		position:         relative;
+		z-index:          2;
+		box-shadow:       0 10px 10px rgba(0, 0, 0, .3);
+		.listing {
+			$listingHeight: 150px; //If you change this, also change board size prop in Player.js.jsx to render correctly
+			border:           1px solid #cccccc;
+			background-color: white;
+			height:           $listingHeight;
+			margin-bottom:    5px;
+			position:         relative;
+
+			display:          flex;
+			flex-direction:   row;
+
+			board {
+				display: grid;
+				height:  $listingHeight - 20px;
+				width:   $listingHeight - 20px;
+				margin:  10px;
+			}
+
+			.game-info {
+				display:         flex;
+				flex-wrap:       wrap;
+				justify-content: space-around;
+				align-items:     flex-end;
+				position:        relative;
+				width:           100%;
+
+				.col-2 {
+					width:     40%;
+					font-size: 1.5em;
+				}
+				.left {
+					text-align: right;
+				}
+				.right {
+					text-align: left;
+				}
+				.bottom {
+					width: 100%;
+					span {
+						position: relative;
+						bottom:   15px;
+					}
+				}
+				.vs {
+					font-size: 3em;
+					position:  absolute;
+					left:      0;
+					right:     0;
+					top:       30%;
+				}
+
+				.date {
+					position: absolute;
+					top:      10px;
+					right:    10px
+				}
+			}
+			&.win .bottom span {
+				color: green;
+			}
+			&.loss .bottom span {
+				color: red;
+			}
+		}
+	}
 }
