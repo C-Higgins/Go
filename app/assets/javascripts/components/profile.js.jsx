@@ -5,11 +5,11 @@ class Profile extends React.Component {
 		this.state = {
 			activeTab: 0,
 			table:     {
-				All:      [],
-				Wins:     [],
-				Losses:   [],
-				Draws:    [],
-				Ongoings: [],
+				All:     [],
+				Wins:    [],
+				Losses:  [],
+				Draws:   [],
+				Ongoing: [],
 			},
 			gamesList: []
 		};

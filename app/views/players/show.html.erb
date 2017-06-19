@@ -1,5 +1,5 @@
 <% invs = @player.involvements %>
-<% games = invs.joins(:game).where(games: {completed: true}) #.or in progress true %>
+<% games = invs.joins(:game).where(games: {completed: true}).or(invs.joins(:game).where(games: {in_progress: true})) %>
 
 
 <%= react_component 'Profile', {
