@@ -103,7 +103,7 @@ function GameList(props) {
 	})
 	return (
 		<div id="list-block">
-			{!!games.length ? games : 'None found'}
+			{!!games.length ? games : 'No games found. Play some to populate this list'}
 		</div>
 	)
 }
