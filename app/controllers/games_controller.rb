@@ -33,6 +33,7 @@ class GamesController < ApplicationController
 			when 'rand'
 				current_user.involvements.last.update(color: !!rand(2))
 		end
+		current_user.involvements.last.update(timer: params[:game][:timer])
 		@game.save
 		redirect_to @game if @game.private
 		refresh_games_list!
@@ -48,7 +49,7 @@ class GamesController < ApplicationController
 			# Join as player
 			unless current_user.nil? || @game.players.include?(@current_user)
 				@game.players << current_user
-				current_user.involvements.last.update(color: !@game.involvements.first.color)
+				current_user.involvements.last.update(color: !@game.involvements.first.color, timer: @game.timer)
 				@game.update(in_progress: true)
 				@game.save
 				if @game.private

@@ -16,20 +16,16 @@
 			p2 = players[1]
 		end
 
-		p1j = p1.as_json
-		p1j[:color] = p1.involvements.find_by(game_id: @game.id).color
-		if p2
-			p2j         = p2.as_json
-			p2j[:color] = !p1j[:color]
-		end
+		p1j = p1.involvements.find_by(game_id: @game.id)
+		p2j = p2.involvements.find_by(game_id: @game.id) if p2
 	%>
 
 	<%= react_component 'GameRoom', {
 		game:  @game.attributes.except('created_at', 'updated_at'),
 		ready: @game.players.count > 1,
 		me:    @current_user.slice('id', 'display_name'),
-		p1:    p1j,
-		p2:    p2j,
-		color: color
+		p1:    p1j.as_json(include: :player),
+		p2:    p2j.as_json(include: :player),
+		color: color,
 	}, style: 'width:100%' %>
 </div>

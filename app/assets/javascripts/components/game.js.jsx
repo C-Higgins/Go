@@ -62,7 +62,6 @@ class GameRoom extends React.Component {
 					this.receive_takeback(data.requester)
 				} else if (data.friend_joined) {
 					let p2 = data.friend_joined
-					p2.color = !this.props.p1.color
 					this.setState({p2: p2, ready: true})
 				} else if (data.move) {
 					const newHistory = this.state.history.concat(data.move)
@@ -199,6 +198,8 @@ class GameRoom extends React.Component {
 					  jumpTo={(move) => this.jumpTo(move)}
 					  messages={this.state.messages}
 					  sendChat={(m) => this.sendChat(m)}
+					  timer={this.props.game.timer}
+					  inc={this.props.game.inc}
 				/>
 			)
 		}
@@ -231,12 +232,14 @@ function Game(props) {
 					 moveNum={props.move}
 					 jumpTo={(m) => props.jumpTo(m)}
 					 resignConfirmation={props.resignConfirmation}
-					 p1={props.p1}
-					 p2={props.p2}
 					 pass={() => props.pass()}
 					 takeback={() => props.offer_takeback()}
 					 draw={() => props.offer_draw()}
 					 resign={() => props.resign()}
+
+					 p1={props.p1}
+					 p2={props.p2}
+					 inc={props.game.inc}
 
 					 messages={props.messages}
 					 sendChat={(m) => props.sendChat(m)}
@@ -266,7 +269,7 @@ class Infobox extends React.Component {
 		const indicator = <span className="indicator">    &lt;---</span>
 		return (
 			<div id="controlBox">
-				<Timer timeStart={150000}/>
+				<Timer timeStart={this.props.p2.timer} increment={this.props.inc}/>
 				<PlayerInfo
 					player={this.props.p2}
 					indicator={!this.props.indicator && !this.props.result && indicator}
@@ -293,7 +296,7 @@ class Infobox extends React.Component {
 					player={this.props.p1}
 					indicator={this.props.indicator && !this.props.result && indicator}
 				/>
-				<Timer timeStart={15000}/>
+				<Timer timeStart={70000} increment={this.props.inc}/>
 				<Chat messages={this.props.messages} sendChat={(m) => this.props.sendChat(m)}/>
 			</div>
 		)
@@ -304,7 +307,7 @@ function PlayerInfo(props) {
 	return (
 		<div className="player-name">
 			<i className={`circle-${getColor(props.player.color)}`}>&nbsp;</i>
-			{props.player.display_name}
+			{props.player.player.display_name}
 			{props.indicator}
 			{props.rating && <span className="rating"> ({props.rating})</span>}
 		</div>
@@ -321,6 +324,8 @@ class Timer extends React.Component {
 		this.state = {
 			time: props.timeStart,
 		}
+		this.stopTimer = this.stopTimer.bind(this)
+		this.startTimer = this.startTimer.bind(this)
 	}
 
 	componentDidMount() {
@@ -328,6 +333,7 @@ class Timer extends React.Component {
 	}
 
 	startTimer() {
+		clearInterval(this.timerID)
 		this.setState({lastTick: Date.now()})
 		this.timerID = setInterval(() => {
 			this.tick()
@@ -336,6 +342,26 @@ class Timer extends React.Component {
 
 	stopTimer() {
 		clearInterval(this.timerID)
+	}
+
+	static formatTime(ms) {
+		let minutes = Math.floor((ms % 3600000) / 60000)
+		let seconds = (((ms % 360000) % 60000) / 1000)
+
+		if (minutes === 0) {
+			seconds = seconds.toFixed(1)
+		} else {
+			seconds = Math.floor(seconds)
+		}
+		if (minutes < 10) {
+			minutes = `0${minutes}`
+		}
+		if (seconds < 10) {
+			seconds = `0${seconds}`
+		}
+
+		return `${minutes}:${seconds}`
+
 	}
 
 	tick() {
@@ -353,8 +379,7 @@ class Timer extends React.Component {
 
 	render() {
 		return (
-			<div className="timer"><span onClick={() => this.stopTimer()}>Stop</span><span
-				onClick={() => this.startTimer()}>Start</span> {this.state.time}</div>
+			<timer className="timer">{Timer.formatTime(this.state.time)}</timer>
 		)
 	}
 
