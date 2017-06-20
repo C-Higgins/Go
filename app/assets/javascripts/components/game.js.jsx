@@ -11,7 +11,6 @@ class GameRoom extends React.Component {
 			result:             props.game.result,
 			resignConfirmation: false,
 			messages:           props.game.messages,
-			score:              props.game.score,
 		}
 
 	}
@@ -109,7 +108,6 @@ class GameRoom extends React.Component {
 				pass:  false,
 			}
 		})
-		// -> gameroom_channel#receive
 	}
 
 	pass() {
@@ -189,17 +187,18 @@ class GameRoom extends React.Component {
 		if (!this.state.ready) {
 			return (<WaitingRoom />)
 		} else {
-			return (<Game {...this.props}
-						  {...this.state}
-						  p2={this.state.p2}
-						  handleClick={(i) => this.handleClick(i)}
-						  pass={() => this.pass()}
-						  offer_takeback={() => this.offer_takeback()}
-						  offer_draw={() => this.offer_draw()}
-						  resign={() => this.resign()}
-						  jumpTo={(move) => this.jumpTo(move)}
-						  messages={this.state.messages}
-						  sendChat={(m) => this.sendChat(m)}
+			return (
+				<Game {...this.props}
+					  {...this.state}
+					  p2={this.state.p2}
+					  handleClick={(i) => this.handleClick(i)}
+					  pass={() => this.pass()}
+					  offer_takeback={() => this.offer_takeback()}
+					  offer_draw={() => this.offer_draw()}
+					  resign={() => this.resign()}
+					  jumpTo={(move) => this.jumpTo(move)}
+					  messages={this.state.messages}
+					  sendChat={(m) => this.sendChat(m)}
 				/>
 			)
 		}
@@ -267,6 +266,7 @@ class Infobox extends React.Component {
 		const indicator = <span className="indicator">    &lt;---</span>
 		return (
 			<div id="controlBox">
+				<Timer timeStart={150000}/>
 				<PlayerInfo
 					player={this.props.p2}
 					indicator={!this.props.indicator && !this.props.result && indicator}
@@ -292,8 +292,8 @@ class Infobox extends React.Component {
 				<PlayerInfo
 					player={this.props.p1}
 					indicator={this.props.indicator && !this.props.result && indicator}
-					score={this.props.score}
 				/>
+				<Timer timeStart={15000}/>
 				<Chat messages={this.props.messages} sendChat={(m) => this.props.sendChat(m)}/>
 			</div>
 		)
@@ -307,13 +307,57 @@ function PlayerInfo(props) {
 			{props.player.display_name}
 			{props.indicator}
 			{props.rating && <span className="rating"> ({props.rating})</span>}
-			{props.score && <span className="score">{props.score}</span>}
 		</div>
 	)
 
 	function getColor(bool) {
 		return bool ? 'black' : 'white'
 	}
+}
+
+class Timer extends React.Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			time: props.timeStart,
+		}
+	}
+
+	componentDidMount() {
+		this.startTimer()
+	}
+
+	startTimer() {
+		this.setState({lastTick: Date.now()})
+		this.timerID = setInterval(() => {
+			this.tick()
+		}, 100)
+	}
+
+	stopTimer() {
+		clearInterval(this.timerID)
+	}
+
+	tick() {
+		const newTime = this.state.time - (Date.now() - this.state.lastTick)
+		if (newTime > 0) {
+			this.setState({time: newTime, lastTick: Date.now()})
+		} else {
+			this.setState({time: 0, lastTick: Date.now()})
+			return this.stopTimer()
+		}
+
+
+	}
+
+
+	render() {
+		return (
+			<div className="timer"><span onClick={() => this.stopTimer()}>Stop</span><span
+				onClick={() => this.startTimer()}>Start</span> {this.state.time}</div>
+		)
+	}
+
 }
 
 function Board(props) {
