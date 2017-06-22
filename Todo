@@ -2,11 +2,13 @@ Features:
 - Takeback
 - Abort before game start
 - make session errors look not shitty
-- Timer
+- Timer reaching zero behavior
 - Rating
 
 Bugs:
-
+Chat doesn't expand properly when there are no timers
+lobby shows 1000* the minutes and seconds
+timers mess up after resignation
 
 Code issues:
 - Refactor history send/receive nonsense

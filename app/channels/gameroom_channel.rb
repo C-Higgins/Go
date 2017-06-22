@@ -1,6 +1,7 @@
 # Be sure to restart your server when you modify this file. Action Cable runs in a loop that does not support auto reloading.
 class GameroomChannel < ApplicationCable::Channel
 	include GamesHelper
+	include TimeHelper
 
 	def subscribed
 		game = Game.find_by(webid: params[:room])
@@ -41,14 +42,17 @@ class GameroomChannel < ApplicationCable::Channel
 		#  offerd: bool
 		#  offert: bool
 
-
-		@game = Game.find_by(webid: params[:room])
+		sent_at        = Time.now
+		@game          = Game.find_by(webid: params[:room])
+		sender         = self.connection.user
+		senderInv      = sender.involvements.where(game_id: @game.id).first
+		last_move_time = @game.last_move
 
 		if data['chat']
 			if self.connection.user.anonymous
-				author = "<#{self.connection.user.involvements.where(game_id: @game.id).first.color ? 'Black' : 'White'}>"
+				author = "<#{senderInv.color ? 'Black' : 'White'}>"
 			else
-				author = self.connection.user.display_name
+				author = sender.display_name
 			end
 			res = {
 				message: data['chat'],
@@ -59,31 +63,36 @@ class GameroomChannel < ApplicationCable::Channel
 		return if @game.completed || data.nil?
 
 		if data['move'] #New move or pass
-			return if @game.history.length % 2 == data['move']['color'] #not your turn
+			return if @game.history.length % 2 == senderInv.color #not your turn
 			return if @locked #Complete the move before accepting new moves
 			@locked = true
 			if data['move']['pass']
 				sysmsg = {
-					message: "#{self.connection.user.display_name} has passed.",
+					message: "#{sender.display_name} has passed.",
 					author:  nil,
 					system:  true,
 				}
 				broadcast_chat(sysmsg)
 			end
-			data['move']['color'] = self.connection.user.involvements.where(game_id: @game.id).first.color
+			data['move']['color'] = senderInv.color
 			new                   = getNewBoard(@game, data['move'])
-
+			new_time              = get_new_time(last_move_time, sent_at, senderInv.timer, @game.inc)
 			if new[:end_of_game]
 				result = end_game(@game, data)
 				GameroomChannel.broadcast_to(@game, game_over: result)
 				broadcast_chat({message: result[:message], system: true})
 			elsif !new[:board].nil?
 				@game.update_attributes(
-					history: @game.history.push(new[:board]),
-					move:    @game.move+1,
-					ko:      new[:ko]
+					history:   @game.history.push(new[:board]),
+					move:      @game.move+1,
+					ko:        new[:ko],
+					last_move: Time.now,
 				) &&
-					GameroomChannel.broadcast_to(@game, move: [@game.history.last])
+					GameroomChannel.broadcast_to(@game, {
+						move:    [@game.history.last],
+						newTime: new_time
+					})
+				senderInv.update_attributes(timer: new_time)
 				@locked = false
 			end
 
@@ -93,9 +102,10 @@ class GameroomChannel < ApplicationCable::Channel
 		elsif data['takeback_request']
 
 		elsif (data.keys & ['resign', 'draw', 'abort']).any?
-			result = end_game(@game, data, self.connection.user)
+			result = end_game(@game, data, sender)
 			broadcast_chat({message: result[:message], system: true})
 			GameroomChannel.broadcast_to(@game, game_over: result)
+			senderInv.update_attributes(timer: data['time'])
 		end
 	end
 

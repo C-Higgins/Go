@@ -2,15 +2,25 @@ class GameRoom extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			ready:              props.ready,
-			p2:                 props.p2,
-			history:            props.game.history,
-			blackNext:          props.game.history.length % 2 !== 0,
-			move:               props.game.history.length - 1,
+			ready:  props.ready,
+			p1:     props.p1,
+			p2:     props.p2,
+			p1Tick: props.game.in_progress && props.game.history.length > 1 &&
+					props.p1.color === (props.game.history.length % 2 !== 0),
+			p2Tick: props.game.in_progress && props.game.history.length > 1 &&
+					props.p2.color === (props.game.history.length % 2 !== 0),
+
+
+			history:   props.game.history,
+			blackNext: props.game.history.length % 2 !== 0,
+			move:      props.game.history.length - 1,
+			lastMove:  props.game.last_move,
+
 			completed:          props.game.completed,
 			result:             props.game.result,
 			resignConfirmation: false,
-			messages:           props.game.messages,
+
+			messages: props.game.messages,
 		}
 
 	}
@@ -66,22 +76,45 @@ class GameRoom extends React.Component {
 				} else if (data.move) {
 					const newHistory = this.state.history.concat(data.move)
 					const move = newHistory.length - 1
-					this.setState({
-						history:   newHistory,
-						move:      move,
-						blackNext: !this.state.blackNext
+
+					this.setState(ps => {
+						if (ps.blackNext === this.props.p1.color) { //p1 just moved
+							ps.p1.timer = data.newTime
+							ps.p1Tick = false
+							ps.p2Tick = true
+						} else {							//p2 just moved
+							ps.p2.timer = data.newTime
+							ps.p1Tick = true
+							ps.p2Tick = false
+						}
+						ps.blackNext = !ps.blackNext
+						ps.history = newHistory
+						ps.move = move
+						return ps
 					})
 				}
 			}
 		})
+		if (this.props.game.history.length > 1 && !this.props.game.completed) {
+			if (this.state.blackNext === this.state.p1.color) { //p1 just moved
+				let p1 = this.props.p1
+				p1.timer = p1.timer - (Date.now() - new Date(this.state.lastMove))
+				this.setState({p1: p1})
+			} else if (this.state.p2) {							//p2 just moved
+				let p2 = this.props.p2
+				p2.timer = p2.timer - (Date.now() - new Date(this.state.lastMove))
+				this.setState({p2: p2})
+			}
+		}
+
 	}
 
 	gameOver(result) {
-		//timer.stop()
-		//this.setState({win/loss info})
 		this.setState({
 			completed: true,
 			result:    result.message,
+			p1Tick:    false,
+			p2Tick:    false,
 		})
 	}
 
@@ -100,6 +133,7 @@ class GameRoom extends React.Component {
 		squares[i] = this.state.blackNext
 
 		//set board state here without setting move list
+
 
 		App.gameRoom.send({
 			move: {
@@ -157,7 +191,8 @@ class GameRoom extends React.Component {
 	resign() {
 		if (this.state.resignConfirmation) {
 			App.gameRoom.send({
-				resign: true
+				resign: true,
+				time:   this.state.p1.timer - (Date.now() - new Date(this.state.lastMove)), //this is wrong somehow
 			})
 			this.setState({resignConfirmation: false})
 		} else {
@@ -187,19 +222,17 @@ class GameRoom extends React.Component {
 			return (<WaitingRoom />)
 		} else {
 			return (
-				<Game {...this.props}
-					  {...this.state}
-					  p2={this.state.p2}
-					  handleClick={(i) => this.handleClick(i)}
-					  pass={() => this.pass()}
-					  offer_takeback={() => this.offer_takeback()}
-					  offer_draw={() => this.offer_draw()}
-					  resign={() => this.resign()}
-					  jumpTo={(move) => this.jumpTo(move)}
-					  messages={this.state.messages}
-					  sendChat={(m) => this.sendChat(m)}
-					  timer={this.props.game.timer}
-					  inc={this.props.game.inc}
+				<Game
+					{...this.state}
+					game={this.props.game}
+					handleClick={(i) => this.handleClick(i)} //bind these methods in constructor later
+					pass={() => this.pass()}
+					offer_takeback={() => this.offer_takeback()}
+					offer_draw={() => this.offer_draw()}
+					resign={() => this.resign()}
+					jumpTo={(move) => this.jumpTo(move)}
+					messages={this.state.messages}
+					sendChat={(m) => this.sendChat(m)}
 				/>
 			)
 		}
@@ -239,7 +272,8 @@ function Game(props) {
 
 					 p1={props.p1}
 					 p2={props.p2}
-					 inc={props.game.inc}
+					 p1Tick={props.p1Tick}
+					 p2Tick={props.p2Tick}
 
 					 messages={props.messages}
 					 sendChat={(m) => props.sendChat(m)}
@@ -269,22 +303,29 @@ class Infobox extends React.Component {
 		const indicator = <span className="indicator">    &lt;---</span>
 		return (
 			<div id="controlBox">
-				<Timer timeStart={this.props.p2.timer} increment={this.props.inc}/>
+
+				<Timer
+					timeStart={this.props.p2.timer}
+					ticking={this.props.p2Tick}
+				/>
 				<PlayerInfo
 					player={this.props.p2}
 					indicator={!this.props.indicator && !this.props.result && indicator}
 				/>
+
 				<div className="control-container">
 					<control onClick={() => this.props.jumpTo(1)}> &lt;&lt; </control>
 					<control onClick={() => this.props.jumpTo(this.props.moveNum - 1)}> &lt; </control>
 					<control onClick={() => this.props.jumpTo(this.props.moveNum + 1)}> &gt; </control>
 					<control onClick={() => this.props.jumpTo(this.props.moves.length - 1)}> &gt;&gt; </control>
 				</div>
+
 				<div id="moveList" ref={(div => {
 					this.moveListDiv = div
 				})}>
 					<ol>{this.props.moves}</ol>
 				</div>
+
 				<div className="control-container">
 					<control onClick={() => this.props.pass()}>Pass</control>
 					<control style={{textDecoration: 'line-through'}}>Takeback</control>
@@ -292,12 +333,18 @@ class Infobox extends React.Component {
 					<control
 						onClick={() => this.props.resign()}>{this.props.resignConfirmation ? 'Sure?' : 'Resign'}</control>
 				</div>
+
 				<PlayerInfo
 					player={this.props.p1}
 					indicator={this.props.indicator && !this.props.result && indicator}
 				/>
-				<Timer timeStart={70000} increment={this.props.inc}/>
+				<Timer
+					timeStart={this.props.p1.timer}
+					ticking={this.props.p1Tick}
+				/>
+
 				<Chat messages={this.props.messages} sendChat={(m) => this.props.sendChat(m)}/>
+
 			</div>
 		)
 	}
@@ -316,73 +363,6 @@ function PlayerInfo(props) {
 	function getColor(bool) {
 		return bool ? 'black' : 'white'
 	}
-}
-
-class Timer extends React.Component {
-	constructor(props) {
-		super(props)
-		this.state = {
-			time: props.timeStart,
-		}
-		this.stopTimer = this.stopTimer.bind(this)
-		this.startTimer = this.startTimer.bind(this)
-	}
-
-	componentDidMount() {
-		this.startTimer()
-	}
-
-	startTimer() {
-		clearInterval(this.timerID)
-		this.setState({lastTick: Date.now()})
-		this.timerID = setInterval(() => {
-			this.tick()
-		}, 100)
-	}
-
-	stopTimer() {
-		clearInterval(this.timerID)
-	}
-
-	static formatTime(ms) {
-		let minutes = Math.floor((ms % 3600000) / 60000)
-		let seconds = (((ms % 360000) % 60000) / 1000)
-
-		if (minutes === 0) {
-			seconds = seconds.toFixed(1)
-		} else {
-			seconds = Math.floor(seconds)
-		}
-		if (minutes < 10) {
-			minutes = `0${minutes}`
-		}
-		if (seconds < 10) {
-			seconds = `0${seconds}`
-		}
-
-		return `${minutes}:${seconds}`
-
-	}
-
-	tick() {
-		const newTime = this.state.time - (Date.now() - this.state.lastTick)
-		if (newTime > 0) {
-			this.setState({time: newTime, lastTick: Date.now()})
-		} else {
-			this.setState({time: 0, lastTick: Date.now()})
-			return this.stopTimer()
-		}
-
-
-	}
-
-
-	render() {
-		return (
-			<timer className="timer">{Timer.formatTime(this.state.time)}</timer>
-		)
-	}
-
 }
 
 function Board(props) {

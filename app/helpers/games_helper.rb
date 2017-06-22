@@ -51,7 +51,7 @@ module GamesHelper
 	end
 
 	def end_game game, data, sender=nil
-		type = data.keys.last
+		type = (data.keys & ['resign', 'draw', 'abort']).first
 		case type
 			when 'move' #Game ended naturally
 				result = calc_winner @game

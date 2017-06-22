@@ -45,14 +45,24 @@ game {
 		margin:   0 0 0 20px;
 
 		.timer {
-			display:      inline-block;
-			height:       40px;
-			width:        140px;
-			padding-left: 5px;
+			display:             inline-block;
+			height:              40px;
+			width:               140px;
+			padding-left:        5px;
 
-			font:         30px 'Roboto Mono', monospace;
-			background:   white;
-			border:       1px solid #cccccc;
+			font:                30px 'Roboto Mono', monospace;
+			background:          white;
+			border:              1px solid #cccccc;
+			cursor:              default;
+			-webkit-user-select: none;
+			-moz-user-select:    none;
+			-ms-user-select:     none;
+			user-select:         none;
+
+			&.low {
+				background: #b93c3c;
+				color:      white;
+			}
 
 			&:first-of-type {
 				border-bottom: none;

@@ -49,9 +49,8 @@ class GamesController < ApplicationController
 			# Join as player
 			unless current_user.nil? || @game.players.include?(@current_user)
 				@game.players << current_user
-				current_user.involvements.last.update(color: !@game.involvements.first.color, timer: @game.timer)
-				@game.update(in_progress: true)
-				@game.save
+				current_user.involvements.last.update_attributes(color: !@game.involvements.first.color, timer: @game.timer)
+				@game.update_attributes(in_progress: true)
 				if @game.private
 					join(@game, @current_user)
 				else
