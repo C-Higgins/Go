@@ -51,7 +51,7 @@ module GamesHelper
 	end
 
 	def end_game game, data, sender=nil
-		type = (data.keys & ['resign', 'draw', 'abort']).first
+		type = (data.keys & ['resign', 'draw', 'abort', 'time_up']).first
 		case type
 			when 'move' #Game ended naturally
 				result = calc_winner @game
@@ -76,6 +76,15 @@ module GamesHelper
 					message: result_message(:draw),
 					draw:    true
 				}
+			when 'time_up' #someone ran out of time
+				loser  = sender
+				result = {
+					message: result_message(:time, !loser.color, loser.color),
+					loser:   Player.find(sender.player_id),
+					winner:  game.players.where.not(id: sender.id).first
+				}
+				result[:winner].involvements.find_by(game_id: game.id).update_attributes(winner: true)
+				result[:loser].involvements.find_by(game_id: game.id).update_attributes(winner: false)
 			else
 				return
 		end

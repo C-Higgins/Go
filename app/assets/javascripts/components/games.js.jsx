@@ -16,7 +16,7 @@ class Games extends React.Component { //Games is the same variable as 'Games' in
 				<a className={classname} href={link} key={g.webid}>
 					<span className="player">{g.players[0].display_name}</span>
 					<span className="rating">Unranked</span>
-					<span className="time">{`${g.timer / 60}m + ${g.inc}s`}</span>
+					<span className="time">{`${g.timer / 60000}m + ${g.inc / 1000}s`}</span>
 					<span className="mode">19x19</span>
 				</a>
 			)

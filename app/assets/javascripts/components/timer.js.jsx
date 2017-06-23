@@ -3,6 +3,7 @@ class Timer extends React.Component {
 		super(props)
 		this.state = {
 			time: props.timeStart,
+			done: false,
 		}
 		this.stopTimer = this.stopTimer.bind(this)
 		this.startTimer = this.startTimer.bind(this)
@@ -29,6 +30,7 @@ class Timer extends React.Component {
 		if (np.ticking && this.props.ticking && ns.time > this.state.time) {
 			return false
 		}
+		return !this.state.done
 		return true
 	}
 
@@ -49,8 +51,9 @@ class Timer extends React.Component {
 		if (newTime > 0) {
 			this.setState({time: newTime})
 		} else {
-			this.setState({time: 0})
 			this.stopTimer()
+			this.setState({time: 0, done: true})
+			this.props.timeUp()
 		}
 	}
 
@@ -75,7 +78,7 @@ class Timer extends React.Component {
 	}
 
 	render() {
-		const low = this.state.time <= 60000 ? ' low' : ''
+		const low = this.state.time < 60000 ? ' low' : ''
 		return (
 			<timer className={'timer' + low}>{Timer.formatTime(this.state.time)}</timer>
 		)

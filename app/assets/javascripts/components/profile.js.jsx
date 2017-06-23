@@ -81,7 +81,7 @@ function GameList(props) {
 			resultClass = ''
 		}
 
-		date = (new Date(g.game.created_at)).toDateString()
+		date = (new Date(g.game.updated_at)).toDateString()
 
 		return (<a href={"/g/" + g.game.webid} key={g.game.webid}>
 				<div className={'listing ' + resultClass}>

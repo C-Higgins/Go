@@ -95,21 +95,44 @@ class GameRoom extends React.Component {
 				}
 			}
 		})
-		if (this.props.game.history.length > 1 && !this.props.game.completed) {
-			if (this.state.blackNext === this.state.p1.color) { //p1 just moved
+		if (this.state.p1Tick) { //p1 just moved
+			let p1 = this.props.p1
+			p1.timer = p1.timer - (Date.now() - new Date(this.state.lastMove))
+			this.setState({p1: p1})
+		} else if (this.state.p2Tick) {							//p2 just moved
+			let p2 = this.props.p2
+			p2.timer = p2.timer - (Date.now() - new Date(this.state.lastMove))
+			this.setState({p2: p2})
+		}
+
+
+	}
+
+	timeUp(p) {
+		if (p === 1) {
+			var piid = this.state.p1.id
+		} else if (p === 2) {
+			piid = this.state.p2.id
+		}
+
+		App.gameRoom.send({
+			time_up: piid
+		})
+	}
+
+	gameOver(result) {
+		if (result.time) {
+			if (this.state.p1Tick) { //p1 just moved
 				let p1 = this.props.p1
-				p1.timer = p1.timer - (Date.now() - new Date(this.state.lastMove))
+				p1.timer = result.time
 				this.setState({p1: p1})
-			} else if (this.state.p2) {							//p2 just moved
+			} else if (this.state.p2Tick) {							//p2 just moved
 				let p2 = this.props.p2
-				p2.timer = p2.timer - (Date.now() - new Date(this.state.lastMove))
+				p2.timer = result.time
 				this.setState({p2: p2})
 			}
 		}
 
-	}
-
-	gameOver(result) {
 		this.setState({
 			completed: true,
 			result:    result.message,
@@ -192,7 +215,6 @@ class GameRoom extends React.Component {
 		if (this.state.resignConfirmation) {
 			App.gameRoom.send({
 				resign: true,
-				time:   this.state.p1.timer - (Date.now() - new Date(this.state.lastMove)), //this is wrong somehow
 			})
 			this.setState({resignConfirmation: false})
 		} else {
@@ -230,6 +252,7 @@ class GameRoom extends React.Component {
 					offer_takeback={() => this.offer_takeback()}
 					offer_draw={() => this.offer_draw()}
 					resign={() => this.resign()}
+					timeUp={(p) => this.timeUp(p)}
 					jumpTo={(move) => this.jumpTo(move)}
 					messages={this.state.messages}
 					sendChat={(m) => this.sendChat(m)}
@@ -274,6 +297,7 @@ function Game(props) {
 					 p2={props.p2}
 					 p1Tick={props.p1Tick}
 					 p2Tick={props.p2Tick}
+					 timeUp={(p) => props.timeUp(p)}
 
 					 messages={props.messages}
 					 sendChat={(m) => props.sendChat(m)}
@@ -307,6 +331,7 @@ class Infobox extends React.Component {
 				<Timer
 					timeStart={this.props.p2.timer}
 					ticking={this.props.p2Tick}
+					timeUp={() => this.props.timeUp(2)}
 				/>
 				<PlayerInfo
 					player={this.props.p2}
@@ -341,6 +366,7 @@ class Infobox extends React.Component {
 				<Timer
 					timeStart={this.props.p1.timer}
 					ticking={this.props.p1Tick}
+					timeUp={() => this.props.timeUp(1)}
 				/>
 
 				<Chat messages={this.props.messages} sendChat={(m) => this.props.sendChat(m)}/>

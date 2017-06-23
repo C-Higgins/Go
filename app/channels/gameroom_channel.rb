@@ -102,10 +102,22 @@ class GameroomChannel < ApplicationCable::Channel
 		elsif data['takeback_request']
 
 		elsif (data.keys & ['resign', 'draw', 'abort']).any?
-			result = end_game(@game, data, sender)
+			result        = end_game(@game, data, sender)
+			result[:time] = get_new_time(last_move_time, sent_at, senderInv.timer, 0)
 			broadcast_chat({message: result[:message], system: true})
 			GameroomChannel.broadcast_to(@game, game_over: result)
-			senderInv.update_attributes(timer: data['time'])
+			senderInv.update_attributes(timer: result[:time])
+		elsif (data['time_up'])
+			loser = Involvement.find(data['time_up'])
+			return if sender.id != loser.player_id
+			new_time = get_new_time(last_move_time, sent_at, loser.timer, 0)
+			if new_time <= 0
+				result = end_game(@game, data, loser)
+				GameroomChannel.broadcast_to(@game, game_over: result)
+				broadcast_chat({message: result[:message], system: true})
+				loser.update_attributes(timer: 0)
+			end
+			@locked = false
 		end
 	end
 
