@@ -20,7 +20,8 @@ class GamesController < ApplicationController
 
 	def create
 		pending_games(@current_user).destroy_all #Remove old pending games
-		params[:game][:timer] = params[:game][:timer].to_i*60 #minutes to seconds
+		params[:game][:timer] = params[:game][:timer].to_i*60*1000 #minutes to ms
+		params[:game][:inc]   = params[:game][:inc].to_i*1000 #seconds to ms
 		@game                 = current_user.games.build(params.require(:game).permit(:timer, :inc, :private))
 		@game.history         = [Array.new(361).fill('')]
 		@game.messages        = []
@@ -32,6 +33,7 @@ class GamesController < ApplicationController
 			when 'rand'
 				current_user.involvements.last.update(color: !!rand(2))
 		end
+		current_user.involvements.last.update(timer: params[:game][:timer])
 		@game.save
 		redirect_to @game if @game.private
 		refresh_games_list!
@@ -47,9 +49,8 @@ class GamesController < ApplicationController
 			# Join as player
 			unless current_user.nil? || @game.players.include?(@current_user)
 				@game.players << current_user
-				current_user.involvements.last.update(color: !@game.involvements.first.color)
-				@game.update(in_progress: true)
-				@game.save
+				current_user.involvements.last.update_attributes(color: !@game.involvements.first.color, timer: @game.timer)
+				@game.update_attributes(in_progress: true)
 				if @game.private
 					join(@game, @current_user)
 				else

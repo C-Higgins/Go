@@ -69,7 +69,7 @@ class Lobby extends React.Component {
 				}
 				<div id="shameless-plug">
 					<span id="plug-header">rgo</span><br />
-					<span id="plug-body">Chris Higgins<br /><a href="https://github.com/C-Higgins/Go">Github</a></span>
+					<span id="plug-body"><a href="https://github.com/C-Higgins/Go">a Go server</a></span>
 				</div>
 				<div id="gameList">
 					<Games games={this.state.games} me={this.props.game_data.me}/>

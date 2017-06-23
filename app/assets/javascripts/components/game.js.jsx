@@ -2,16 +2,25 @@ class GameRoom extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			ready:              props.ready,
-			p2:                 props.p2,
-			history:            props.game.history,
-			blackNext:          props.game.history.length % 2 !== 0,
-			move:               props.game.history.length - 1,
+			ready:  props.ready,
+			p1:     props.p1,
+			p2:     props.p2,
+			p1Tick: props.game.in_progress && props.game.history.length > 1 &&
+					props.p1.color === (props.game.history.length % 2 !== 0),
+			p2Tick: props.game.in_progress && props.game.history.length > 1 &&
+					props.p2.color === (props.game.history.length % 2 !== 0),
+
+
+			history:   props.game.history,
+			blackNext: props.game.history.length % 2 !== 0,
+			move:      props.game.history.length - 1,
+			lastMove:  props.game.last_move,
+
 			completed:          props.game.completed,
 			result:             props.game.result,
 			resignConfirmation: false,
-			messages:           props.game.messages,
-			score:              props.game.score,
+
+			messages: props.game.messages,
 		}
 
 	}
@@ -63,27 +72,72 @@ class GameRoom extends React.Component {
 					this.receive_takeback(data.requester)
 				} else if (data.friend_joined) {
 					let p2 = data.friend_joined
-					p2.color = !this.props.p1.color
 					this.setState({p2: p2, ready: true})
 				} else if (data.move) {
 					const newHistory = this.state.history.concat(data.move)
 					const move = newHistory.length - 1
-					this.setState({
-						history:   newHistory,
-						move:      move,
-						blackNext: !this.state.blackNext
+
+					this.setState(ps => {
+						if (ps.blackNext === this.props.p1.color) { //p1 just moved
+							ps.p1.timer = data.newTime
+							ps.p1Tick = false
+							ps.p2Tick = true
+						} else {							//p2 just moved
+							ps.p2.timer = data.newTime
+							ps.p1Tick = true
+							ps.p2Tick = false
+						}
+						ps.blackNext = !ps.blackNext
+						ps.history = newHistory
+						ps.move = move
+						return ps
 					})
 				}
 			}
 		})
+		if (this.state.p1Tick) { //p1 just moved
+			let p1 = this.props.p1
+			p1.timer = p1.timer - (Date.now() - new Date(this.state.lastMove))
+			this.setState({p1: p1})
+		} else if (this.state.p2Tick) {							//p2 just moved
+			let p2 = this.props.p2
+			p2.timer = p2.timer - (Date.now() - new Date(this.state.lastMove))
+			this.setState({p2: p2})
+		}
+
+
+	}
+
+	timeUp(p) {
+		if (p === 1) {
+			var piid = this.state.p1.id
+		} else if (p === 2) {
+			piid = this.state.p2.id
+		}
+
+		App.gameRoom.send({
+			time_up: piid
+		})
 	}
 
 	gameOver(result) {
-		//timer.stop()
-		//this.setState({win/loss info})
+		if (result.time) {
+			if (this.state.p1Tick) { //p1 just moved
+				let p1 = this.props.p1
+				p1.timer = result.time
+				this.setState({p1: p1})
+			} else if (this.state.p2Tick) {							//p2 just moved
+				let p2 = this.props.p2
+				p2.timer = result.time
+				this.setState({p2: p2})
+			}
+		}
+
 		this.setState({
 			completed: true,
 			result:    result.message,
+			p1Tick:    false,
+			p2Tick:    false,
 		})
 	}
 
@@ -103,13 +157,13 @@ class GameRoom extends React.Component {
 
 		//set board state here without setting move list
 
+
 		App.gameRoom.send({
 			move: {
 				index: i,
 				pass:  false,
 			}
 		})
-		// -> gameroom_channel#receive
 	}
 
 	pass() {
@@ -160,7 +214,7 @@ class GameRoom extends React.Component {
 	resign() {
 		if (this.state.resignConfirmation) {
 			App.gameRoom.send({
-				resign: true
+				resign: true,
 			})
 			this.setState({resignConfirmation: false})
 		} else {
@@ -189,17 +243,19 @@ class GameRoom extends React.Component {
 		if (!this.state.ready) {
 			return (<WaitingRoom />)
 		} else {
-			return (<Game {...this.props}
-						  {...this.state}
-						  p2={this.state.p2}
-						  handleClick={(i) => this.handleClick(i)}
-						  pass={() => this.pass()}
-						  offer_takeback={() => this.offer_takeback()}
-						  offer_draw={() => this.offer_draw()}
-						  resign={() => this.resign()}
-						  jumpTo={(move) => this.jumpTo(move)}
-						  messages={this.state.messages}
-						  sendChat={(m) => this.sendChat(m)}
+			return (
+				<Game
+					{...this.state}
+					game={this.props.game}
+					handleClick={(i) => this.handleClick(i)} //bind these methods in constructor later
+					pass={() => this.pass()}
+					offer_takeback={() => this.offer_takeback()}
+					offer_draw={() => this.offer_draw()}
+					resign={() => this.resign()}
+					timeUp={(p) => this.timeUp(p)}
+					jumpTo={(move) => this.jumpTo(move)}
+					messages={this.state.messages}
+					sendChat={(m) => this.sendChat(m)}
 				/>
 			)
 		}
@@ -232,12 +288,16 @@ function Game(props) {
 					 moveNum={props.move}
 					 jumpTo={(m) => props.jumpTo(m)}
 					 resignConfirmation={props.resignConfirmation}
-					 p1={props.p1}
-					 p2={props.p2}
 					 pass={() => props.pass()}
 					 takeback={() => props.offer_takeback()}
 					 draw={() => props.offer_draw()}
 					 resign={() => props.resign()}
+
+					 p1={props.p1}
+					 p2={props.p2}
+					 p1Tick={props.p1Tick}
+					 p2Tick={props.p2Tick}
+					 timeUp={(p) => props.timeUp(p)}
 
 					 messages={props.messages}
 					 sendChat={(m) => props.sendChat(m)}
@@ -267,21 +327,30 @@ class Infobox extends React.Component {
 		const indicator = <span className="indicator">    &lt;---</span>
 		return (
 			<div id="controlBox">
+
+				<Timer
+					timeStart={this.props.p2.timer}
+					ticking={this.props.p2Tick}
+					timeUp={() => this.props.timeUp(2)}
+				/>
 				<PlayerInfo
 					player={this.props.p2}
 					indicator={!this.props.indicator && !this.props.result && indicator}
 				/>
+
 				<div className="control-container">
 					<control onClick={() => this.props.jumpTo(1)}> &lt;&lt; </control>
 					<control onClick={() => this.props.jumpTo(this.props.moveNum - 1)}> &lt; </control>
 					<control onClick={() => this.props.jumpTo(this.props.moveNum + 1)}> &gt; </control>
 					<control onClick={() => this.props.jumpTo(this.props.moves.length - 1)}> &gt;&gt; </control>
 				</div>
+
 				<div id="moveList" ref={(div => {
 					this.moveListDiv = div
 				})}>
 					<ol>{this.props.moves}</ol>
 				</div>
+
 				<div className="control-container">
 					<control onClick={() => this.props.pass()}>Pass</control>
 					<control style={{textDecoration: 'line-through'}}>Takeback</control>
@@ -289,12 +358,19 @@ class Infobox extends React.Component {
 					<control
 						onClick={() => this.props.resign()}>{this.props.resignConfirmation ? 'Sure?' : 'Resign'}</control>
 				</div>
+
 				<PlayerInfo
 					player={this.props.p1}
 					indicator={this.props.indicator && !this.props.result && indicator}
-					score={this.props.score}
 				/>
+				<Timer
+					timeStart={this.props.p1.timer}
+					ticking={this.props.p1Tick}
+					timeUp={() => this.props.timeUp(1)}
+				/>
+
 				<Chat messages={this.props.messages} sendChat={(m) => this.props.sendChat(m)}/>
+
 			</div>
 		)
 	}
@@ -304,10 +380,9 @@ function PlayerInfo(props) {
 	return (
 		<div className="player-name">
 			<i className={`circle-${getColor(props.player.color)}`}>&nbsp;</i>
-			{props.player.display_name}
+			{props.player.player.display_name}
 			{props.indicator}
 			{props.rating && <span className="rating"> ({props.rating})</span>}
-			{props.score && <span className="score">{props.score}</span>}
 		</div>
 	)
 

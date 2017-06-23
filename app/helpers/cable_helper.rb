@@ -13,6 +13,6 @@ module CableHelper
 	end
 
 	def join(game, user)
-		GameroomChannel.broadcast_to(game, {friend_joined: user})
+		GameroomChannel.broadcast_to(game, {friend_joined: user.involvements.last.as_json(include: :player)})
 	end
 end

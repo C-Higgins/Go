@@ -7,7 +7,7 @@
 	games:      games.as_json(
 		include: {
 			game: {
-				only:    [:webid, :history, :created_at, :result, :in_progress, :completed],
+				only:    [:webid, :history, :updated_at, :result, :in_progress, :completed],
 				include: {
 					players: {
 						only: [:display_name]

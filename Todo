@@ -2,11 +2,11 @@ Features:
 - Takeback
 - Abort before game start
 - make session errors look not shitty
-- Timer
 - Rating
 
 Bugs:
-
+Chat doesn't expand properly when there are no timers
+Timer reaching zero is not back end validated
 
 Code issues:
 - Refactor history send/receive nonsense

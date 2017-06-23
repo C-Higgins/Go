@@ -29,21 +29,51 @@ board {
 		@include no-select;
 	}
 }
+
 game {
 	display:        flex;
 	flex-direction: row;
 
 	#controlBox {
-		$totalHeight: 170px;
+		$totalHeight: 200px;
 		$buttonHeight: 20px;
 		$spanHeight: 20px;
+		$timerHeight: 40px;
 		$width: 249px;
 		width:    $width;
 		position: relative;
 		margin:   0 0 0 20px;
 
+		.timer {
+			display:             inline-block;
+			height:              40px;
+			width:               140px;
+			padding-left:        5px;
+
+			font:                30px 'Roboto Mono', monospace;
+			background:          white;
+			border:              1px solid #cccccc;
+			cursor:              default;
+			-webkit-user-select: none;
+			-moz-user-select:    none;
+			-ms-user-select:     none;
+			user-select:         none;
+
+			&.low {
+				background: #b93c3c;
+				color:      white;
+			}
+
+			&:first-of-type {
+				border-bottom: none;
+			}
+			&:last-of-type {
+				border-top: none;
+			}
+		}
+
 		#chat {
-			$chatHeight: 600-$totalHeight - $spanHeight*2 - $buttonHeight - 20px;
+			$chatHeight: 600-$totalHeight - $spanHeight*2 - $buttonHeight - 20px - $timerHeight*2;
 			$inputHeight: 48px;
 			height:     $chatHeight;
 			margin-top: 20px;
