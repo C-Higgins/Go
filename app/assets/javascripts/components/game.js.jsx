@@ -98,10 +98,18 @@ class GameRoom extends React.Component {
 		if (this.state.p1Tick) { //p1 just moved
 			let p1 = this.props.p1
 			p1.timer = p1.timer - (Date.now() - new Date(this.state.lastMove))
+			if (p1.timer < 0) {
+				p1.timer = 0
+				this.timeUp(1)
+			}
 			this.setState({p1: p1})
 		} else if (this.state.p2Tick) {							//p2 just moved
 			let p2 = this.props.p2
 			p2.timer = p2.timer - (Date.now() - new Date(this.state.lastMove))
+			if (p2.timer < 0) {
+				p2.timer = 0
+				this.timeUp(2)
+			}
 			this.setState({p2: p2})
 		}
 

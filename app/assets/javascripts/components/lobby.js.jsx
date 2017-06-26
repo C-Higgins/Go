@@ -7,6 +7,8 @@ class Lobby extends React.Component {
 			modal:   props.modal,
 			buttons: props.button_data,
 		};
+		PRIVATE_MSG = "You will be given a URL to share with a friend."
+		PUBLIC_MSG = "Your game will be shown in the game list until someone joins it."
 	}
 
 	componentDidMount() {
@@ -58,14 +60,20 @@ class Lobby extends React.Component {
 							  key={i}
 			/>
 		});
+		if (this.state.modal === 0) {
+			var text = PUBLIC_MSG
+		} else if (this.state.modal === 1) {
+			text = PRIVATE_MSG
+		}
 		return (
 			<div id="wrapper" data-room-id="lobby">
 				{this.state.modal !== -1 &&
 				<Modal authenticity_token={this.props.auth}
-					   private={this.state.modal == this.props.modals.private}
+					   private={this.state.modal === this.props.modals.private}
 					   games_in_progress={this.props.game_data.games_in_progress}
 					   createGame={() => this.createGame(this.props.game_data.me.id)}
-					   close_modal={() => this.close_modal()}/>
+					   close_modal={() => this.close_modal()}
+					   messaging={text}/>
 				}
 				<div id="shameless-plug">
 					<span id="plug-header">rgo</span><br />
