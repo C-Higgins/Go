@@ -109,7 +109,7 @@ class GameroomChannel < ApplicationCable::Channel
 			senderInv.update_attributes(timer: result[:time])
 		elsif (data['time_up'])
 			loser = Involvement.find(data['time_up'])
-			return if sender.id != loser.player_id
+			# return if sender.id != loser.player_id
 			new_time = get_new_time(last_move_time, sent_at, loser.timer, 0)
 			if new_time <= 0
 				result = end_game(@game, data, loser)
@@ -117,7 +117,6 @@ class GameroomChannel < ApplicationCable::Channel
 				broadcast_chat({message: result[:message], system: true})
 				loser.update_attributes(timer: 0)
 			end
-			@locked = false
 		end
 	end
 
