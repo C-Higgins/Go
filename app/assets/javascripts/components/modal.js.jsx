@@ -76,10 +76,10 @@ class Modal extends React.Component {
 						X
 					</span>
 					<div id="modalBody">
-						{this.props.games_in_progress &&
-						'Note: You have games in progress. Creating a new game will not interrupt ongoing games.'
-						}
-
+						{/*{this.props.games_in_progress &&*/}
+						{/*'Note: You have games in progress. Creating a new game will not interrupt ongoing games.'*/}
+						{/*}*/}
+						{this.props.messaging}
 						<form id="new_game" onSubmit={() => this.props.createGame()} action="/g" acceptCharset="UTF-8"
 							  method="post">
 							<input name="utf8" type="hidden" value="✓"/>
