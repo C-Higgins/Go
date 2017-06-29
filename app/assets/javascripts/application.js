@@ -16,3 +16,7 @@
 //= require react_ujs
 //= require components
 //= require_tree .
+
+function getColor(bool) {
+	return bool ? 'black' : 'white'
+}

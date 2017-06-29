@@ -393,10 +393,6 @@ function PlayerInfo(props) {
 			{props.rating && <span className="rating"> ({props.rating})</span>}
 		</div>
 	)
-
-	function getColor(bool) {
-		return bool ? 'black' : 'white'
-	}
 }
 
 function Board(props) {

@@ -3,7 +3,18 @@ module CableHelper
 	include PlayersHelper
 
 	def refresh_games_list!
-		g = all_pending_games.select(:id, :webid, :timer, :inc).to_json(include: :players)
+		g = all_pending_games.select(:id, :webid, :timer, :inc).to_json(
+			include: {
+				involvements: {
+					include: {
+						player: {
+							only: [:display_name, :id]
+						}
+					}
+				},
+
+			}
+		)
 		ActionCable.server.broadcast 'lobby', g
 		g
 	end
