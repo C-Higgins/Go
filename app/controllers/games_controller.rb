@@ -4,7 +4,18 @@ class GamesController < ApplicationController
 	include CableHelper
 
 	def index
-		@games = all_pending_games.select(:id, :webid, :timer, :inc).to_json(include: :players)
+		@games = all_pending_games.select(:id, :webid, :timer, :inc).to_json(
+			include: {
+				involvements: {
+					include: {
+						player: {
+							only: [:display_name, :id]
+						}
+					}
+				},
+
+			}
+		)
 		@game  = Game.new
 	end
 

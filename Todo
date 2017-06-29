@@ -3,6 +3,7 @@ Features:
 - Abort before game start
 - make session errors look not shitty
 - Rating
+- Make game list server show random
 
 Bugs:
 Chat doesn't expand properly when there are no timers
